@@ -1,1 +1,3 @@
-it.todo('write a test');
+import m from '../index';
+
+console.info(m.Screen);
