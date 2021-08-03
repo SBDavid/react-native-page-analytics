@@ -1,7 +1,7 @@
 import React from 'react';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 
-type Props = {
+export type Props = {
   navigation: NavigationProp<ParamListBase>;
   pageViewId: number;
   pageExitId: number;
