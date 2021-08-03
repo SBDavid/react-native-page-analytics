@@ -8,40 +8,95 @@ type Props = {
   currentPage: string;
 };
 
+interface AnalyticPropsType {
+  [key: string]: any;
+}
+
+type SendAnalyticFunc = (
+  metaId: number,
+  currPage: string,
+  props: AnalyticPropsType
+) => void;
+
 export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
   // 取消订阅
   focusSubscripe?: () => void;
   blurSubscripe?: () => void;
 
   // pageview属性
-  pageViewProps: any;
+  pageViewProps: AnalyticPropsType = {};
   pageViewPropsPromise: Promise<any>;
   pageViewPropsResolve?: (r: any) => void;
 
+  // pageExit属性
+  pageExitProps: AnalyticPropsType = {};
+
+  // 发送数据操作
+  private static sendAnalytic: SendAnalyticFunc;
+
+  // 设置发送操作
+  static setSendAnalyticAction(cb: SendAnalyticFunc) {
+    Screen.sendAnalytic = cb;
+  }
+
   // 全局currPage
-  static currentPage?: string;
+  private static currentPage: string;
+
+  // 获取全局currPage
+  static getCurrPage() {
+    return Screen.currentPage;
+  }
 
   constructor(p: P & Props) {
     super(p);
-
-    this.pageViewProps = {};
     this.pageViewPropsPromise = new Promise((resolve) => {
       this.pageViewPropsResolve = resolve;
     });
   }
 
+  // 页面显示操作
   async onFocus() {
     Screen.currentPage = this.props.currentPage;
     await this.pageViewPropsPromise;
     // 发送数据
-  }
-  onBlur() {
-    // 发送数据
+    this.sendAnalyticAction('focus');
   }
 
-  setPageViewProps(props: any) {
+  // 页面离开操作
+  onBlur() {
+    // 发送数据
+    this.sendAnalyticAction('blur');
+  }
+
+  // 发送数据操作
+  sendAnalyticAction(type: 'focus' | 'blur') {
+    if (!Screen.sendAnalytic) {
+      return;
+    }
+    if (type === 'focus') {
+      Screen.sendAnalytic(
+        this.props.pageViewId,
+        Screen.currentPage,
+        this.pageViewProps
+      );
+    } else {
+      Screen.sendAnalytic(
+        this.props.pageExitId,
+        Screen.currentPage,
+        this.pageExitProps
+      );
+    }
+  }
+
+  // 设置页面属性
+  setPageViewProps(props: AnalyticPropsType) {
     this.pageViewProps = props;
     this.pageViewPropsResolve && this.pageViewPropsResolve(null);
+  }
+
+  // 设置页面离开属性
+  setPageExitProps(props: AnalyticPropsType) {
+    this.pageExitProps = props;
   }
 
   componentDidMount() {
