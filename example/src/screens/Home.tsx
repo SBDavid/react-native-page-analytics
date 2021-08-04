@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, TouchableHighlight, Text, View } from 'react-native';
+import { ScrollView, TouchableHighlight } from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   AnalyticPropsParams,
@@ -29,15 +29,15 @@ export default class HomePage extends PageAnalytics.Screen<
     currPage: string,
     props: AnalyticPropsParams
   ) => {
-    console.log(`发送数据 ${metaId} ${currPage} ${props}`);
+    // console.log(`发送数据 ${metaId} ${currPage} ${props}`);
   };
 
   state: HomePageState = {
-    list: [RouterName.SCREEN1, RouterName.SCREEN2],
+    list: [RouterName.SCREEN1, RouterName.SCREEN2, RouterName.TAB],
   };
 
   componentDidMount() {
-    super.componentDidMount();
+    // super.componentDidMount();
     this.syncSetPageViewProps();
   }
 

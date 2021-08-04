@@ -1,5 +1,21 @@
 import React from 'react';
-import { ContentContainer, ContentText } from '../screens/StyledComponents';
+import styled from 'styled-components';
+import { View, Text } from 'react-native';
+
+export const ContentContainer = styled(View)`
+  background-color: green;
+  margin-top: 30px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+`;
+
+export const ContentText = styled(Text)`
+  font-size: 20px;
+  color: white;
+`;
 
 interface CurrentPropType {
   title: string;

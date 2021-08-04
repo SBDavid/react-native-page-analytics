@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from './screens/Home';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
+import Tab from './screens/Tab';
 import RouterName from './router';
 
 const Stack = createStackNavigator();
@@ -21,7 +22,7 @@ export default function App() {
           name={RouterName.HOME}
           component={(props) => (
             <Home
-              currentPage="currentPage"
+              currentPage="homePage"
               pageViewId={0}
               pageExitId={1}
               {...props}
@@ -31,27 +32,50 @@ export default function App() {
         <Stack.Screen
           name={RouterName.SCREEN1 as string}
           component={(props) => (
-            <React.Suspense fallback={null}>
-              <LazyScreen1
-                currentPage="screen2"
-                pageViewId={0}
-                pageExitId={1}
-                {...props}
-              />
-            </React.Suspense>
+            <Screen1
+              currentPage="screen1"
+              pageViewId={0}
+              pageExitId={1}
+              {...props}
+            />
+            // <React.Suspense fallback={null}>
+            //   <LazyScreen1
+            //     currentPage="screen1"
+            //     pageViewId={0}
+            //     pageExitId={1}
+            //     {...props}
+            //   />
+            // </React.Suspense>
           )}
         />
         <Stack.Screen
           name={RouterName.SCREEN2 as string}
           component={(props) => (
-            <React.Suspense fallback={null}>
-              <LazyScreen2
-                currentPage="screen2"
-                pageViewId={0}
-                pageExitId={1}
-                {...props}
-              />
-            </React.Suspense>
+            <Screen2
+              currentPage="screen2"
+              pageViewId={0}
+              pageExitId={1}
+              {...props}
+            />
+            // <React.Suspense fallback={null}>
+            //   <LazyScreen2
+            //     currentPage="screen2"
+            //     pageViewId={0}
+            //     pageExitId={1}
+            //     {...props}
+            //   />
+            // </React.Suspense>
+          )}
+        />
+        <Stack.Screen
+          name={RouterName.TAB}
+          component={(props) => (
+            <Tab
+              currentPage="tabPage"
+              pageViewId={0}
+              pageExitId={1}
+              {...props}
+            />
           )}
         />
       </Stack.Navigator>

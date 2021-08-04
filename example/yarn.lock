@@ -897,6 +897,14 @@
   resolved "https://registry.nlark.com/@react-native-community/masked-view/download/@react-native-community/masked-view-0.1.10.tgz?cache=0&sync_timestamp=1619440061429&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-native-community%2Fmasked-view%2Fdownload%2F%40react-native-community%2Fmasked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
   integrity sha1-XdpkPhnlh3k7wgNN2b9zmK1D1AE=
 
+"@react-navigation/bottom-tabs@5.11.1":
+  version "5.11.1"
+  resolved "https://registry.nlark.com/@react-navigation/bottom-tabs/download/@react-navigation/bottom-tabs-5.11.1.tgz?cache=0&sync_timestamp=1627984299381&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-navigation%2Fbottom-tabs%2Fdownload%2F%40react-navigation%2Fbottom-tabs-5.11.1.tgz#58c4f784d3262f7fb6f3075b41f64e9617054087"
+  integrity sha1-WMT3hNMmL3+28wdbQfZOlhcFQIc=
+  dependencies:
+    color "^3.1.3"
+    react-native-iphone-x-helper "^1.3.0"
+
 "@react-navigation/core@^5.12.3":
   version "5.15.5"
   resolved "https://registry.nlark.com/@react-navigation/core/download/@react-navigation/core-5.15.5.tgz?cache=0&sync_timestamp=1627983701482&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-navigation%2Fcore%2Fdownload%2F%40react-navigation%2Fcore-5.15.5.tgz#9b5a534ed101df8a18a89356f3fa1d8e5f6e3826"
@@ -1809,7 +1817,7 @@ color-support@^1.1.3:
   resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
   integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
 
-color@^3.1.2:
+color@^3.1.2, color@^3.1.3:
   version "3.2.1"
   resolved "https://registry.nlark.com/color/download/color-3.2.1.tgz?cache=0&sync_timestamp=1626601281817&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fcolor%2Fdownload%2Fcolor-3.2.1.tgz#3544dc198caf4490c3ecc9a790b54fe9ff45e164"
   integrity sha1-NUTcGYyvRJDD7MmnkLVP6f9F4WQ=
@@ -4035,7 +4043,7 @@ react-native-gesture-handler@1.7.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-iphone-x-helper@^1.2.1:
+react-native-iphone-x-helper@^1.2.1, react-native-iphone-x-helper@^1.3.0:
   version "1.3.1"
   resolved "https://registry.npm.taobao.org/react-native-iphone-x-helper/download/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha1-IMYD6aDnZf1vlzlmOL3rDlpgsBA=

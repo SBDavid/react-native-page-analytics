@@ -12,6 +12,7 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/native": "5.7.3",
     "@react-navigation/stack": "5.9.0",
+    "@react-navigation/bottom-tabs": "5.11.1",
     "@rematch/core": "^2.0.1",
     "react": "16.13.1",
     "react-native": "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#19400311",

@@ -6,6 +6,7 @@ import Content from '../components/Content';
 import { Container } from './StyledComponents';
 import Button from '../components/Button';
 import RouterName from '../router';
+import Utils from '../utils';
 
 interface HomePageProps {}
 
@@ -25,7 +26,24 @@ export default class Screen2 extends PageAnalytics.Screen<
     list: ['页面1', '页面2', '页面3'],
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.asyncSetPageViewProps();
+  }
+
+  componentWillUnmount() {
+    super.componentWillUnmount();
+  }
+
+  // 同步设置页面props
+  syncSetPageViewProps = () => {
+    this.setPageViewProps({ currPageName: 'home' });
+  };
+
+  // 异步设置页面props
+  asyncSetPageViewProps = async () => {
+    await Utils.delay(2000);
+    this.setPageViewProps({ currPageName: 'home' });
+  };
 
   render() {
     return (

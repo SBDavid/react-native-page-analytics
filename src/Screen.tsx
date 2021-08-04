@@ -52,6 +52,13 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
     this.pageViewPropsPromise = new Promise((resolve) => {
       this.pageViewPropsResolve = resolve;
     });
+
+    console.log('analytic page constructor');
+    this.focusSubscripe = this.props.navigation.addListener(
+      'focus',
+      this.onFocus
+    );
+    this.blurSubscripe = this.props.navigation.addListener('blur', this.onBlur);
   }
 
   // 页面显示操作
@@ -102,12 +109,12 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
   };
 
   componentDidMount() {
-    console.log('analytic page didmount');
-    this.focusSubscripe = this.props.navigation.addListener(
-      'focus',
-      this.onFocus
-    );
-    this.blurSubscripe = this.props.navigation.addListener('blur', this.onBlur);
+    // console.log('analytic page didmount');
+    // this.focusSubscripe = this.props.navigation.addListener(
+    //   'focus',
+    //   this.onFocus
+    // );
+    // this.blurSubscripe = this.props.navigation.addListener('blur', this.onBlur);
   }
 
   componentWillUnmount() {
