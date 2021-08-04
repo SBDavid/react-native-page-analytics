@@ -8,11 +8,11 @@ export type Props = {
   currentPage: string;
 };
 
-interface AnalyticPropsType {
+export interface AnalyticPropsType {
   [key: string]: any;
 }
 
-type SendAnalyticFunc = (
+export type SendAnalyticFunc = (
   metaId: number,
   currPage: string,
   props: AnalyticPropsType
@@ -55,51 +55,54 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
   }
 
   // 页面显示操作
-  async onFocus() {
+  onFocus = async () => {
     Screen.currentPage = this.props.currentPage;
     await this.pageViewPropsPromise;
     // 发送数据
     this.sendAnalyticAction('focus');
-  }
+  };
 
   // 页面离开操作
-  onBlur() {
+  onBlur = () => {
     // 发送数据
     this.sendAnalyticAction('blur');
-  }
+  };
 
   // 发送数据操作
-  sendAnalyticAction(type: 'focus' | 'blur') {
+  sendAnalyticAction = (type: 'focus' | 'blur') => {
     if (!Screen.sendAnalytic) {
       return;
     }
     if (type === 'focus') {
+      console.log(`页面focus事件 页面名: ${Screen.currentPage}`);
       Screen.sendAnalytic(
         this.props.pageViewId,
         Screen.currentPage,
         this.pageViewProps
       );
     } else {
+      console.log(`页面blur事件 页面名: ${Screen.currentPage}`);
       Screen.sendAnalytic(
         this.props.pageExitId,
         Screen.currentPage,
         this.pageExitProps
       );
     }
-  }
+  };
 
   // 设置页面属性
-  setPageViewProps(props: AnalyticPropsType) {
+  setPageViewProps = (props: AnalyticPropsType) => {
     this.pageViewProps = props;
     this.pageViewPropsResolve && this.pageViewPropsResolve(null);
-  }
+  };
 
   // 设置页面离开属性
-  setPageExitProps(props: AnalyticPropsType) {
+  setPageExitProps = (props: AnalyticPropsType) => {
     this.pageExitProps = props;
-  }
+  };
 
   componentDidMount() {
+    console.log('analytic page didmount');
     this.focusSubscripe = this.props.navigation.addListener(
       'focus',
       this.onFocus

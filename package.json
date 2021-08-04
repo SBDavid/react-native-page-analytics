@@ -151,6 +151,6 @@
     ]
   },
   "dependencies": {
-    "@react-navigation/native": "^5.9.4"
+    "@react-navigation/native": "5.7.3"
   }
 }
