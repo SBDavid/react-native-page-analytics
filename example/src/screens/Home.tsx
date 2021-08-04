@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableHighlight } from 'react-native';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
-import styled from 'styled-components';
+import { ScrollView, TouchableHighlight, Text, View } from 'react-native';
+import PageAnalytics, {
+  AnalyticProps,
+  AnalyticPropsParams,
+  SendAnalyticFuncType,
+} from 'react-native-page-analytics';
 import { Container, Item, ItemText } from './StyledComponents';
+import RouterName from '../router';
+import Utils from '../utils';
 
 interface HomePageProps {}
 
 interface HomePageState {
-  list: string[];
+  list: RouterName[];
 }
 
 export default class HomePage extends PageAnalytics.Screen<
@@ -16,19 +21,43 @@ export default class HomePage extends PageAnalytics.Screen<
 > {
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
+    PageAnalytics.Screen.setSendAnalyticAction(HomePage.sendAnalyTicOperation);
   }
 
-  state: HomePageState = {
-    list: ['页面1', '页面2', '页面3'],
+  static sendAnalyTicOperation: SendAnalyticFuncType = (
+    metaId: number,
+    currPage: string,
+    props: AnalyticPropsParams
+  ) => {
+    console.log(`发送数据 ${metaId} ${currPage} ${props}`);
   };
 
-  componentDidMount() {}
+  state: HomePageState = {
+    list: [RouterName.SCREEN1, RouterName.SCREEN2],
+  };
 
-  handlePress = (index: number) => {
-    if (index === 0) {
-    } else if (index === 1) {
-    } else {
-    }
+  componentDidMount() {
+    super.componentDidMount();
+    this.syncSetPageViewProps();
+  }
+
+  componentWillUnmount() {
+    super.componentWillUnmount();
+  }
+
+  // 同步设置页面props
+  syncSetPageViewProps = () => {
+    this.setPageViewProps({ currPageName: 'home' });
+  };
+
+  // 异步设置页面props
+  asyncSetPageViewProps = async () => {
+    await Utils.delay(2000);
+    this.setPageViewProps({ currPageName: 'home' });
+  };
+
+  handlePress = (item: RouterName) => {
+    this.props.navigation.navigate(item);
   };
 
   render() {
@@ -37,8 +66,11 @@ export default class HomePage extends PageAnalytics.Screen<
         <ScrollView>
           {this.state.list.map((item, index) => {
             return (
-              <TouchableHighlight onPress={() => this.handlePress(index)}>
-                <Item key={index} index={index}>
+              <TouchableHighlight
+                key={index}
+                onPress={() => this.handlePress(item)}
+              >
+                <Item key={index}>
                   <ItemText>{item}</ItemText>
                 </Item>
               </TouchableHighlight>

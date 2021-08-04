@@ -1,26 +1,11 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableHighlight } from 'react-native';
+import { ScrollView } from 'react-native';
 import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
-import styled from 'styled-components';
-import BackBtn from './BackBtn';
+import BackBtn from '../components/BackBtn';
+import Content from '../components/Content';
 import { Container } from './StyledComponents';
-
-const Item = styled(View)`
-  width: 100px;
-  height: 20px;
-  background-color: rgba(
-    255,
-    0,
-    0,
-    ${(props: { index: number }) => 0.3 + props.index * 0.1}
-  );
-`;
-
-const ItemText = styled(Text)`
-  font-size: 20px;
-  color: green;
-  font-weight: bold;
-`;
+import Button from '../components/Button';
+import RouterName from '../router';
 
 interface HomePageProps {}
 
@@ -42,27 +27,18 @@ export default class Screen2 extends PageAnalytics.Screen<
 
   componentDidMount() {}
 
-  handlePress = (index: number) => {
-    if (index === 0) {
-    } else if (index === 1) {
-    } else {
-    }
-  };
-
   render() {
     return (
       <Container>
         <ScrollView>
-          <BackBtn backBtnHandler={() => {}} />
-          {this.state.list.map((item, index) => {
-            return (
-              <TouchableHighlight onPress={() => this.handlePress(index)}>
-                <Item key={index} index={index}>
-                  <ItemText>{item}</ItemText>
-                </Item>
-              </TouchableHighlight>
-            );
-          })}
+          <BackBtn backBtnHandler={this.props.navigation.goBack} />
+          <Content title="Screen2" />
+          <Button
+            handler={() => {
+              this.props.navigation.navigate(RouterName.HOME);
+            }}
+            title="跳转到首页"
+          />
         </ScrollView>
       </Container>
     );

@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableHighlight } from 'react-native';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
-import styled from 'styled-components';
-import { BackBtnContainer, BackBtnText } from './StyledComponents';
+import { TouchableHighlight } from 'react-native';
+import { BackBtnContainer, BackBtnText } from '../screens/StyledComponents';
 
 interface CurrentPropType {
   backBtnHandler: () => void;

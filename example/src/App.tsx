@@ -1,45 +1,60 @@
-import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import 'react-native-gesture-handler';
-import PageAnalytics from 'react-native-page-analytics';
+import * as React from 'react';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import Home from './screens/Home';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
+import RouterName from './router';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
+
+const LazyScreen1 = React.lazy(() => import('./screens/Screen1'));
+const LazyScreen2 = React.lazy(() => import('./screens/Screen2'));
 
 export default function App() {
-  const [result] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    console.info(PageAnalytics);
-  }, []);
-
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="home" component={Home} />
-        <Stack.Screen name="screen1" component={Screen1} />
-        <Stack.Screen name="screen1" component={Screen2} />
+      <Stack.Navigator initialRouteName={RouterName.HOME}>
+        <Stack.Screen
+          name={RouterName.HOME}
+          component={(props) => (
+            <Home
+              currentPage="currentPage"
+              pageViewId={0}
+              pageExitId={1}
+              {...props}
+            />
+          )}
+        />
+        <Stack.Screen
+          name={RouterName.SCREEN1 as string}
+          component={(props) => (
+            <React.Suspense fallback={null}>
+              <LazyScreen1
+                currentPage="screen2"
+                pageViewId={0}
+                pageExitId={1}
+                {...props}
+              />
+            </React.Suspense>
+          )}
+        />
+        <Stack.Screen
+          name={RouterName.SCREEN2 as string}
+          component={(props) => (
+            <React.Suspense fallback={null}>
+              <LazyScreen2
+                currentPage="screen2"
+                pageViewId={0}
+                pageExitId={1}
+                {...props}
+              />
+            </React.Suspense>
+          )}
+        />
       </Stack.Navigator>
-      <View style={styles.container}>
-        <Text>Result: {result}</Text>
-      </View>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
