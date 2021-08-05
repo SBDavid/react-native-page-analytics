@@ -10,18 +10,23 @@ interface CurrentPropType {
 const ButtonContainer = styled(View)`
   width: 200px;
   height: 30px;
-  border-radius: 7px;
-  border: 1px solid green;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid red;
+  border-radius: 8px;
   margin-top: 25px;
   margin-left: 20px;
+  background-color: white;
 `;
 
 const ButtonText = styled(Text)`
   font-size: 20px;
-  color: red;
+  font-weight: bold;
+  color: green;
 `;
 
-export default function BackBtn(props: CurrentPropType) {
+export default function Button(props: CurrentPropType) {
   return (
     <TouchableHighlight onPress={props.handler}>
       <ButtonContainer>

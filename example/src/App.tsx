@@ -1,28 +1,27 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from './screens/Home';
+
+import RouterName from './router';
+import HomeTab from './screens/HomeTab';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
-import Tab from './screens/Tab';
-import RouterName from './router';
 
 const Stack = createStackNavigator();
 
-const LazyScreen1 = React.lazy(() => import('./screens/Screen1'));
-const LazyScreen2 = React.lazy(() => import('./screens/Screen2'));
+// const LazyScreen1 = React.lazy(() => import('./screens/Screen1'));
+// const LazyScreen2 = React.lazy(() => import('./screens/Screen2'));
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={RouterName.HOME}>
+      <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
         <Stack.Screen
-          name={RouterName.HOME}
+          name={RouterName.HOME_TAB}
           component={(props) => (
-            <Home
-              currentPage="homePage"
+            <HomeTab
+              currentPage="homeTabPage"
               pageViewId={0}
               pageExitId={1}
               {...props}
@@ -65,17 +64,6 @@ export default function App() {
             //     {...props}
             //   />
             // </React.Suspense>
-          )}
-        />
-        <Stack.Screen
-          name={RouterName.TAB}
-          component={(props) => (
-            <Tab
-              currentPage="tabPage"
-              pageViewId={0}
-              pageExitId={1}
-              {...props}
-            />
           )}
         />
       </Stack.Navigator>

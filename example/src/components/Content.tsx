@@ -13,7 +13,7 @@ export const ContentContainer = styled(View)`
 `;
 
 export const ContentText = styled(Text)`
-  font-size: 20px;
+  font-size: 30px;
   color: white;
 `;
 

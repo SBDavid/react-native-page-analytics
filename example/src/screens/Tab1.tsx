@@ -1,13 +1,16 @@
 import React from 'react';
 import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
+import { ScrollView, TouchableHighlight } from 'react-native';
+
 import Content from '../components/Content';
-import { Container } from './StyledComponents';
+import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
+import RouterName from '../router';
 
 interface HomePageProps {}
 
 interface HomePageState {
-  list: string[];
+  list: RouterName[];
 }
 
 export default class Tab1 extends PageAnalytics.Screen<
@@ -19,7 +22,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   }
 
   state: HomePageState = {
-    list: ['Screen1', 'Screen2', 'Screen3'],
+    list: [RouterName.SCREEN1, RouterName.SCREEN2],
   };
 
   componentDidMount() {
@@ -41,10 +44,29 @@ export default class Tab1 extends PageAnalytics.Screen<
     this.setPageViewProps({ currPageName: 'home' });
   };
 
+  handlePress = (item: RouterName) => {
+    this.props.navigation.navigate(item);
+  };
+
   render() {
     return (
       <Container>
         <Content title="Tab1" />
+
+        <ScrollView>
+          {this.state.list.map((item, index) => {
+            return (
+              <TouchableHighlight
+                key={index}
+                onPress={() => this.handlePress(item)}
+              >
+                <Item key={index}>
+                  <ItemText>{item}</ItemText>
+                </Item>
+              </TouchableHighlight>
+            );
+          })}
+        </ScrollView>
       </Container>
     );
   }

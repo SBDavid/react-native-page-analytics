@@ -1,7 +1,6 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
 import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
-import BackBtn from '../components/BackBtn';
 import Content from '../components/Content';
 import Button from '../components/Button';
 import { Container } from './StyledComponents';
@@ -49,7 +48,6 @@ export default class Screen1 extends PageAnalytics.Screen<
     return (
       <Container>
         <ScrollView>
-          <BackBtn backBtnHandler={this.props.navigation.goBack} />
           <Content title="Screen1" />
           <Button
             handler={() => {

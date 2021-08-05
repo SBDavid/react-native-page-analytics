@@ -11,6 +11,13 @@ export type Props = {
 export interface AnalyticPropsType {
   [key: string]: any;
 }
+interface PageViewExitPropsType {
+  metaId: number;
+  currPage: string;
+  props: AnalyticPropsType;
+}
+
+type PageExitDataGenerType = () => PageViewExitPropsType;
 
 export type SendAnalyticFunc = (
   metaId: number,
@@ -19,24 +26,33 @@ export type SendAnalyticFunc = (
 ) => void;
 
 export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
-  // 取消订阅
-  focusSubscripe?: () => void;
-  blurSubscripe?: () => void;
+  // focus事件订阅
+  private focusSubs?: () => void;
+
+  // blur事件订阅
+  private blurSubs?: () => void;
 
   // pageview属性
-  pageViewProps: AnalyticPropsType = {};
-  pageViewPropsPromise: Promise<any>;
-  pageViewPropsResolve?: (r: any) => void;
+  private pageViewProps: AnalyticPropsType = {};
+
+  // 设置pageViewProps等待promise
+  private pageViewPropsPromise: Promise<any>;
+
+  // 设置pageViewProps等待resolve
+  private pageViewPropsResolve?: (r: any) => void;
 
   // pageExit属性
-  pageExitProps: AnalyticPropsType = {};
+  private pageExitProps: AnalyticPropsType = {};
+
+  // 动态获取pageExit属性方法
+  private pageExitDataGener?: PageExitDataGenerType;
 
   // 发送数据操作
-  private static sendAnalytic: SendAnalyticFunc;
+  private static sendAnalyticAction: SendAnalyticFunc;
 
   // 设置发送操作
   static setSendAnalyticAction(cb: SendAnalyticFunc) {
-    Screen.sendAnalytic = cb;
+    Screen.sendAnalyticAction = cb;
   }
 
   // 全局currPage
@@ -52,78 +68,76 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
     this.pageViewPropsPromise = new Promise((resolve) => {
       this.pageViewPropsResolve = resolve;
     });
-
-    console.log('analytic page constructor');
-    this.focusSubscripe = this.props.navigation.addListener(
-      'focus',
-      this.onFocus
-    );
-    this.blurSubscripe = this.props.navigation.addListener('blur', this.onBlur);
+    // console.log('analytic page constructor');
+    this.focusSubs = this.props.navigation.addListener('focus', this.onFocus);
+    this.blurSubs = this.props.navigation.addListener('blur', this.onBlur);
   }
 
   // 页面显示操作
-  onFocus = async () => {
+  private onFocus = async () => {
     Screen.currentPage = this.props.currentPage;
     await this.pageViewPropsPromise;
-    // 发送数据
     this.sendAnalyticAction('focus');
   };
 
   // 页面离开操作
-  onBlur = () => {
-    // 发送数据
+  private onBlur = () => {
     this.sendAnalyticAction('blur');
   };
 
+  // 设置
+
   // 发送数据操作
-  sendAnalyticAction = (type: 'focus' | 'blur') => {
-    if (!Screen.sendAnalytic) {
+  private sendAnalyticAction = (type: 'focus' | 'blur') => {
+    if (!Screen.sendAnalyticAction) {
       return;
     }
+
     if (type === 'focus') {
       console.log(`页面focus事件 页面名: ${Screen.currentPage}`);
-      Screen.sendAnalytic(
+      Screen.sendAnalyticAction(
         this.props.pageViewId,
         Screen.currentPage,
         this.pageViewProps
       );
     } else {
       console.log(`页面blur事件 页面名: ${Screen.currentPage}`);
-      Screen.sendAnalytic(
-        this.props.pageExitId,
-        Screen.currentPage,
-        this.pageExitProps
-      );
+      if (this.pageExitDataGener) {
+        const { metaId, currPage, props } = this.pageExitDataGener();
+        Screen.sendAnalyticAction(metaId, currPage, props);
+      } else {
+        Screen.sendAnalyticAction(
+          this.props.pageExitId,
+          Screen.currentPage,
+          this.pageExitProps
+        );
+      }
     }
   };
 
   // 设置页面属性
-  setPageViewProps = (props: AnalyticPropsType) => {
+  protected setPageViewProps = (props: AnalyticPropsType) => {
     this.pageViewProps = props;
     this.pageViewPropsResolve && this.pageViewPropsResolve(null);
   };
 
-  // 设置页面离开属性
-  setPageExitProps = (props: AnalyticPropsType) => {
-    this.pageExitProps = props;
+  // // 设置页面离开属性
+  // protected setPageExitProps = (props: AnalyticPropsType) => {
+  //   this.pageExitProps = props;
+  // };
+
+  // 设置 动态获取页面离开埋点属性 方法
+  protected setPageExitPropsGener = (cb: PageExitDataGenerType) => {
+    this.pageExitDataGener = cb;
   };
 
-  componentDidMount() {
-    // console.log('analytic page didmount');
-    // this.focusSubscripe = this.props.navigation.addListener(
-    //   'focus',
-    //   this.onFocus
-    // );
-    // this.blurSubscripe = this.props.navigation.addListener('blur', this.onBlur);
-  }
-
   componentWillUnmount() {
-    if (this.focusSubscripe) {
-      this.focusSubscripe();
+    if (this.focusSubs) {
+      this.focusSubs();
     }
 
-    if (this.blurSubscripe) {
-      this.blurSubscripe();
+    if (this.blurSubs) {
+      this.blurSubs();
     }
   }
 }
