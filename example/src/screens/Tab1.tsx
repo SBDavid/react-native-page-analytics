@@ -67,7 +67,7 @@ export default class Tab1 extends PageAnalytics.Screen<
 
   // 异步设置页面props
   asyncSetPageViewProps = async () => {
-    await Utils.delay(2000);
+    await Utils.delay(500);
     this.setPageViewProps({
       metaId: this.metaId,
       currPage: this.currPage,

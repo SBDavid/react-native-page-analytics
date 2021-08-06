@@ -78,7 +78,7 @@ export default class LazyScreen extends React.PureComponent<Props> {
   }
 
   onBlur() {
-    console.log(`lazyload onblur ${this.blurCallbacks.length}`);
+    // console.log(`lazyload onblur ${this.blurCallbacks.length}`);
     this.blurCallbacks.forEach((cb) => cb());
   }
 

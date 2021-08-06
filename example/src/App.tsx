@@ -37,10 +37,14 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
         <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
-
-        <Stack.Screen name={RouterName.SCREEN1 as string} component={Screen1} />
-
-        <Stack.Screen name={RouterName.SCREEN2 as string} component={Screen2} />
+        <Stack.Screen
+          name={RouterName.SCREEN1 as string}
+          component={LazyScreen1}
+        />
+        <Stack.Screen
+          name={RouterName.SCREEN2 as string}
+          component={LazyScreen2}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

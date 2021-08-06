@@ -68,23 +68,23 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
     });
 
     // console.log('analytic page constructor');
-    // if (this.props.addFocusListener) {
-    //   console.log(`页面有addFocusListener ${this.props.name}`);
-    //   this.focusSubs = this.props.addFocusListener(this.onFocus);
-    // } else {
-    //   console.log(`页面没有addFocusListener ${this.props.name}`);
-    //   this.focusSubs = this.props.navigation.addListener('focus', this.onFocus);
-    // }
+    if (this.props.addFocusListener) {
+      // console.log(`页面有addFocusListener ${this.props.name}`);
+      this.focusSubs = this.props.addFocusListener(this.onFocus);
+    } else {
+      // console.log(`页面没有addFocusListener ${this.props.name}`);
+      this.focusSubs = this.props.navigation.addListener('focus', this.onFocus);
+    }
 
-    // if (this.props.addBlurListener) {
-    //   console.log(`页面有addBlurListener ${this.props.name}`);
-    //   this.blurSubs = this.props.addBlurListener(this.onBlur);
-    // } else {
-    //   console.log(`页面没有addBlurListener ${this.props.name}`);
-    //   this.blurSubs = this.props.navigation.addListener('blur', this.onBlur);
-    // }
-    this.focusSubs = this.props.navigation?.addListener('focus', this.onFocus);
-    this.blurSubs = this.props.navigation?.addListener('blur', this.onBlur);
+    if (this.props.addBlurListener) {
+      // console.log(`页面有addBlurListener ${this.props.name}`);
+      this.blurSubs = this.props.addBlurListener(this.onBlur);
+    } else {
+      // console.log(`页面没有addBlurListener ${this.props.name}`);
+      this.blurSubs = this.props.navigation.addListener('blur', this.onBlur);
+    }
+    // this.focusSubs = this.props.navigation?.addListener('focus', this.onFocus);
+    // this.blurSubs = this.props.navigation?.addListener('blur', this.onBlur);
   }
 
   // 页面显示操作
@@ -96,7 +96,7 @@ export default class Screen<P, S> extends React.PureComponent<P & Props, S> {
 
   // 页面离开操作
   private onBlur = () => {
-    console.log('触发onBlur事件');
+    // console.log('触发onBlur事件');
     this.sendAnalyticAction('blur');
   };
 
