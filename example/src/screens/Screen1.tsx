@@ -1,6 +1,9 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
+import PageAnalytics, {
+  AnalyticProps,
+  PageExitDataGenerType,
+} from 'react-native-page-analytics';
 import Content from '../components/Content';
 import Button from '../components/Button';
 import { Container } from './StyledComponents';
@@ -17,8 +20,18 @@ export default class Screen1 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
 > {
+  //
+  metaId: number;
+  //
+  currPage: string;
+  //
+  viewProps: { [index: string]: any };
+
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
+    this.metaId = 0;
+    this.currPage = 'screen1';
+    this.viewProps = { customData: 'customData' };
   }
 
   state: HomePageState = {
@@ -26,22 +39,38 @@ export default class Screen1 extends PageAnalytics.Screen<
   };
 
   componentDidMount() {
-    this.asyncSetPageViewProps();
+    this.syncSetPageViewProps();
+    this.setPageExitPropsGener(this.customPageExitDataGener);
   }
 
   componentWillUnmount() {
     super.componentWillUnmount();
   }
 
+  // 生成页面离开埋点数据
+  customPageExitDataGener: PageExitDataGenerType = () => ({
+    metaId: this.metaId,
+    currPage: this.currPage,
+    props: { customData: 'customData' },
+  });
+
   // 同步设置页面props
   syncSetPageViewProps = () => {
-    this.setPageViewProps({ currPageName: 'home' });
+    this.setPageViewProps({
+      metaId: this.metaId,
+      currPage: this.currPage,
+      props: this.viewProps,
+    });
   };
 
   // 异步设置页面props
   asyncSetPageViewProps = async () => {
     await Utils.delay(2000);
-    this.setPageViewProps({ currPageName: 'home' });
+    this.setPageViewProps({
+      metaId: this.metaId,
+      currPage: this.currPage,
+      props: this.viewProps,
+    });
   };
 
   render() {
