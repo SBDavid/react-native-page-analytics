@@ -4098,10 +4098,10 @@ react-native-screens@2.10.1:
     use-subscription "^1.0.0"
     whatwg-fetch "^3.0.0"
 
-react-navigation-lazy-screen@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.nlark.com/react-navigation-lazy-screen/download/react-navigation-lazy-screen-0.1.1.tgz#81d9b67a84a44a20b1f77f7a4b8a6c0bfa9c3d15"
-  integrity sha1-gdm2eoSkSiCx9396S4psC/qcPRU=
+react-navigation-lazy-screen@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.nlark.com/react-navigation-lazy-screen/download/react-navigation-lazy-screen-1.0.0.tgz#99a361d40c8de08517272eebdbce89d318a5d164"
+  integrity sha1-maNh1AyN4IUXJy7r286J0xil0WQ=
 
 react-refresh@^0.4.0:
   version "0.4.3"

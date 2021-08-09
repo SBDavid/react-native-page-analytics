@@ -9,8 +9,6 @@ import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
-import LazyLoad from './LazyLoad';
-import LazyScreen from 'react-navigation-lazy-screen';
 
 interface HomePageProps {}
 

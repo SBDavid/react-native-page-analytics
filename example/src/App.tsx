@@ -8,7 +8,8 @@ import RouterName from './router';
 import HomeTab from './screens/HomeTab';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
-import LazyLoad from './screens/LazyLoad';
+// import LazyLoad from './screens/LazyLoad';
+import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,8 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
         <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
+
+        {/* 懒加载页面 */}
         <Stack.Screen
           name={RouterName.SCREEN1 as string}
           component={LazyScreen1}
@@ -45,6 +48,10 @@ export default function App() {
           name={RouterName.SCREEN2 as string}
           component={LazyScreen2}
         />
+
+        {/* 非懒加载页面 */}
+        {/* <Stack.Screen name={RouterName.SCREEN1 as string} component={Screen1} /> */}
+        {/* <Stack.Screen name={RouterName.SCREEN2 as string} component={Screen2} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

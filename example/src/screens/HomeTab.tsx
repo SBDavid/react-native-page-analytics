@@ -10,8 +10,10 @@ import {
   createBottomTabNavigator,
   BottomTabBarProps,
 } from '@react-navigation/bottom-tabs';
-import LazyScreen from 'react-navigation-lazy-screen';
-import LazyLoad from './LazyLoad';
+import LazyLoad from 'react-navigation-lazy-screen';
+import Tab1 from './Tab1';
+import Tab2 from './Tab2';
+import Tab3 from './Tab3';
 
 import RouterName from '../router';
 import {
@@ -19,16 +21,8 @@ import {
   TabButtonItem,
   TabButtonItemText,
 } from './StyledComponents';
-import Utils from '../utils';
-import Tab1 from './Tab1';
-import Tab2 from './Tab2';
-import Tab3 from './Tab3';
 
 interface HomeTabProps {}
-
-interface HomePageState {
-  list: RouterName[];
-}
 
 const Tab = createBottomTabNavigator();
 
@@ -92,9 +86,15 @@ export default class HomeTab extends React.Component<HomeTabProps> {
         // initialRouteName={RouterName.TAB1}
         tabBar={(props) => <TabButton {...props} />}
       >
+        {/* 懒加载页面 */}
         <Tab.Screen name={RouterName.TAB1} component={LazyTab1} />
         <Tab.Screen name={RouterName.TAB2} component={LazyTab2} />
         <Tab.Screen name={RouterName.TAB3} component={LazyTab3} />
+
+        {/* 非懒加载页面 */}
+        {/* <Tab.Screen name={RouterName.TAB1} component={Tab1} /> */}
+        {/* <Tab.Screen name={RouterName.TAB2} component={Tab2} /> */}
+        {/* <Tab.Screen name={RouterName.TAB3} component={Tab3} /> */}
       </Tab.Navigator>
     );
   }
