@@ -39,7 +39,9 @@ export default class Screen1 extends PageAnalytics.Screen<
   };
 
   componentDidMount() {
+    // 添加pageView数据
     this.syncSetPageViewProps();
+    // 添加pageExit数据生成函数
     this.setPageExitPropsGener(this.customPageExitDataGener);
   }
 
@@ -54,7 +56,7 @@ export default class Screen1 extends PageAnalytics.Screen<
     props: { customData: 'customData' },
   });
 
-  // 同步设置页面props
+  // 同步设置pageViewProps
   syncSetPageViewProps = () => {
     this.setPageViewProps({
       metaId: this.metaId,
@@ -63,7 +65,7 @@ export default class Screen1 extends PageAnalytics.Screen<
     });
   };
 
-  // 异步设置页面props
+  // 异步设置pageViewProps
   asyncSetPageViewProps = async () => {
     await Utils.delay(500);
     this.setPageViewProps({
