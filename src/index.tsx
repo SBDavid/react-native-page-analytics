@@ -1,14 +1,16 @@
 import Screen, {
   Props,
-  AnalyticPropsType,
+  AnalyticDataProps,
   SendAnalyticFunc,
   PageExitDataGener,
+  BasicAnalytic,
 } from './Screen';
 
 export type AnalyticProps = Props;
-export type AnalyticPropsParams = AnalyticPropsType;
+export type AnalyticPropsParams = AnalyticDataProps;
 export type SendAnalyticFuncType = SendAnalyticFunc;
 export type PageExitDataGenerType = PageExitDataGener;
+export type BasicAnalyticType = BasicAnalytic;
 
 export default {
   Screen,

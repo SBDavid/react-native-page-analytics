@@ -2,6 +2,7 @@ import React from 'react';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
+  BasicAnalyticType,
 } from 'react-native-page-analytics';
 import { ScrollView, TouchableHighlight } from 'react-native';
 
@@ -21,17 +22,14 @@ export default class Tab1 extends PageAnalytics.Screen<
   HomePageState
 > {
   //
-  metaId: number;
+  pageViewId: number = 0;
   //
-  currPage: string;
+  pageExitId: number = 0;
   //
-  viewProps: { [index: string]: any };
+  currPage: string = 'tab1';
 
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
-    this.metaId = 0;
-    this.currPage = 'tab1';
-    this.viewProps = { customData: 'customData' };
   }
 
   state: HomePageState = {
@@ -41,8 +39,8 @@ export default class Tab1 extends PageAnalytics.Screen<
   componentDidMount() {
     // 添加pageView数据
     this.syncSetPageViewProps();
-    // 添加pageExit数据生成函数
-    this.setPageExitPropsGener(this.customPageExitDataGener);
+    // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
+    this.setPageExitProps({ trackId: 100 });
   }
 
   componentWillUnmount() {
@@ -50,19 +48,24 @@ export default class Tab1 extends PageAnalytics.Screen<
     super.componentWillUnmount();
   }
 
-  // 生成页面离开埋点数据
-  customPageExitDataGener: PageExitDataGenerType = () => ({
-    metaId: this.metaId,
-    currPage: this.currPage,
-    props: { customData: 'customData' },
-  });
+  // 用户自定义的页面展示埋点上传方法
+  // customPageView = () => {
+  //   console.log(
+  //     `页面focus事件 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+  //   );
+  // };
+
+  // 用户自定义的页面离开埋点上传方法
+  // customPageExit = () => {
+  //   console.log(
+  //     `页面blur事件 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+  //   );
+  // };
 
   // 同步设置pageViewProps
   syncSetPageViewProps = () => {
     this.setPageViewProps({
-      metaId: this.metaId,
-      currPage: this.currPage,
-      props: this.viewProps,
+      customData: 'customData',
     });
   };
 
@@ -70,9 +73,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   asyncSetPageViewProps = async () => {
     await Utils.delay(500);
     this.setPageViewProps({
-      metaId: this.metaId,
-      currPage: this.currPage,
-      props: this.viewProps,
+      customData: 'customData',
     });
   };
 

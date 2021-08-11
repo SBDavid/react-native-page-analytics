@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight, View } from 'react-native';
+import { TouchableHighlight } from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   AnalyticPropsParams,
