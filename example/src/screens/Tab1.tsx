@@ -4,7 +4,7 @@ import PageAnalytics, {
   PageExitDataGenerType,
   BasicAnalyticType,
 } from 'react-native-page-analytics';
-import { ScrollView, TouchableHighlight } from 'react-native';
+import { ScrollView, TouchableHighlight, NativeModules } from 'react-native';
 
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
@@ -33,7 +33,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   }
 
   state: HomePageState = {
-    list: [RouterName.SCREEN1, RouterName.SCREEN2],
+    list: [RouterName.SCREEN1, RouterName.SCREEN2, RouterName.NativeScreen],
   };
 
   componentDidMount() {
@@ -51,14 +51,14 @@ export default class Tab1 extends PageAnalytics.Screen<
   // 用户自定义的页面展示埋点上传方法
   // customPageView = () => {
   //   console.log(
-  //     `页面focus事件 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+  //     `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
   //   );
   // };
 
   // 用户自定义的页面离开埋点上传方法
   // customPageExit = () => {
   //   console.log(
-  //     `页面blur事件 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+  //     `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
   //   );
   // };
 
@@ -78,7 +78,13 @@ export default class Tab1 extends PageAnalytics.Screen<
   };
 
   handlePress = (item: RouterName) => {
-    this.props.navigation.navigate(item);
+    if (item === RouterName.NativeScreen) {
+      NativeModules.Page.start(
+        'iting://open?msg_type=287&themeId=20&subThemeId=10'
+      );
+    } else {
+      this.props.navigation.navigate(item);
+    }
   };
 
   render() {

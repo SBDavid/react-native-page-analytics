@@ -84,7 +84,7 @@ export default class HomeTab extends React.Component<HomeTabProps> {
   render() {
     return (
       <Tab.Navigator
-        // initialRouteName={RouterName.TAB1}
+        initialRouteName={RouterName.TAB1}
         tabBar={(props) => <TabButton {...props} />}
       >
         {/* 懒加载页面 */}
