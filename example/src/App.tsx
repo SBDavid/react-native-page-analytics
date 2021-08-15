@@ -39,22 +39,22 @@ const LazyScreen2: React.FC = (props) => {
 };
 
 export default class App extends React.PureComponent {
-  onPauseSubs: EmitterSubscription;
-  onResumeSubs: EmitterSubscription;
+  // onPauseSubs: EmitterSubscription;
+  // onResumeSubs: EmitterSubscription;
 
   constructor(props: any) {
     super(props);
-    this.onPauseSubs = EventEmitter.addListener('onPause', () => {
-      console.log('最外层收到onPause事件');
-    });
-    this.onResumeSubs = EventEmitter.addListener('onResume', () => {
-      console.log('最外层收到onResume事件');
-    });
+    // this.onPauseSubs = EventEmitter.addListener('onPause', () => {
+    //   console.log('最外层收到onPause事件');
+    // });
+    // this.onResumeSubs = EventEmitter.addListener('onResume', () => {
+    //   console.log('最外层收到onResume事件');
+    // });
   }
 
   componentWillUnmount() {
-    this.onPauseSubs?.remove();
-    this.onResumeSubs?.remove();
+    // this.onPauseSubs?.remove();
+    // this.onResumeSubs?.remove();
   }
 
   render() {

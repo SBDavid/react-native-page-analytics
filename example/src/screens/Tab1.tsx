@@ -79,9 +79,7 @@ export default class Tab1 extends PageAnalytics.Screen<
 
   handlePress = (item: RouterName) => {
     if (item === RouterName.NativeScreen) {
-      NativeModules.Page.start(
-        'iting://open?msg_type=287&themeId=20&subThemeId=10'
-      );
+      NativeModules.Page.start('iting://open?msg_type=209&themeId=20');
     } else {
       this.props.navigation.navigate(item);
     }

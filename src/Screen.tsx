@@ -25,6 +25,13 @@ enum CustomAppState {
   background = 'background',
 }
 
+// 触发onFocus, onBlur动作的事件来源，分为 Page状态变化、APPstate状态变化、navigation状态变化三种
+enum PageViewExitEventSource {
+  page = 'page',
+  appState = 'appState',
+  navigation = 'navigation',
+}
+
 export type Props = {
   navigation: NavigationProp<ParamListBase>;
   [index: string]: any;
@@ -274,7 +281,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       console.log(
         `appstate变化，active 页面名：${this.currPage} ${Date.now()}`
       );
-      this.onFocus();
+      this.onFocus(PageViewExitEventSource.appState);
     } else {
       console.log(
         `appstate变化，background 页面名：${this.currPage} ${Date.now()}`
@@ -289,7 +296,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       return;
     }
     console.log(`onResume事件： 页面名：${this.currPage}`);
-    this.onFocus();
+    this.onFocus(PageViewExitEventSource.page);
   };
 
   // 页面与native页面相互跳转的处理
@@ -304,7 +311,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // navigationOnFocus事件
   private onNavigationFocus = () => {
     console.log(`onNavigationFocus事件： 页面名：${this.currPage}`);
-    this.onFocus();
+    this.onFocus(PageViewExitEventSource.navigation);
   };
 
   // navigationOnBlur事件
@@ -314,10 +321,13 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   };
 
   // 页面显示操作
-  private onFocus = async () => {
-    if (Screen.isFirstPageView) {
+  private onFocus = async (source: PageViewExitEventSource) => {
+    if (source === PageViewExitEventSource.page && Screen.isFirstPageView) {
       Screen.isFirstPageView = false;
       return;
+    }
+    if (Screen.isFirstPageView) {
+      Screen.isFirstPageView = false;
     }
     await this.pageViewPropsPromise;
     Screen.currentPage = this.currPage;
