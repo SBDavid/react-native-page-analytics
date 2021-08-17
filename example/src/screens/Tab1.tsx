@@ -79,7 +79,8 @@ export default class Tab1 extends PageAnalytics.Screen<
 
   handlePress = (item: RouterName) => {
     if (item === RouterName.NativeScreen) {
-      NativeModules.Page.start('iting://open?msg_type=209&themeId=20');
+      // 跳转到账号绑定页
+      NativeModules.Page.start('iting://open?msg_type=84');
     } else {
       this.props.navigation.navigate(item);
     }
