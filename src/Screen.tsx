@@ -47,14 +47,7 @@ interface PageViewExitPropsType {
   props: AnalyticDataProps;
 }
 
-export interface BasicAnalytic {
-  metaId: number;
-  currPage: string;
-}
-
 export type PageExitDataGener = () => PageViewExitPropsType;
-
-export type SetBasicAnalyticData = () => BasicAnalytic;
 
 export type SendAnalyticFunc = (
   metaId: number,
