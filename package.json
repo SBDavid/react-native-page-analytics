@@ -43,9 +43,6 @@
     "url": "https://github.com/SBDavid/react-native-page-analytics/issues"
   },
   "homepage": "https://github.com/SBDavid/react-native-page-analytics#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@react-native-community/eslint-config": "^2.0.0",
