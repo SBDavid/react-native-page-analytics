@@ -117,7 +117,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
   3. 须在componentWillUnmount中调用super.componentWillUnmount方法去移除页面事件监听
 
-  4. 默认使用xm-log中的方法去上传埋点数据，customPageView和customPageExit属性是可选的，设置了后，页面展示/隐藏 被触发时即执行这两个方法，如果用户想自定义上传的方法，可设置这两个属性
+  4. 默认使用xmlog-rn中的方法去上传埋点数据，customPageView和customPageExit属性是可选的，设置了后，页面展示/隐藏 被触发时即执行这两个方法，如果用户想自定义上传的方法，可设置这两个属性
 
 <br />
 
