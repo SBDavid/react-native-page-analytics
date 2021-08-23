@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
-} from 'react-native-page-analytics';
+} from '../../../src';
 import Content from '../components/Content';
 import { Container } from './StyledComponents';
 import Button from '../components/Button';

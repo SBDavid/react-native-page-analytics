@@ -2,7 +2,7 @@ import React from 'react';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
-} from 'react-native-page-analytics';
+} from '../../../src';
 import Content from '../components/Content';
 import { Container } from './StyledComponents';
 import Utils from '../utils';

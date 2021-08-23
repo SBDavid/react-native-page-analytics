@@ -5,7 +5,7 @@ import PageAnalytics, {
   AnalyticPropsParams,
   SendAnalyticFuncType,
   PageExitDataGenerType,
-} from 'react-native-page-analytics';
+} from '../../../src';
 import {
   createBottomTabNavigator,
   BottomTabBarProps,
@@ -13,6 +13,7 @@ import {
 import LazyLoad from 'react-navigation-lazy-screen';
 import Tab1 from './Tab1';
 import Tab2 from './Tab2';
+// import Tab2 from './Tab2Hook';
 import Tab3 from './Tab3';
 
 import RouterName from '../router';
@@ -21,6 +22,7 @@ import {
   TabButtonItem,
   TabButtonItemText,
 } from './StyledComponents';
+import { createFactory } from 'react';
 
 interface HomeTabProps {}
 
@@ -34,7 +36,8 @@ const LazyTab1: React.FC = (props) => {
 
 const LazyTab2: React.FC = (props) => {
   return (
-    <LazyLoad fallback={null} factory={() => import('./Tab2')} {...props} />
+    // <LazyLoad fallback={null} factory={() => import('./Tab2')} {...props} />
+    <LazyLoad fallback={null} factory={() => import('./Tab2Hook')} {...props} />
   );
 };
 
@@ -93,9 +96,9 @@ export default class HomeTab extends React.Component<HomeTabProps> {
         <Tab.Screen name={RouterName.TAB3} component={LazyTab3} />
 
         {/* 非懒加载页面 */}
-        {/* <Tab.Screen name={RouterName.TAB1} component={Tab1} /> */}
-        {/* <Tab.Screen name={RouterName.TAB2} component={Tab2} /> */}
-        {/* <Tab.Screen name={RouterName.TAB3} component={Tab3} /> */}
+        {/* <Tab.Screen name={RouterName.TAB1} component={Tab1} />
+        <Tab.Screen name={RouterName.TAB2} component={Tab2} />
+        <Tab.Screen name={RouterName.TAB3} component={Tab3} /> */}
       </Tab.Navigator>
     );
   }

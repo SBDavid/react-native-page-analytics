@@ -1,5 +1,5 @@
 import React from 'react';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
+import PageAnalytics, { AnalyticProps } from '../../../src';
 import { ScrollView, TouchableHighlight, NativeModules } from 'react-native';
 
 import Content from '../components/Content';

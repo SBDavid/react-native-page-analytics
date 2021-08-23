@@ -15,18 +15,18 @@ import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 //     开发反馈，打包出来后的包执行起来的效果和他说的一样，需要打包验证一下
 // 2. ios端通过inactive状态去监听切换到多任务状态、下拉控制中心、下拉通知栏，在几个过程中会出现多次触发inactive和active的现象，需要处理
 
-const PageEventEmitter = new NativeEventEmitter(NativeModules.Page);
+export const PageEventEmitter = new NativeEventEmitter(NativeModules.Page);
 
-const isIos: boolean = Platform.OS === 'ios';
+export const isIos: boolean = Platform.OS === 'ios';
 
 // 自定义APPstate状态，前台/后台，兼容ios端的active/background/inactive三种状态，inactive视为后台状态
-enum CustomAppState {
+export enum CustomAppState {
   active = 'active',
   background = 'background',
 }
 
 // 触发onFocus, onBlur动作的事件来源，分为 Page状态变化、APPstate状态变化、navigation状态变化三种
-enum PageViewExitEventSource {
+export enum PageViewExitEventSource {
   page = 'page',
   appState = 'appState',
   navigation = 'navigation',
@@ -35,9 +35,6 @@ enum PageViewExitEventSource {
 export type Props = {
   navigation: NavigationProp<ParamListBase>;
   [index: string]: any;
-  // pageViewId: number;
-  // pageExitId: number;
-  // currentPage: string;
 };
 
 export interface AnalyticDataProps {
@@ -119,7 +116,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // private pageExitDataGener?: PageExitDataGener;
 
   // 发送数据操作
-  private static sendAnalyticAction: SendAnalyticFunc;
+  private static sendAnalyticAction?: SendAnalyticFunc;
 
   // 设置发送操作
   static setSendAnalyticAction(cb: SendAnalyticFunc) {
@@ -234,7 +231,9 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // APPstate状态更新防抖
   private appStateChangeHandler = (status: AppStateStatus) => {
-    console.log(`appStateChangeHandler ${status}  ${Date.now()}`);
+    console.log(
+      `appStateChangeHandler ${status} ${this.currPage} ${Date.now()}`
+    );
     if (!this.props.navigation.isFocused()) {
       return;
     }
