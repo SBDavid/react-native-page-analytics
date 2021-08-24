@@ -47,12 +47,6 @@ interface PageViewExitPropsType {
 
 export type PageExitDataGener = () => PageViewExitPropsType;
 
-export type SendAnalyticFunc = (
-  metaId: number,
-  currPage: string,
-  props: AnalyticDataProps
-) => void;
-
 export default abstract class Screen<P, S> extends React.PureComponent<
   P & Props,
   S
@@ -317,14 +311,14 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   private onFocus = async (source: PageViewExitEventSource) => {
     if (
       source === PageViewExitEventSource.page &&
-      ScreenUtils.isFirstPageView
+      ScreenUtils.getIsFirstPageView()
     ) {
       console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
-      ScreenUtils.isFirstPageView = false;
+      ScreenUtils.updateIsFirstPageView(false);
       return;
     }
-    if (ScreenUtils.isFirstPageView) {
-      ScreenUtils.isFirstPageView = false;
+    if (ScreenUtils.getIsFirstPageView()) {
+      ScreenUtils.updateIsFirstPageView(false);
     }
     await this.pageViewPropsPromise;
     ScreenUtils.currPage = this.currPage;
@@ -338,10 +332,14 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 发送数据操作
   private sendAnalyticAction = (type: 'focus' | 'blur') => {
-    if (!ScreenUtils.sendAnalyticAction) {
+    const sendActions = ScreenUtils.getSendAnalyticActions();
+
+    if (!sendActions) {
       console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
       return;
     }
+
+    const { pageView, pageExit } = sendActions;
 
     if (type === 'focus') {
       // console.log('sendAnalyticAction focus');
@@ -355,11 +353,10 @@ export default abstract class Screen<P, S> extends React.PureComponent<
           this.pageViewId
         } props: ${this.pageViewProps} ${Date.now()}`
       );
-      ScreenUtils.sendAnalyticAction(
-        this.pageViewId,
-        this.currPage,
-        this.pageViewProps || {}
-      );
+      if (!pageView) {
+        return;
+      }
+      pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
       return;
     }
 
@@ -375,11 +372,10 @@ export default abstract class Screen<P, S> extends React.PureComponent<
           this.pageExitId
         } props: ${this.pageExitProps} ${Date.now()}`
       );
-      ScreenUtils.sendAnalyticAction(
-        this.pageExitId,
-        this.currPage,
-        this.pageExitProps || {}
-      );
+      if (!pageExit) {
+        return;
+      }
+      pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
       return;
     }
   };

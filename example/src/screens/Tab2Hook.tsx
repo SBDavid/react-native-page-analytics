@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
-import PageAnalytics, {
-  AnalyticProps,
-  PageExitDataGenerType,
-} from '../../../src';
+import PageAnalytics, { AnalyticProps } from '../../../src';
 import { ScrollView, TouchableHighlight } from 'react-native';
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';

@@ -1,9 +1,6 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import PageAnalytics, {
-  AnalyticProps,
-  PageExitDataGenerType,
-} from '../../../src';
+import PageAnalytics, { AnalyticProps } from '../../../src';
 import Content from '../components/Content';
 import { Container } from './StyledComponents';
 import Button from '../components/Button';

@@ -99,11 +99,13 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 发送数据操作
   function sendAnalyticAction(type: 'focus' | 'blur') {
-    const sendAction = ScreenUtils.getSendAnalyticAction();
-    if (!sendAction) {
+    const sendActions = ScreenUtils.getSendAnalyticActions();
+    if (!sendActions) {
       console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
       return;
     }
+
+    const { pageView, pageExit } = sendActions;
 
     if (type === 'focus') {
       // console.log('sendAnalyticAction focus');
@@ -115,7 +117,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       console.log(
         `发送页面pageView埋点 页面名: ${currPage} pageViewId: ${pageViewId} props: ${pageViewProps} ${Date.now()}`
       );
-      sendAction(pageViewId, currPage, pageViewProps || {});
+      if (!pageView) {
+        return;
+      }
+      pageView(pageViewId, currPage, pageViewProps || {});
       return;
     }
 
@@ -129,7 +134,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       console.log(
         `发送页面pageExit埋点 页面名: ${currPage} pageExitId: ${pageExitId} props: ${pageExitProps} ${Date.now()}`
       );
-      sendAction(pageExitId, currPage, pageExitProps || {});
+      if (!pageExit) {
+        return;
+      }
+      pageExit(pageExitId, currPage, pageExitProps || {});
       return;
     }
   }

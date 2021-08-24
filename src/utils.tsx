@@ -1,22 +1,33 @@
-import type { SendAnalyticFunc } from './Screen';
+import type { AnalyticDataProps } from './Screen';
+
+export type SendAnalyticFunc = (
+  metaId: number,
+  currPage: string,
+  props: AnalyticDataProps
+) => void;
+
+interface SendAnalyticActions {
+  pageView: SendAnalyticFunc;
+  pageExit: SendAnalyticFunc;
+}
 
 export default class ScreenUtils {
   // 发送数据操作
-  static sendAnalyticAction?: SendAnalyticFunc;
+  private static sendAnalyticActions?: SendAnalyticActions;
 
   // 设置发送操作
-  static setSendAnalyticAction(cb: SendAnalyticFunc) {
-    ScreenUtils.sendAnalyticAction = cb;
+  static setSendAnalyticAction(cbs: SendAnalyticActions) {
+    ScreenUtils.sendAnalyticActions = cbs;
   }
 
   //
-  static getSendAnalyticAction(): SendAnalyticFunc | undefined {
-    return ScreenUtils.sendAnalyticAction;
+  static getSendAnalyticActions(): SendAnalyticActions | undefined {
+    return ScreenUtils.sendAnalyticActions;
   }
 
   // 是否是首次发送 页面展示，由于首次进入页面后navigation的focus事件 与 page的onResume事件/APPstate的active事件 都会触发一次
   // 导致重复发送 页面展示 埋点，过滤掉首次发送页面展示的埋点
-  static isFirstPageView: boolean = true;
+  private static isFirstPageView: boolean = true;
 
   //
   static updateIsFirstPageView(value: boolean) {
