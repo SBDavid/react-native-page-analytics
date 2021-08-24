@@ -39,7 +39,7 @@ export type Props = {
 };
 
 export interface AnalyticDataProps {
-  [key: string]: any;
+  [key: string]: string;
 }
 interface PageViewExitPropsType {
   props: AnalyticDataProps;
