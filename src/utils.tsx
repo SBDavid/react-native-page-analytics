@@ -16,7 +16,7 @@ export default class ScreenUtils {
   private static sendAnalyticActions?: SendAnalyticActions;
 
   // 设置发送操作
-  static setSendAnalyticAction(cbs: SendAnalyticActions) {
+  static setSendAnalyticActions(cbs: SendAnalyticActions) {
     ScreenUtils.sendAnalyticActions = cbs;
   }
 

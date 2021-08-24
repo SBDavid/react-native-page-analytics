@@ -7,7 +7,7 @@ export type AnalyticPropsParams = AnalyticDataProps;
 export type SendAnalyticFuncType = SendAnalyticFunc;
 export type PageExitDataGenerType = PageExitDataGener;
 
-ScreenUtils.setSendAnalyticAction({
+ScreenUtils.setSendAnalyticActions({
   pageView: () => {},
   pageExit: () => {},
 });
