@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { EmitterSubscription, AppState, AppStateStatus } from 'react-native';
 // import { useNavigation } from '@react-navigation/native';
 import {

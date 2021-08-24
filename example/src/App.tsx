@@ -1,22 +1,16 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  NativeModules,
-  NativeEventEmitter,
-  EmitterSubscription,
-} from 'react-native';
 
 import RouterName from './router';
 import HomeTab from './screens/HomeTab';
-import Screen1 from './screens/Screen1';
-import Screen2 from './screens/Screen2';
+// import Screen1 from './screens/Screen1';
+// import Screen2 from './screens/Screen2';
 // import LazyLoad from './screens/LazyLoad';
 import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
-const EventEmitter = new NativeEventEmitter(NativeModules.Page);
 
 const LazyScreen1: React.FC = (props) => {
   return (
