@@ -210,7 +210,7 @@ useScreen
 
 | 方法      | 参数   | 返回值  | 含义    |
 | :--        | :--    | :-- | :-- |
-| useScreen  | {<br />pageViewId: number;<br />pageExitId: number;<br />currPage: string;<br />customPageView?: () => void;<br />customPageExit?: () => void;<br />[index: string]: any;<br />} | {<br/>setPageViewProps: (param: {[index: string]:any}) => void<br />setPageExitProps: (param: {[index: string]:any}) => void <br />} | hooks
+| useScreen  | {<br /> // 页面展示id <br />pageViewId: number;<br />// 页面隐藏id <br />pageExitId: number;<br />// 页面名称 <br />currPage: string;<br />// 自定义页面展示埋点方法 <br />customPageView?: () => void;<br />// 自定义页面隐藏埋点方法 <br />customPageExit?: () => void;<br />[index: string]: any;<br />} | {<br/> // 设置/更新页面展示埋点数据 <br /> setPageViewProps: (param: {[index: string]:any}) => void<br /> // 设置/更新页面隐藏埋点数据 <br /> setPageExitProps: (param: {[index: string]:any}) => void <br />} | hooks
 
 ## 实现，特性
   1. 此工具对页面的navigation跳转、APPstate状态变化、RN页面与Native页面互跳 三种场景都做了处理，同时对ios，安卓两端事件监听的差异做了兼容处理，保证了页面展示/隐藏数据埋点的全面准确
