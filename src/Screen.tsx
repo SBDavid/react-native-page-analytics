@@ -8,6 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
+import ScreenUtils from './utils';
 
 // FIXME
 // 1. 开发反馈 ios端首次打开项目执行了onResume，安卓端不会，
@@ -115,13 +116,13 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // // 动态获取pageExit属性方法
   // private pageExitDataGener?: PageExitDataGener;
 
-  // 发送数据操作
-  private static sendAnalyticAction?: SendAnalyticFunc;
+  // // 发送数据操作
+  // private static sendAnalyticAction?: SendAnalyticFunc;
 
-  // 设置发送操作
-  static setSendAnalyticAction(cb: SendAnalyticFunc) {
-    Screen.sendAnalyticAction = cb;
-  }
+  // // 设置发送操作
+  // static setSendAnalyticAction(cb: SendAnalyticFunc) {
+  //   Screen.sendAnalyticAction = cb;
+  // }
 
   // 自定义pageView埋点发送方法
   protected customPageView?: () => void;
@@ -129,17 +130,17 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // 自定义pageExit埋点发送方法
   protected customPageExit?: () => void;
 
-  // 全局currPage
-  protected static currentPage: string;
+  // // 全局currPage
+  // protected static currentPage: string;
 
   // 是否是首次发送 页面展示，由于首次进入页面后navigation的focus事件 与 page的onResume事件/APPstate的active事件 都会触发一次
   // 导致重复发送 页面展示 埋点，过滤掉首次发送页面展示的埋点
-  private static isFirstPageView: boolean = true;
+  // private static isFirstPageView: boolean = true;
 
-  // 获取全局currPage
-  static getCurrPage() {
-    return Screen.currentPage;
-  }
+  // // 获取全局currPage
+  // static getCurrPage() {
+  //   return Screen.currentPage;
+  // }
 
   // 设置pageView埋点属性
   protected setPageViewProps = (props: AnalyticDataProps) => {
@@ -314,15 +315,19 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 页面显示操作
   private onFocus = async (source: PageViewExitEventSource) => {
-    if (source === PageViewExitEventSource.page && Screen.isFirstPageView) {
-      Screen.isFirstPageView = false;
+    if (
+      source === PageViewExitEventSource.page &&
+      ScreenUtils.isFirstPageView
+    ) {
+      console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
+      ScreenUtils.isFirstPageView = false;
       return;
     }
-    if (Screen.isFirstPageView) {
-      Screen.isFirstPageView = false;
+    if (ScreenUtils.isFirstPageView) {
+      ScreenUtils.isFirstPageView = false;
     }
     await this.pageViewPropsPromise;
-    Screen.currentPage = this.currPage;
+    ScreenUtils.currPage = this.currPage;
     this.sendAnalyticAction('focus');
   };
 
@@ -333,7 +338,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 发送数据操作
   private sendAnalyticAction = (type: 'focus' | 'blur') => {
-    if (!Screen.sendAnalyticAction) {
+    if (!ScreenUtils.sendAnalyticAction) {
       console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
       return;
     }
@@ -346,11 +351,11 @@ export default abstract class Screen<P, S> extends React.PureComponent<
         return;
       }
       console.log(
-        `发送页面pageView埋点 页面名: ${Screen.currentPage} pageViewId: ${
+        `发送页面pageView埋点 页面名: ${ScreenUtils.currPage} pageViewId: ${
           this.pageViewId
         } props: ${this.pageViewProps} ${Date.now()}`
       );
-      Screen.sendAnalyticAction(
+      ScreenUtils.sendAnalyticAction(
         this.pageViewId,
         this.currPage,
         this.pageViewProps || {}
@@ -366,11 +371,11 @@ export default abstract class Screen<P, S> extends React.PureComponent<
         return;
       }
       console.log(
-        `发送页面pageExit埋点 页面名: ${Screen.currentPage} pageExitId: ${
+        `发送页面pageExit埋点 页面名: ${ScreenUtils.currPage} pageExitId: ${
           this.pageExitId
         } props: ${this.pageExitProps} ${Date.now()}`
       );
-      Screen.sendAnalyticAction(
+      ScreenUtils.sendAnalyticAction(
         this.pageExitId,
         this.currPage,
         this.pageExitProps || {}

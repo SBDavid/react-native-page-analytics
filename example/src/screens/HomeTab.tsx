@@ -72,7 +72,9 @@ export default class HomeTab extends React.Component<HomeTabProps> {
   constructor(props: HomeTabProps) {
     super(props);
     // 设置埋点数据上传方法
-    PageAnalytics.Screen.setSendAnalyticAction(HomeTab.sendAnalyTicOperation);
+    PageAnalytics.ScreenUtils.setSendAnalyticAction(
+      HomeTab.sendAnalyTicOperation
+    );
   }
 
   static sendAnalyTicOperation: SendAnalyticFuncType = (

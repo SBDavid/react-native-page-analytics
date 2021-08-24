@@ -1,15 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { EmitterSubscription, AppState, AppStateStatus } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import {
   PageViewExitEventSource,
   AnalyticDataProps,
-  Props,
   isIos,
   PageEventEmitter,
   CustomAppState,
-  SendAnalyticFunc,
 } from './Screen';
+import ScreenUtils from './utils';
 
 interface ScreenHookProps {
   pageViewId: number;
@@ -23,34 +22,6 @@ interface ScreenHookProps {
 interface UseScreenReturnType {
   setPageViewProps: (props: AnalyticDataProps) => void;
   setPageExitProps: (props: AnalyticDataProps) => void;
-}
-
-export class ScreenHookUtils {
-  // 发送数据操作
-  private static sendAnalyticAction?: SendAnalyticFunc;
-
-  // 设置发送操作
-  static setSendAnalyticAction(cb: SendAnalyticFunc) {
-    ScreenHookUtils.sendAnalyticAction = cb;
-  }
-
-  //
-  static getSendAnalyticAction(): SendAnalyticFunc | undefined {
-    return ScreenHookUtils.sendAnalyticAction;
-  }
-
-  // 是否是首次发送 页面展示，由于首次进入页面后navigation的focus事件 与 page的onResume事件/APPstate的active事件 都会触发一次
-  // 导致重复发送 页面展示 埋点，过滤掉首次发送页面展示的埋点
-  private static isFirstPageView: boolean = true;
-
-  //
-  static updateIsFirstPageView(value: boolean) {
-    ScreenHookUtils.isFirstPageView = value;
-  }
-
-  static getIsFirstPageView(): boolean {
-    return ScreenHookUtils.isFirstPageView;
-  }
 }
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
@@ -128,7 +99,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 发送数据操作
   function sendAnalyticAction(type: 'focus' | 'blur') {
-    const sendAction = ScreenHookUtils.getSendAnalyticAction();
+    const sendAction = ScreenUtils.getSendAnalyticAction();
     if (!sendAction) {
       console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
       return;
@@ -167,16 +138,18 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   async function onFocus(source: PageViewExitEventSource) {
     if (
       source === PageViewExitEventSource.page &&
-      ScreenHookUtils.getIsFirstPageView()
+      ScreenUtils.getIsFirstPageView()
     ) {
-      ScreenHookUtils.updateIsFirstPageView(false);
+      console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
+      ScreenUtils.updateIsFirstPageView(false);
       return;
     }
-    if (ScreenHookUtils.getIsFirstPageView()) {
-      ScreenHookUtils.updateIsFirstPageView(false);
+    if (ScreenUtils.getIsFirstPageView()) {
+      ScreenUtils.updateIsFirstPageView(false);
     }
     await pageViewPropsPromise;
     // Screen.currentPage = currPage;
+    ScreenUtils.currPage = currPage;
     sendAnalyticAction('focus');
   }
 
