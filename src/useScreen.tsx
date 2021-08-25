@@ -7,6 +7,7 @@ import {
   isIos,
   PageEventEmitter,
   CustomAppState,
+  PageTraceType,
 } from './Screen';
 import ScreenUtils from './utils';
 
@@ -39,8 +40,14 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // focus事件订阅
   let focusSubs: () => void;
 
+  //
+  let hasFocusSubs: boolean = false;
+
   // blur事件订阅
   let blurSubs: () => void;
+
+  //
+  let hasBlurSubs: boolean = false;
 
   // onResume事件订阅
   let onResumeSubs: EmitterSubscription;
@@ -61,6 +68,15 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   let pageViewPropsPromise: Promise<any> = new Promise((resolve) => {
     pageViewPropsResolve = resolve;
   });
+
+  // 是否首次setPageViewProps
+  let hasSetPageViewProps: boolean = false;
+
+  // 当前已经出发的pageView和pageExit事件记录
+  let pageTraceList: PageTraceType[] = [];
+
+  //
+  let delayCheckTimer: ReturnType<typeof setTimeout> | null = null;
 
   // 安卓端是否已经添加过page/appstate变化监听
   // 安卓端这两个事件监听功能相同，都能同时监听onPause/onResume active/background 事件避免重复监听
@@ -88,6 +104,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 设置pageView埋点属性
   function setPageViewProps(prop: AnalyticDataProps) {
+    if (!hasSetPageViewProps) {
+      hasSetPageViewProps = true;
+      delayCheckFirstPageView();
+    }
     pageViewProps = prop;
     pageViewPropsResolve && pageViewPropsResolve(null);
   }
@@ -95,6 +115,15 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 设置pageExit埋点属性
   function setPageExitProps(prop: AnalyticDataProps) {
     pageExitProps = prop;
+  }
+
+  // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
+  function delayCheckFirstPageView() {
+    delayCheckTimer = setTimeout(() => {
+      if (!pageTraceList.includes('focus')) {
+        onFocus(PageViewExitEventSource.page);
+      }
+    }, 500);
   }
 
   // 发送数据操作
@@ -111,6 +140,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       // console.log('sendAnalyticAction focus');
       if (customPageView) {
         // console.log('customPageView 存在 执行');
+        pageTraceList.push('focus');
         customPageView();
         return;
       }
@@ -120,6 +150,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       if (!pageView) {
         return;
       }
+      pageTraceList.push('focus');
       pageView(pageViewId, currPage, pageViewProps || {});
       return;
     }
@@ -128,6 +159,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       // console.log('sendAnalyticAction blur');
       if (customPageExit) {
         // console.log('customPageExit 存在 执行');
+        pageTraceList.push('blur');
         customPageExit();
         return;
       }
@@ -137,6 +169,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       if (!pageExit) {
         return;
       }
+      pageTraceList.push('blur');
       pageExit(pageExitId, currPage, pageExitProps || {});
       return;
     }
@@ -144,7 +177,11 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 页面显示操作
   async function onFocus(source: PageViewExitEventSource) {
+    // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
+    // 由首次页面展示埋点由onNavigatiionChange去触发
     if (
+      hasFocusSubs &&
+      hasBlurSubs &&
       source === PageViewExitEventSource.page &&
       ScreenUtils.getIsFirstPageView()
     ) {
@@ -168,17 +205,19 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 添加路由监听
   function addNavigationListener(): Array<() => void> {
-    focusSubs = () => {};
-    blurSubs = () => {};
     if (props.addFocusListener) {
       focusSubs = props.addFocusListener(onNavigationFocus);
+      hasFocusSubs = true;
     } else if (props.navigation) {
       focusSubs = props.navigation.addListener('focus', onNavigationFocus);
+      hasFocusSubs = true;
     }
     if (props.addBlurListener) {
       blurSubs = props.addBlurListener(onNavigationBlur);
+      hasBlurSubs = true;
     } else if (props.navigation) {
       blurSubs = props.navigation.addListener('blur', onNavigationBlur);
+      hasBlurSubs = true;
     }
 
     return [focusSubs, blurSubs];
@@ -313,6 +352,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     onResumeSubs && onResumeSubs.remove();
     onPauseSubs && onPauseSubs.remove();
     debounceTimer && clearTimeout(debounceTimer);
+    delayCheckTimer && clearTimeout(delayCheckTimer);
     AppState.removeEventListener('change', appStateChangeHandler);
   }
 

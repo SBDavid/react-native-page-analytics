@@ -111,8 +111,8 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
 | 方法               | 参数          | 返回值      | 含义               |
 | :---              | :---          | :---      | :---           |
-| setPageViewProps  | { [index: string]: any }  | void    | 设置/更新页面展示埋点数据 |
-| setPageExitProps  | { [index: string]: any }  | void    | 设置/更新页面隐藏埋点数据 |
+| setPageViewProps  | { [index: string]: string }  | void    | 设置/更新页面展示埋点数据 |
+| setPageExitProps  | { [index: string]: string }  | void    | 设置/更新页面隐藏埋点数据 |
 
 
 ### 注意点
@@ -136,7 +136,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
 2. (可选属性）传入customPageView，自定义'页面展示'埋点上传方法，去覆盖默认的'页面展示'埋点上传方法，如果实现了此方法，'页面展示'埋点上报时将直接执行此方法
 
-3. (可选属性）通过实现customPageExit，自定义'页面隐藏'埋点上传方法，去覆盖默认的'页面隐藏'埋点上传方法，如果实现了此方法，'页面隐藏'埋点上报时将直接执行此方法
+3. (可选属性）传入customPageExit，自定义'页面隐藏'埋点上传方法，去覆盖默认的'页面隐藏'埋点上传方法，如果实现了此方法，'页面隐藏'埋点上报时将直接执行此方法
 
 4. hooks返回 setPageViewProps，setPageExitProps 两个方法
 
@@ -210,7 +210,7 @@ useScreen
 
 | 方法      | 参数   | 返回值  | 含义    |
 | :--        | :--    | :-- | :-- |
-| useScreen  | {<br /> // 页面展示id <br />pageViewId: number;<br /><br />// 页面隐藏id <br />pageExitId: number;<br /><br />// 页面名称 <br />currPage: string;<br /><br />// 自定义页面展示埋点方法 <br />customPageView?: () => void;<br /><br />// 自定义页面隐藏埋点方法 <br />customPageExit?: () => void;<br /><br />[index: string]: any;<br />} | {<br/> // 设置/更新页面展示埋点数据 <br /> setPageViewProps: (param: {[index: string]:any}) => void<br /><br /> // 设置/更新页面隐藏埋点数据 <br /> setPageExitProps: (param: {[index: string]:any}) => void <br />} | hooks
+| useScreen  | {<br /> // 页面展示id <br />pageViewId: number;<br /><br />// 页面隐藏id <br />pageExitId: number;<br /><br />// 页面名称 <br />currPage: string;<br /><br />// 自定义页面展示埋点方法 <br />customPageView?: () => void;<br /><br />// 自定义页面隐藏埋点方法 <br />customPageExit?: () => void;<br /><br />[index: string]: any;<br />} | {<br/> // 设置/更新页面展示埋点数据 <br /> setPageViewProps: (param: {[index: string]:string}) => void<br /><br /> // 设置/更新页面隐藏埋点数据 <br /> setPageExitProps: (param: {[index: string]:string}) => void <br />} | hooks
 
 ## 实现，特性
   1. 此工具对页面的navigation跳转、APPstate状态变化、RN页面与Native页面互跳 三种场景都做了处理，同时对ios，安卓两端事件监听的差异做了兼容处理，保证了页面展示/隐藏数据埋点的全面准确

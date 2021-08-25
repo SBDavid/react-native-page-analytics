@@ -47,6 +47,8 @@ interface PageViewExitPropsType {
 
 export type PageExitDataGener = () => PageViewExitPropsType;
 
+export type PageTraceType = 'focus' | 'blur';
+
 export default abstract class Screen<P, S> extends React.PureComponent<
   P & Props,
   S
@@ -107,6 +109,15 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // 设置pageViewProps等待resolve
   private pageViewPropsResolve?: (r: any) => void;
 
+  // 是否首次setPageViewProps
+  private hasSetPageViewProps: boolean = false;
+
+  // 当前已经出发的pageView和pageExit事件记录
+  private pageTraceList: PageTraceType[] = [];
+
+  //
+  private delayCheckTimer: ReturnType<typeof setTimeout> | null = null;
+
   // // 动态获取pageExit属性方法
   // private pageExitDataGener?: PageExitDataGener;
 
@@ -135,17 +146,6 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // static getCurrPage() {
   //   return Screen.currentPage;
   // }
-
-  // 设置pageView埋点属性
-  protected setPageViewProps = (props: AnalyticDataProps) => {
-    this.pageViewProps = props;
-    this.pageViewPropsResolve && this.pageViewPropsResolve(null);
-  };
-
-  // 设置pageExit埋点属性
-  protected setPageExitProps = (props: AnalyticDataProps) => {
-    this.pageExitProps = props;
-  };
 
   constructor(p: P & Props) {
     super(p);
@@ -309,7 +309,11 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 页面显示操作
   private onFocus = async (source: PageViewExitEventSource) => {
+    // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
+    // 由首次页面展示埋点由onNavigatiionChange去触发
     if (
+      this.focusSubs &&
+      this.blurSubs &&
       source === PageViewExitEventSource.page &&
       ScreenUtils.getIsFirstPageView()
     ) {
@@ -317,6 +321,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       ScreenUtils.updateIsFirstPageView(false);
       return;
     }
+
     if (ScreenUtils.getIsFirstPageView()) {
       ScreenUtils.updateIsFirstPageView(false);
     }
@@ -328,6 +333,30 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // 页面离开操作
   private onBlur = () => {
     this.sendAnalyticAction('blur');
+  };
+
+  // 设置pageView埋点属性
+  protected setPageViewProps = (props: AnalyticDataProps) => {
+    if (!this.hasSetPageViewProps) {
+      this.hasSetPageViewProps = true;
+      this.delayCheckFirstPageView();
+    }
+    this.pageViewProps = props;
+    this.pageViewPropsResolve && this.pageViewPropsResolve(null);
+  };
+
+  // 设置pageExit埋点属性
+  protected setPageExitProps = (props: AnalyticDataProps) => {
+    this.pageExitProps = props;
+  };
+
+  // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
+  private delayCheckFirstPageView = () => {
+    this.delayCheckTimer = setTimeout(() => {
+      if (!this.pageTraceList.includes('focus')) {
+        this.onFocus(PageViewExitEventSource.page);
+      }
+    }, 500);
   };
 
   // 发送数据操作
@@ -345,6 +374,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       // console.log('sendAnalyticAction focus');
       if (this.customPageView) {
         // console.log('customPageView 存在 执行');
+        this.pageTraceList.push('focus');
         this.customPageView();
         return;
       }
@@ -356,6 +386,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       if (!pageView) {
         return;
       }
+      this.pageTraceList.push('focus');
       pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
       return;
     }
@@ -364,6 +395,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       // console.log('sendAnalyticAction blur');
       if (this.customPageExit) {
         // console.log('customPageExit 存在 执行');
+        this.pageTraceList.push('blur');
         this.customPageExit();
         return;
       }
@@ -375,6 +407,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       if (!pageExit) {
         return;
       }
+      this.pageTraceList.push('blur');
       pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
       return;
     }
@@ -391,6 +424,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     this.onResumeSubs && this.onResumeSubs.remove();
     this.onPauseSubs && this.onPauseSubs.remove();
     this.debounceTimer && clearTimeout(this.debounceTimer);
+    this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
     AppState.removeEventListener('change', this.appStateChangeHandler);
   }
 }
