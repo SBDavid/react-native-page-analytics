@@ -34,7 +34,7 @@ export enum PageViewExitEventSource {
 }
 
 export type Props = {
-  navigation: NavigationProp<ParamListBase>;
+  navigation?: NavigationProp<ParamListBase>;
   [index: string]: any;
 };
 
@@ -165,7 +165,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   private addNavigationListener = () => {
     if (this.props.addFocusListener) {
       this.focusSubs = this.props.addFocusListener(this.onNavigationFocus);
-    } else {
+    } else if (this.props.navigation) {
       this.focusSubs = this.props.navigation.addListener(
         'focus',
         this.onNavigationFocus
@@ -173,7 +173,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     }
     if (this.props.addBlurListener) {
       this.blurSubs = this.props.addBlurListener(this.onNavigationBlur);
-    } else {
+    } else if (this.props.navigation) {
       this.blurSubs = this.props.navigation.addListener(
         'blur',
         this.onNavigationBlur
@@ -229,7 +229,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     console.log(
       `appStateChangeHandler ${status} ${this.currPage} ${Date.now()}`
     );
-    if (!this.props.navigation.isFocused()) {
+    if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
 
@@ -279,7 +279,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 页面与native页面相互跳转的处理
   private onResumeHandler = () => {
-    if (!this.props.navigation.isFocused()) {
+    if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
     console.log(`onResume事件： 页面名：${this.currPage}`);
@@ -288,7 +288,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
 
   // 页面与native页面相互跳转的处理
   private onPauseHandler = () => {
-    if (!this.props.navigation.isFocused()) {
+    if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
     console.log(`onPause事件： 页面名：${this.currPage}`);

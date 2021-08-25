@@ -36,7 +36,7 @@ export default class Tab1 extends PageAnalytics.Screen<
     // 添加pageView数据
     this.syncSetPageViewProps();
     // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
-    this.setPageExitProps({ trackId: 100 });
+    this.setPageExitProps({ trackId: String(100) });
   }
 
   componentWillUnmount() {
@@ -78,7 +78,7 @@ export default class Tab1 extends PageAnalytics.Screen<
       // 跳转到账号绑定页
       NativeModules.Page.start('iting://open?msg_type=84');
     } else {
-      this.props.navigation.navigate(item);
+      this.props?.navigation?.navigate(item);
     }
   };
 

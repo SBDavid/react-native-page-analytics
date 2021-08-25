@@ -81,7 +81,7 @@ export default class HomeTab extends React.Component<HomeTabProps> {
     props: AnalyticPropsParams
   ) => {
     // let result = `发送数据 ${metaId} ${currPage} ${props}`;
-    // console.log(`发送数据 ${metaId} ${currPage} ${props}`);
+    console.log(`发送数据 ${metaId} ${currPage} ${props}`);
   };
 
   render() {

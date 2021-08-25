@@ -43,7 +43,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   const list: RouterName[] = [RouterName.SCREEN1, RouterName.SCREEN2];
 
   function handlePress(item: RouterName) {
-    props.navigation.navigate(item);
+    props?.navigation?.navigate(item);
   }
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
       setPageViewProps({
         customData: 'customData',
       });
-      setPageExitProps({ trackId: 100 });
+      setPageExitProps({ trackId: String(100) });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

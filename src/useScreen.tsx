@@ -172,12 +172,12 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     blurSubs = () => {};
     if (props.addFocusListener) {
       focusSubs = props.addFocusListener(onNavigationFocus);
-    } else {
+    } else if (props.navigation) {
       focusSubs = props.navigation.addListener('focus', onNavigationFocus);
     }
     if (props.addBlurListener) {
       blurSubs = props.addBlurListener(onNavigationBlur);
-    } else {
+    } else if (props.navigation) {
       blurSubs = props.navigation.addListener('blur', onNavigationBlur);
     }
 
@@ -198,7 +198,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 页面与native页面相互跳转的处理
   function onResumeHandler() {
-    if (!navigation.isFocused()) {
+    if (navigation && !navigation.isFocused()) {
       return;
     }
     console.log(`onResume事件： 页面名：${currPage}`);
@@ -207,7 +207,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 页面与native页面相互跳转的处理
   function onPauseHandler() {
-    if (!navigation.isFocused()) {
+    if (navigation && !navigation.isFocused()) {
       return;
     }
     console.log(`onPause事件： 页面名：${currPage}`);
@@ -266,7 +266,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // APPstate状态更新防抖
   function appStateChangeHandler(status: AppStateStatus) {
     console.log(`appStateChangeHandler ${status} ${currPage}  ${Date.now()}`);
-    if (!navigation.isFocused()) {
+    if (navigation && !navigation.isFocused()) {
       return;
     }
 
