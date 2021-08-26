@@ -128,8 +128,18 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     }, 500);
   }
 
+  // 检查能否发送pageView或者pageExit事件，这两个事件应该是成对出现，避免连续发送pageView或者pageExit事件，
+  // 除了首次，首次可以直接发送pageView事件
+  function shouldSend(type: PageTraceType): boolean {
+    return (
+      (pageTraceList.length === 0 && type === 'focus') ||
+      (pageTraceList.length > 0 &&
+        pageTraceList[pageTraceList.length - 1] !== type)
+    );
+  }
+
   // 发送数据操作
-  function sendAnalyticAction(type: 'focus' | 'blur') {
+  function sendAnalyticAction(type: PageTraceType) {
     const sendActions = ScreenUtils.getSendAnalyticActions();
     if (!sendActions) {
       console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
@@ -137,6 +147,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     }
 
     const { pageView, pageExit } = sendActions;
+
+    if (!shouldSend(type)) {
+      return;
+    }
 
     if (type === 'focus') {
       // console.log('sendAnalyticAction focus');

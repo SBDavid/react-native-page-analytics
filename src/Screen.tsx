@@ -359,8 +359,18 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     }, 500);
   };
 
+  // 检查能否发送pageView或者pageExit事件，这两个事件应该是成对出现，避免连续发送pageView或者pageExit事件，
+  // 除了首次，首次可以直接发送pageView事件
+  private shouldSend = (type: PageTraceType): boolean => {
+    return (
+      (this.pageTraceList.length === 0 && type === 'focus') ||
+      (this.pageTraceList.length > 0 &&
+        this.pageTraceList[this.pageTraceList.length - 1] !== type)
+    );
+  };
+
   // 发送数据操作
-  private sendAnalyticAction = (type: 'focus' | 'blur') => {
+  private sendAnalyticAction = (type: PageTraceType) => {
     const sendActions = ScreenUtils.getSendAnalyticActions();
 
     if (!sendActions) {
@@ -369,6 +379,10 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     }
 
     const { pageView, pageExit } = sendActions;
+
+    if (!this.shouldSend(type)) {
+      return;
+    }
 
     if (type === 'focus') {
       // console.log('sendAnalyticAction focus');
