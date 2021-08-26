@@ -152,7 +152,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     this.pageViewPropsPromise = new Promise((resolve) => {
       this.pageViewPropsResolve = resolve;
     });
-
+    console.log('screen中添加监听');
     // 添加路由监听
     this.addNavigationListener();
     // 添加page状态变化监听

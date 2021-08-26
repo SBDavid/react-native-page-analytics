@@ -5,6 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import RouterName from './router';
 import HomeTab from './screens/HomeTab';
+// import Tab1 from './screens/Tab1';
+// import Tab2 from './screens/Tab2';
+// import Tab2Hook from './screens/Tab2Hook';
 // import Screen1 from './screens/Screen1';
 // import Screen2 from './screens/Screen2';
 // import LazyLoad from './screens/LazyLoad';
@@ -52,6 +55,8 @@ export default class App extends React.PureComponent {
   }
 
   render() {
+    // return <Tab2Hook />;
+
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>

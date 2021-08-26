@@ -120,7 +120,9 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
   function delayCheckFirstPageView() {
     delayCheckTimer = setTimeout(() => {
+      console.log('delaycheckfirstpageview');
       if (!pageTraceList.includes('focus')) {
+        console.log('delaycheckfirstpageview onfocus');
         onFocus(PageViewExitEventSource.page);
       }
     }, 500);
@@ -340,6 +342,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 添加监听
   function addListeners() {
+    console.log('useScreen中添加监听');
     addNavigationListener();
     addPageListener();
     addAppStateListener();

@@ -40,6 +40,11 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
     ...props,
   });
 
+  // setPageViewProps({
+  //   customData: 'customData',
+  // });
+  // setPageExitProps({ trackId: String(100) });
+
   const list: RouterName[] = [RouterName.SCREEN1, RouterName.SCREEN2];
 
   function handlePress(item: RouterName) {
