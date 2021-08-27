@@ -119,7 +119,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
   1. pageViewId，pageExitId，currPage 三个基础埋点属性必须要设置，未设置时会有提示
 
 
-  2. <big>***在首次调用了this.setPageViewProps方法后才会发送页面展示埋点，在此之前，都处于阻塞等待状态，页面展示埋点上报都不会去实际执行；因此，setPageViewProps方法必须要执行至少一次***</big>，推荐在didMount中调用此方法，这样做的原因是，进入页面后 页面展示 事件会立即被触发，但用户想要上传的埋点数据可能还未准备好，等用户手动设置了数据后再去发送埋点数据，建议在componentDidMount方法中调用此方法，可以直接调用，也可以延迟调用
+  2. <big>**在首次调用了this.setPageViewProps方法后才会发送页面展示埋点，在此之前，都处于阻塞等待状态，页面展示埋点上报都不会去实际执行；因此，setPageViewProps方法必须要执行至少一次**</big>，推荐在didMount中调用此方法，这样做的原因是，进入页面后 页面展示 事件会立即被触发，但用户想要上传的埋点数据可能还未准备好，等用户手动设置了数据后再去发送埋点数据，建议在componentDidMount方法中调用此方法，可以直接调用，也可以延迟调用
 
   3. 须在componentWillUnmount中调用super.componentWillUnmount方法去移除页面事件监听
 
@@ -140,7 +140,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
 4. hooks返回 setPageViewProps，setPageExitProps 两个方法
 
-5. 通过 setPageViewProps 方法设置'页面展示'埋点上报数据，<big>***在此方法被调用之前都不会执行'页面展示'埋点数据上报，因此此方法必须要执行至少一次***</big>，可以多次调用次方法，去更新'页面展示'埋点上报数据
+5. 通过 setPageViewProps 方法设置'页面展示'埋点上报数据，<big>**在此方法被调用之前都不会执行'页面展示'埋点数据上报，因此此方法必须要执行至少一次**</big>，可以多次调用次方法，去更新'页面展示'埋点上报数据
 
 6. 通过 setPageExitProps 方法设置'页面隐藏'埋点数据上报，可以多次调用此方法，去更新'页面隐藏'埋点上报数据
 
