@@ -119,7 +119,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
   1. pageViewId，pageExitId，currPage 三个基础埋点属性必须要设置，未设置时会有提示
 
 
-  2. 在首次调用了this.setPageViewProps方法后才会发送页面展示埋点，在此之前，都处于阻塞等待状态，页面展示埋点上报都不会去实际执行；这样做的原因是，进入页面后 页面展示 事件会立即被触发，但用户想要上传的埋点数据可能还未准备好，等用户手动设置了数据后再去发送埋点数据，建议在componentDidMount方法中调用此方法，可以直接调用，也可以延迟调用
+  2. <big>**在首次调用了this.setPageViewProps方法后才会发送页面展示埋点，在此之前，都处于阻塞等待状态，页面展示埋点上报都不会去实际执行；因此，setPageViewProps方法必须要执行至少一次**</big>，推荐在didMount中调用此方法，这样做的原因是，进入页面后 页面展示 事件会立即被触发，但用户想要上传的埋点数据可能还未准备好，等用户手动设置了数据后再去发送埋点数据，建议在componentDidMount方法中调用此方法，可以直接调用，也可以延迟调用
 
   3. 须在componentWillUnmount中调用super.componentWillUnmount方法去移除页面事件监听
 
@@ -214,6 +214,9 @@ useScreen
 
 ## 实现，特性
   1. 此工具对页面的navigation跳转、APPstate状态变化、RN页面与Native页面互跳 三种场景都做了处理，同时对ios，安卓两端事件监听的差异做了兼容处理，保证了页面展示/隐藏数据埋点的全面准确
+
+
+  2. 兼容没有使用react-navigation的项目，对于没有使用路由的单RN页面项目，会对APPstate状态变化、RN页面与Native页面互跳 这两种场景做了处理
 
 ## Contributing
 
