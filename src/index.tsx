@@ -16,6 +16,7 @@ ScreenUtils.setSendAnalyticActions({
     currPage: string,
     props: { [index: string]: string }
   ) => {
+    console.log(currPage);
     const xmlog = require('@xmly/xmlog-rn');
     xmlog.pageExit(metaId, props);
   },
