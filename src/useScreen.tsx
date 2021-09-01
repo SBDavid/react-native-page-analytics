@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { EmitterSubscription, AppState, AppStateStatus } from 'react-native';
 // import { useNavigation } from '@react-navigation/native';
 import {
@@ -101,6 +101,15 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   //
   // let navigation: ReturnType<typeof useNavigation> = useNavigation();
   let navigation = props.navigation;
+
+  //
+  // 页面key
+  let pageKey = useRef<string>('');
+
+  // 上传pageKey
+  function pageShow() {
+    ScreenUtils.getPageShowAction()({ __pageKey: pageKey.current });
+  }
 
   // 设置pageView埋点属性
   function setPageViewProps(prop: AnalyticDataProps) {
@@ -242,6 +251,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // navigationOnFocus事件
   function onNavigationFocus() {
     console.log(`onNavigationFocus事件： 页面名：${currPage}`);
+    pageShow();
     onFocus(PageViewExitEventSource.navigation);
   }
 
@@ -257,6 +267,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       return;
     }
     console.log(`onResume事件： 页面名：${currPage}`);
+    pageShow();
     onFocus(PageViewExitEventSource.page);
   }
 
@@ -374,6 +385,8 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   }
 
   useEffect(() => {
+    pageKey.current = Date.now().toString();
+    pageShow();
     addListeners();
     return removeListeners;
     // eslint-disable-next-line react-hooks/exhaustive-deps

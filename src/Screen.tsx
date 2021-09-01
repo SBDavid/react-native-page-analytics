@@ -135,6 +135,9 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // 自定义pageExit埋点发送方法
   protected customPageExit?: () => void;
 
+  // 页面key
+  protected pageKey: string;
+
   // // 全局currPage
   // protected static currentPage: string;
 
@@ -152,7 +155,9 @@ export default abstract class Screen<P, S> extends React.PureComponent<
     this.pageViewPropsPromise = new Promise((resolve) => {
       this.pageViewPropsResolve = resolve;
     });
+    this.pageKey = Date.now().toString();
     console.log('screen中添加监听');
+    this.pageShow();
     // 添加路由监听
     this.addNavigationListener();
     // 添加page状态变化监听
@@ -283,6 +288,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
       return;
     }
     console.log(`onResume事件： 页面名：${this.currPage}`);
+    this.pageShow();
     this.onFocus(PageViewExitEventSource.page);
   };
 
@@ -298,6 +304,7 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   // navigationOnFocus事件
   private onNavigationFocus = () => {
     console.log(`onNavigationFocus事件： 页面名：${this.currPage}`);
+    this.pageShow();
     this.onFocus(PageViewExitEventSource.navigation);
   };
 
@@ -334,6 +341,11 @@ export default abstract class Screen<P, S> extends React.PureComponent<
   private onBlur = () => {
     this.sendAnalyticAction('blur');
   };
+
+  // 上传pageKey
+  private pageShow() {
+    ScreenUtils.getPageShowAction()({ __pageKey: this.pageKey });
+  }
 
   // 设置pageView埋点属性
   protected setPageViewProps = (props: AnalyticDataProps) => {
