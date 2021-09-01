@@ -5,51 +5,20 @@ import {
   AppState,
   AppStateStatus,
   EmitterSubscription,
-  Platform,
 } from 'react-native';
-import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 import ScreenUtils from './utils';
-
-// FIXME
-// 1. 开发反馈 ios端首次打开项目执行了onResume，安卓端不会，
-//     本地开发调试的时候现象：ios端不会执行onResume，控制台中提示了发送onResume事件没有接收者，安卓端首次打开执行了onResume
-//     开发反馈，打包出来后的包执行起来的效果和他说的一样，需要打包验证一下
-// 2. ios端通过inactive状态去监听切换到多任务状态、下拉控制中心、下拉通知栏，在几个过程中会出现多次触发inactive和active的现象，需要处理
+import {
+  isIos,
+  CustomAppState,
+  PageViewExitEventSource,
+  Props,
+  AnalyticDataProps,
+  PageTraceType,
+} from './Screen';
 
 export const PageEventEmitter = new NativeEventEmitter(NativeModules.Page);
 
-export const isIos: boolean = Platform.OS === 'ios';
-
-// 自定义APPstate状态，前台/后台，兼容ios端的active/background/inactive三种状态，inactive视为后台状态
-export enum CustomAppState {
-  active = 'active',
-  background = 'background',
-}
-
-// 触发onFocus, onBlur动作的事件来源，分为 Page状态变化、APPstate状态变化、navigation状态变化三种
-export enum PageViewExitEventSource {
-  page = 'page',
-  appState = 'appState',
-  navigation = 'navigation',
-}
-
-export type Props = {
-  navigation?: NavigationProp<ParamListBase>;
-  [index: string]: any;
-};
-
-export interface AnalyticDataProps {
-  [key: string]: string;
-}
-export interface PageViewExitPropsType {
-  props: AnalyticDataProps;
-}
-
-export type PageExitDataGener = () => PageViewExitPropsType;
-
-export type PageTraceType = 'focus' | 'blur';
-
-export default abstract class Screen<P, S> extends React.Component<
+export default abstract class PureScreen<P, S> extends React.PureComponent<
   P & Props,
   S
 > {

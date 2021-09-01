@@ -1,4 +1,5 @@
 import Screen, { Props, AnalyticDataProps, PageExitDataGener } from './Screen';
+import PureScreen from './PureScreen';
 import useScreen from './useScreen';
 import ScreenUtils, { SendAnalyticFunc } from './utils';
 
@@ -29,6 +30,7 @@ export type PageExitDataGenerType = PageExitDataGener;
 
 export default {
   Screen,
+  PureScreen,
   useScreen,
   ScreenUtils,
 };
