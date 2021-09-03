@@ -132,6 +132,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       console.log('delaycheckfirstpageview');
       if (!pageTraceList.includes('focus')) {
         console.log('delaycheckfirstpageview onfocus');
+        pageShow();
         onFocus(PageViewExitEventSource.page);
       }
     }, 500);
@@ -386,7 +387,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   useEffect(() => {
     pageKey.current = Date.now().toString();
-    pageShow();
+    // pageShow();
     addListeners();
     return removeListeners;
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -157,7 +157,7 @@ export default abstract class Screen<P, S> extends React.Component<
     });
     this.pageKey = Date.now().toString();
     console.log('screen中添加监听');
-    this.pageShow();
+    // this.pageShow();
     // 添加路由监听
     this.addNavigationListener();
     // 添加page状态变化监听
@@ -366,6 +366,7 @@ export default abstract class Screen<P, S> extends React.Component<
   private delayCheckFirstPageView = () => {
     this.delayCheckTimer = setTimeout(() => {
       if (!this.pageTraceList.includes('focus')) {
+        this.pageShow();
         this.onFocus(PageViewExitEventSource.page);
       }
     }, 500);
