@@ -333,8 +333,11 @@ export default abstract class PureScreen<P, S> extends React.PureComponent<
 
   // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
   private delayCheckFirstPageView = () => {
+    this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
     this.delayCheckTimer = setTimeout(() => {
+      console.log('delaycheckfirstpageview');
       if (!this.pageTraceList.includes('focus')) {
+        console.log('delaycheckfirstpageview onfocus');
         this.pageShow();
         this.onFocus(PageViewExitEventSource.page);
       }

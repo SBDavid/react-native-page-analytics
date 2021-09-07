@@ -148,6 +148,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
 ### 使用实例：
 ```js
+import { useCallback } from 'react';
 import { View } from 'react-native';
 import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
 
@@ -162,18 +163,19 @@ export default function HomePage(props: HomePageProps & AnalyticProps) {
   const currPage: string = 'homePage';
 
   // （可选）用户自定义的页面展示埋点上传方法
-  function customPageView() {
+  const customPageView = useCallback(() => {
     console.log(
       `发送页面pageView埋点 自定义 页面名: ${currPage} pageExitId: ${pageViewId}`
     );
-  }
+  }, []);
+
 
   // （可选）用户自定义的页面离开埋点上传方法，
-  function customPageExit() {
+  const customPageExit = useCallback(() => {
     console.log(
       `发送页面pageExit埋点 自定义 页面名: ${currPage} pageExitId: ${pageViewId}`
     );
-  }
+  }, []);
 
   const {
     // 添加pageView数据

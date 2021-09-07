@@ -48,7 +48,7 @@ export default class ScreenUtils {
 
   // 发送pageKey方法
   private static pageShow: PageShowFunc = (param: PageKeyProps) => {
-    if (NativeModules.XMTrace.pageShow) {
+    if (NativeModules?.XMTrace?.pageShow) {
       console.log('pageShow方法执行');
       NativeModules.XMTrace.pageShow(param);
     }
