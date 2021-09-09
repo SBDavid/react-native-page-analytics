@@ -89,7 +89,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   // }
 
   useEffect(() => {
-    Utils.delay(5000).then(() => {
+    Utils.delay(500).then(() => {
       setPageViewProps({
         customData: 'customData',
       });
@@ -98,9 +98,11 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
     // timer.current = setTimeout(() => {
     //   setCount(count + 1);
     // }, 1000);
-    // return () => {
-    //   timer.current && clearTimeout(timer.current);
-    // };
+    console.log('Tab2Hook didmount');
+    return () => {
+      console.log('Tab2Hook willunmount');
+      // timer.current && clearTimeout(timer.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

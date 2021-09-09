@@ -17,6 +17,26 @@ interface SendAnalyticActions {
   pageExit: SendAnalyticFunc;
 }
 export default class ScreenUtils {
+  // 设置默认的埋点上传方法
+  public static setDefaultSendAnalyticActions() {
+    ScreenUtils.setSendAnalyticActions({
+      pageView: (
+        metaId: number,
+        currPage: string,
+        props: { [index: string]: string }
+      ) => {
+        NativeModules.XMTrace.pageView({ metaId, currPage, props });
+      },
+      pageExit: (
+        metaId: number,
+        currPage: string,
+        props: { [index: string]: string }
+      ) => {
+        NativeModules.XMTrace.pageExit({ metaId, currPage, props });
+      },
+    });
+  }
+
   // 发送数据操作
   private static sendAnalyticActions?: SendAnalyticActions;
 

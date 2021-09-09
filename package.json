@@ -1,6 +1,6 @@
 {
   "name": "@xmly/react-native-page-analytics",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "empty",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -147,7 +147,6 @@
     ]
   },
   "dependencies": {
-    "@react-navigation/native": "5.7.3",
-    "@xmly/xmlog-rn": "1.0.2"
+    "@react-navigation/native": "5.7.3"
   }
 }

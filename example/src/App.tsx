@@ -19,7 +19,7 @@ const LazyScreen1: React.FC = (props) => {
   return (
     <LazyLoad
       fallback={null}
-      factory={() => import('./screens/Screen1')}
+      factory={() => import('./screens/Screen1Hook')}
       {...props}
     />
   );
