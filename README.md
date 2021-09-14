@@ -16,7 +16,7 @@ empty
 <br />
 
 ### 使用方式
-  1. 页面继承PageAnalytics.Screen
+  1. 页面继承PageAnalytics.Screen或者PageAnalytics.PureScreen，分别对应普通组件和纯组件
 
   2. 页面中设置三个基础埋点数据： 页面展示id，页面隐藏id，页面名称 三个属性（实现父类抽象属性的方式）
 
