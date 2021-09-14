@@ -18,7 +18,7 @@ empty
 ### 使用方式
   1. 页面继承PageAnalytics.Screen或者PageAnalytics.PureScreen，分别对应普通组件和纯组件
 
-  2. 页面中设置三个基础埋点数据： 页面展示埋点metaId，页面隐藏埋点metaId，页面名称 三个属性（实现父类抽象属性的方式）
+  2. 页面中设置三个基础埋点数据： **页面展示埋点metaId**，**页面隐藏埋点metaId**，**页面名称** 三个属性（实现父类抽象属性的方式）
 
   3. 通过 setPageViewProps 方法设置'页面展示'埋点上报数据，在此方法被调用之前都不会执行'页面展示'埋点数据上报，可以多次调用次方法，去更新'页面展示'埋点上报数据
 
@@ -116,12 +116,12 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps, Curren
 
 
 ### 注意点
-  1. pageViewId，pageExitId，currPage 三个基础埋点属性必须要设置，未设置时会有提示
+  1. pageViewId，pageExitId，currPage **三个基础埋点属性必须要设置**，未设置时会有提示
 
 
   2. <big>**在首次调用了this.setPageViewProps方法后才会发送页面展示埋点，在此之前，都处于阻塞等待状态，页面展示埋点上报都不会去实际执行；因此，setPageViewProps方法必须要执行至少一次**</big>，推荐在didMount中调用此方法，这样做的原因是，进入页面后 页面展示 事件会立即被触发，但用户想要上传的埋点数据可能还未准备好，等用户手动设置了数据后再去发送埋点数据，建议在componentDidMount方法中调用此方法，可以直接调用，也可以延迟调用
 
-  3. 须在componentWillUnmount中调用super.componentWillUnmount方法去移除页面事件监听
+  3. **须在componentWillUnmount中调用super.componentWillUnmount方法去移除页面事件监听**
 
   4. 默认使用xmlog-rn中的方法去上传埋点数据，customPageView和customPageExit属性是可选的，设置了后，页面展示/隐藏 被触发时即执行这两个方法，如果用户想自定义上传的方法，可设置这两个属性
 
@@ -132,7 +132,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps, Curren
 <br />
 
 ### 使用方式：
-1. 组件中使用useScreen()，参数中传入 页面展示埋点metaId，页面隐藏埋点metaId，页面名称， 三个必传属性
+1. 组件中使用useScreen()，参数中传入 **页面展示埋点metaId**，**页面隐藏埋点metaId**，**页面名称**， 三个必传属性
 
 2. (可选属性）传入customPageView，自定义'页面展示'埋点上传方法，去覆盖默认的'页面展示'埋点上传方法，如果实现了此方法，'页面展示'埋点上报时将直接执行此方法
 
