@@ -4,7 +4,7 @@ empty
 
 ## 安装
 
-  + npm install react-native-page-analytics
+  + npm install @xmly/react-native-page-analytics
 
 <br/>
 
