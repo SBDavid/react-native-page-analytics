@@ -18,7 +18,7 @@ empty
 ### 使用方式
   1. 页面继承PageAnalytics.Screen或者PageAnalytics.PureScreen，分别对应普通组件和纯组件
 
-  2. 页面中设置三个基础埋点数据： 页面展示id，页面隐藏id，页面名称 三个属性（实现父类抽象属性的方式）
+  2. 页面中设置三个基础埋点数据： 页面展示埋点metaId，页面隐藏埋点metaId，页面名称 三个属性（实现父类抽象属性的方式）
 
   3. 通过 setPageViewProps 方法设置'页面展示'埋点上报数据，在此方法被调用之前都不会执行'页面展示'埋点数据上报，可以多次调用次方法，去更新'页面展示'埋点上报数据
 
@@ -35,19 +35,20 @@ empty
 ### 使用示例：
 ```js
 import { View } from 'react-native';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
+import PageAnalytics, { AnalyticProps } from '@xmly/react-native-page-analytics';
 
 interface CurrentProps {}
+interface CurrentState {}
 
-class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
-  // 设置页面展示Id
+class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps, CurrentState> {
+  // 设置页面展示埋点metaId
   pageViewId: number = 0;
-  // 设置页面隐藏Id
+  // 设置页面隐藏埋点metaId
   pageExitId: number = 0;
   // 设置页面名称
   currPage: string = 'homePage';
 
-  constructor(props: HomePageProps & AnalyticProps) {
+  constructor(props: CurrentProps & AnalyticProps) {
     super(props);
   }
 
@@ -72,10 +73,9 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
   // 异步设置pageViewProps
   asyncSetPageViewProps = async () => {
-    await Utils.delay(500);
-    this.setPageViewProps({
-      customData: 'customData',
-    });
+    setTimeout(() => {
+      this.setPageViewProps({ customData: 'customData'});
+    }, 500)
   };
 
   // （可选）用户自定义的页面展示埋点上传方法
@@ -101,8 +101,8 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 
 | 属性             | 类型        | 可选     | 含义               |
 | :---            | :---        | :---    | :---              |
-| pageViewId      | number      |   否    | 页面展示id          |
-| pageExitId      | number      |   否    | 页面隐藏id          |
+| pageViewId      | number      |   否    | 页面展示埋点metaId          |
+| pageExitId      | number      |   否    | 页面隐藏埋点metaId          |
 | currPage        | string      |   否    | 页面名称            |
 | customPageView  | () => void  |   是    | 自定义页面展示埋点方法 |
 | customPageExit  | () => void  |   是    | 自定义页面隐藏埋点方法 |
@@ -132,7 +132,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 <br />
 
 ### 使用方式：
-1. 组件中使用useScreen()，参数中传入 页面展示id，页面隐藏id，页面名称 三个必传属性
+1. 组件中使用useScreen()，参数中传入 页面展示埋点metaId，页面隐藏埋点metaId，页面名称， 三个必传属性
 
 2. (可选属性）传入customPageView，自定义'页面展示'埋点上传方法，去覆盖默认的'页面展示'埋点上传方法，如果实现了此方法，'页面展示'埋点上报时将直接执行此方法
 
@@ -150,14 +150,14 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps> {
 ```js
 import { useCallback } from 'react';
 import { View } from 'react-native';
-import PageAnalytics, { AnalyticProps } from 'react-native-page-analytics';
+import PageAnalytics, { AnalyticProps } from '@xmly/react-native-page-analytics';
 
 interface HomePageProps {}
 
 export default function HomePage(props: HomePageProps & AnalyticProps) {
-  // 页面展示Id
+  // 页面展示埋点metaId
   const pageViewId: number = 0;
-  // 页面隐藏Id
+  // 页面隐藏埋点metaId
   const pageExitId: number = 0;
   // 页面名称
   const currPage: string = 'homePage';
@@ -212,7 +212,7 @@ useScreen
 
 | 方法      | 参数   | 返回值  | 含义    |
 | :--        | :--    | :-- | :-- |
-| useScreen  | {<br /> // 页面展示id <br />pageViewId: number;<br /><br />// 页面隐藏id <br />pageExitId: number;<br /><br />// 页面名称 <br />currPage: string;<br /><br />// 自定义页面展示埋点方法 <br />customPageView?: () => void;<br /><br />// 自定义页面隐藏埋点方法 <br />customPageExit?: () => void;<br /><br />[index: string]: any;<br />} | {<br/> // 设置/更新页面展示埋点数据 <br /> setPageViewProps: (param: {[index: string]:string}) => void<br /><br /> // 设置/更新页面隐藏埋点数据 <br /> setPageExitProps: (param: {[index: string]:string}) => void <br />} | hooks
+| useScreen  | {<br /> // 页面展示埋点metaId <br />pageViewId: number;<br /><br />// 页面隐藏埋点metaId <br />pageExitId: number;<br /><br />// 页面名称 <br />currPage: string;<br /><br />// 自定义页面展示埋点方法 <br />customPageView?: () => void;<br /><br />// 自定义页面隐藏埋点方法 <br />customPageExit?: () => void;<br /><br />[index: string]: any;<br />} | {<br/> // 设置/更新页面展示埋点数据 <br /> setPageViewProps: (param: {[index: string]:string}) => void<br /><br /> // 设置/更新页面隐藏埋点数据 <br /> setPageExitProps: (param: {[index: string]:string}) => void <br />} | hooks
 
 ## 实现，特性
   1. 此工具对页面的navigation跳转、APPstate状态变化、RN页面与Native页面互跳 三种场景都做了处理，同时对ios，安卓两端事件监听的差异做了兼容处理，保证了页面展示/隐藏数据埋点的全面准确
