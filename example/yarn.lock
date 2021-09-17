@@ -1043,7 +1043,7 @@
     serve-static "^1.13.1"
     ws "^1.1.0"
 
-"@xmly/cli@^0.2.8":
+"@xmly/cli@^0.2.15":
   version "0.2.15"
   resolved "http://xnpm.ximalaya.com/@xmly/cli/download/@xmly/cli-0.2.15.tgz#0f5f677df6e42851c397c1a4d2126b7f764e031c"
   integrity sha1-D19nffbkKFHDl8Gk0hJrf3ZOAxw=
@@ -4065,14 +4065,14 @@ react-native-screens@2.10.1:
   resolved "https://registry.nlark.com/react-native-screens/download/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
   integrity sha1-BtIvrofvDOUcYWw0oZlybbFAO5U=
 
-"react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#19400311":
+"react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63-virtualizedlist2":
   version "0.63.2"
-  resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#19400311f39a8a6af12ccc35b680a0802ee08795"
+  resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#214d93a025bd57ffdb7ee64ded238fb63bfd004d"
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@react-native-community/cli-platform-android" "^4.7.0"
     "@react-native-community/cli-platform-ios" "^4.7.0"
-    "@xmly/cli" "^0.2.8"
+    "@xmly/cli" "^0.2.15"
     abort-controller "^3.0.0"
     anser "^1.4.9"
     base64-js "^1.1.2"

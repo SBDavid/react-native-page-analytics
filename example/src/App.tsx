@@ -11,6 +11,7 @@ import HomeTab from './screens/HomeTab';
 // import Screen1 from './screens/Screen1';
 // import Screen2 from './screens/Screen2';
 // import LazyLoad from './screens/LazyLoad';
+import ListScreen from './screens/ListScreen';
 import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
@@ -70,6 +71,10 @@ export default class App extends React.PureComponent {
           <Stack.Screen
             name={RouterName.SCREEN2 as string}
             component={LazyScreen2}
+          />
+          <Stack.Screen
+            name={RouterName.LIST as string}
+            component={ListScreen}
           />
 
           {/* 非懒加载页面 */}

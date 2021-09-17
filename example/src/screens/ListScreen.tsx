@@ -1,6 +1,13 @@
 import React from 'react';
-import PageAnalytics, { AnalyticProps } from '../../../src';
-import { ScrollView, TouchableHighlight, NativeModules } from 'react-native';
+import PageAnalytics, { AnalyticProps, ScrollShowEvent } from '../../../src';
+import {
+  ScrollView,
+  TouchableHighlight,
+  NativeModules,
+  FlatList,
+  View,
+  Text,
+} from 'react-native';
 
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
@@ -10,10 +17,10 @@ import RouterName from '../router';
 interface HomePageProps {}
 
 interface HomePageState {
-  list: RouterName[];
+  list: string[];
 }
 
-export default class Tab1 extends PageAnalytics.Screen<
+export default class ListScreen extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
 > {
@@ -22,19 +29,14 @@ export default class Tab1 extends PageAnalytics.Screen<
   //
   pageExitId: number = 0;
   //
-  currPage: string = 'tab1';
+  currPage: string = 'listScreen';
 
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
   }
 
   state: HomePageState = {
-    list: [
-      RouterName.SCREEN1,
-      RouterName.SCREEN2,
-      RouterName.NativeScreen,
-      RouterName.LIST,
-    ],
+    list: Array(10).fill('name'),
   };
 
   componentDidMount() {
@@ -78,7 +80,7 @@ export default class Tab1 extends PageAnalytics.Screen<
     });
   };
 
-  handlePress = (item: RouterName) => {
+  handlePress = (item: string) => {
     if (item === RouterName.NativeScreen) {
       // 跳转到账号绑定页
       // NativeModules.Page.start('iting://open?msg_type=84');
@@ -90,25 +92,51 @@ export default class Tab1 extends PageAnalytics.Screen<
     }
   };
 
+  createItem = ({ item, index }: { item: string; index: number }) => {
+    return (
+      <PageAnalytics.ScrollAnalyticItem
+        key={index}
+        {...this.props}
+        onShow={(e: ScrollShowEvent) => {
+          console.log(
+            `show -- ${index} hasInteracted: ${e.hasInteracted} hasViewed: ${e.hasViewed}`
+          );
+        }}
+        onHide={() => {
+          console.log(`hide-- ${index}`);
+        }}
+      >
+        <View
+          style={{
+            width: 200,
+            height: 200,
+            backgroundColor: 'red',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{ color: 'white', fontSize: 15 }}
+          >{`${item} -- ${index}`}</Text>
+        </View>
+      </PageAnalytics.ScrollAnalyticItem>
+    );
+  };
+
+  createSeperator = () => <View style={{ width: '100%', height: 10 }} />;
+
   render() {
     return (
       <Container>
-        <Content title="Tab1" />
+        <Content title="ListScreen" />
 
-        <ScrollView>
-          {this.state.list.map((item, index) => {
-            return (
-              <TouchableHighlight
-                key={index}
-                onPress={() => this.handlePress(item)}
-              >
-                <Item key={index}>
-                  <ItemText>{item}</ItemText>
-                </Item>
-              </TouchableHighlight>
-            );
-          })}
-        </ScrollView>
+        <FlatList
+          data={this.state.list}
+          renderItem={this.createItem}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={this.createSeperator}
+        />
       </Container>
     );
   }
