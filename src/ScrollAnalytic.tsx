@@ -7,7 +7,7 @@ export type ShowEvent = {
   hasViewed: Boolean;
 };
 
-export type Props = {
+type Props = {
   onShow?: (e: ShowEvent) => void;
   onHide?: Function;
   disable?: Boolean;
@@ -33,10 +33,12 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._computeIsViewable = this._computeIsViewable.bind(this);
     this._hasInteracted = this._hasInteracted.bind(this);
     this._hasViewed = this._hasViewed.bind(this);
+    this.manuallyHide = this.manuallyHide.bind(this);
+    this.manuallyShow = this.manuallyShow.bind(this);
   }
 
   // 是否处于曝光状态
-  isInViewport: boolean = false;
+  isVisable: boolean = false;
   // 当前节点引用，用于获取元素的位置
   itemRef = React.createRef<View>();
 
@@ -52,13 +54,22 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       }
     }
 
+    // 绑定手动事件
+    if (this._isInNestedVirtuallizedList()) {
+      this._getParentListRef().addManuallyHideListener(this.manuallyHide);
+      this._getParentListRef().addManuallyShowListener(this.manuallyShow);
+    } else {
+      this._getCurrentListRef().addManuallyHideListener(this.manuallyHide);
+      this._getCurrentListRef().addManuallyShowListener(this.manuallyShow);
+    }
+
     // 计算冷启动曝光
     setTimeout(() => {
       this._isViewable();
     }, 100);
   }
 
-  _cancelTimeout: NodeJS.Timeout;
+  _cancelTimeout: NodeJS.Timeout | undefined;
   _onScrollHandler() {
     if (this._cancelTimeout) clearTimeout(this._cancelTimeout);
     this._cancelTimeout = setTimeout(this._isViewable, 500);
@@ -78,11 +89,13 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
       // 父级是否曝光
       if (this._computeIsViewable(scrollMetrics, frameMetrics)) {
-        console.info('父级 曝光');
+        if (!this.isVisable) {
+          // console.info('父级 曝光');
+        }
       } else {
-        console.info('父级 隐藏');
-        if (this.isInViewport) {
-          this.isInViewport = false;
+        if (this.isVisable) {
+          // console.info('父级 隐藏');
+          this.isVisable = false;
           this.props.onHide && this.props.onHide();
         }
         return;
@@ -101,16 +114,16 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
     // 是否曝光
     if (!this._computeIsViewable(selfScrollMetrics, seflFrameMetrics)) {
-      console.info('子级 隐藏');
-      if (this.isInViewport) {
-        this.isInViewport = false;
+      if (this.isVisable) {
+        // console.info('子级 隐藏');
+        this.isVisable = false;
         this.props.onHide && this.props.onHide();
       }
       return;
     }
-    console.info('子级 曝光');
-    if (!this.isInViewport) {
-      this.isInViewport = true;
+    if (!this.isVisable) {
+      // console.info('子级 曝光');
+      this.isVisable = true;
 
       this.props.onShow &&
         this.props.onShow({
@@ -120,7 +133,17 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     }
   }
 
-  _computeIsViewable(scrollMetrics, frameMetrics) {
+  // 手动隐藏接口，用户页面离开或者tab页离开
+  manuallyHide() {
+    this.isVisable = false;
+  }
+
+  // 手动触发展示
+  manuallyShow() {
+    setTimeout(this._isViewable, 100);
+  }
+
+  _computeIsViewable(scrollMetrics: any, frameMetrics: any) {
     const viewPortTop = scrollMetrics.offset;
     const viewPortBottom = viewPortTop + scrollMetrics.visibleLength;
     const itemTop = frameMetrics.offset;
@@ -138,6 +161,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       if (this._isInNestedVirtuallizedList()) {
         this._getParentListRef().removeScrollListener(this._onScrollHandler);
       }
+    }
+
+    // 手动事件
+    if (this._isInNestedVirtuallizedList()) {
+      this._getParentListRef().removeManuallyHideListener(this.manuallyHide);
+      this._getParentListRef().removeManuallyShowListener(this.manuallyShow);
+    } else {
+      this._getCurrentListRef().removeManuallyHideListener(this.manuallyHide);
+      this._getCurrentListRef().removeManuallyShowListener(this.manuallyShow);
     }
   }
 
@@ -172,7 +204,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   // 获取 VirtualizedCell 的index
-  _getVirtualizedCellIndex(ListRef, key) {
+  _getVirtualizedCellIndex(ListRef: any, key: any) {
     let _index;
     const { data, getItemCount, getItem, keyExtractor } = ListRef.props;
     const itemCount = getItemCount(data);
