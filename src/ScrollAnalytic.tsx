@@ -141,6 +141,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 手动隐藏接口，用户页面离开或者tab页离开
   manuallyHide() {
     this.isVisable = false;
+    // 如果离开页面也作为已交互过处理
+    if (!this._getCurrentListRef()._hasRefreshed) {
+      this._getCurrentListRef()._hasRefreshed = true;
+    }
   }
 
   // 手动触发展示
