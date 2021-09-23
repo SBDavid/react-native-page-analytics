@@ -7,6 +7,8 @@ enum RouterName {
   TAB3 = 'tab3',
   NativeScreen = 'native_screen',
   VirtualizedList = 'VirtualizedList',
+  FlatList = 'FlatList',
+  SectionList = 'SectionList',
 }
 
 export default RouterName;

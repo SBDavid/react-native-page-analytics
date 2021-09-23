@@ -40,6 +40,8 @@ export default class Tab1 extends PageAnalytics.Screen<
       RouterName.SCREEN2,
       RouterName.NativeScreen,
       RouterName.VirtualizedList,
+      RouterName.FlatList,
+      RouterName.SectionList,
     ],
   };
 

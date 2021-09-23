@@ -51,7 +51,7 @@ export class TestVirtralLizedList extends React.PureComponent<
     return <TestItem1 text={info.item} />;
   }
 
-  listRef = React.createRef<VirtualizedList<TestItem1>>();
+  listRef = React.createRef<VirtualizedList<string>>();
 
   render() {
     return (
@@ -66,7 +66,8 @@ export class TestVirtralLizedList extends React.PureComponent<
         onRefresh={() => {
           this.setState({ refreshing: true });
           setTimeout(() => {
-            this.listRef.current.triggerManuallyRefreshed();
+            // @ts-ignore
+            this.listRef?.current?.triggerManuallyRefreshed();
             this.setState({ refreshing: false });
           }, 200);
         }}
