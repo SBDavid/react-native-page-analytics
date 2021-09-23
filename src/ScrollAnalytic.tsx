@@ -1,15 +1,15 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
 
 export type ShowEvent = {
   hasInteracted: Boolean;
   hasViewed: Boolean;
 };
 
-export type Props = {
+type Props = {
   onShow?: (e: ShowEvent) => void;
-  onHide?: Function;
+  onHide?: () => void;
+  onRefreshed?: () => void;
   disable?: Boolean;
 };
 
@@ -33,12 +33,13 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._computeIsViewable = this._computeIsViewable.bind(this);
     this._hasInteracted = this._hasInteracted.bind(this);
     this._hasViewed = this._hasViewed.bind(this);
+    this.manuallyHide = this.manuallyHide.bind(this);
+    this.manuallyShow = this.manuallyShow.bind(this);
+    this.manuallyRefreshed = this.manuallyRefreshed.bind(this);
   }
 
   // 是否处于曝光状态
-  isInViewport: boolean = false;
-  // 当前节点引用，用于获取元素的位置
-  itemRef = React.createRef<View>();
+  isVisable: boolean = false;
 
   componentDidMount() {
     if (this.props.disable) return;
@@ -52,13 +53,28 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       }
     }
 
+    // 绑定手动事件
+    if (this._isInNestedVirtuallizedList()) {
+      this._getParentListRef().addManuallyHideListener(this.manuallyHide);
+      this._getParentListRef().addManuallyShowListener(this.manuallyShow);
+      this._getParentListRef().addManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
+    } else {
+      this._getCurrentListRef().addManuallyHideListener(this.manuallyHide);
+      this._getCurrentListRef().addManuallyShowListener(this.manuallyShow);
+      this._getCurrentListRef().addManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
+    }
+
     // 计算冷启动曝光
     setTimeout(() => {
       this._isViewable();
     }, 100);
   }
 
-  _cancelTimeout: NodeJS.Timeout;
+  _cancelTimeout: NodeJS.Timeout | undefined;
   _onScrollHandler() {
     if (this._cancelTimeout) clearTimeout(this._cancelTimeout);
     this._cancelTimeout = setTimeout(this._isViewable, 500);
@@ -78,11 +94,13 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
       // 父级是否曝光
       if (this._computeIsViewable(scrollMetrics, frameMetrics)) {
-        console.info('父级 曝光');
+        if (!this.isVisable) {
+          // console.info('父级 曝光');
+        }
       } else {
-        console.info('父级 隐藏');
-        if (this.isInViewport) {
-          this.isInViewport = false;
+        if (this.isVisable) {
+          // console.info('父级 隐藏');
+          this.isVisable = false;
           this.props.onHide && this.props.onHide();
         }
         return;
@@ -101,16 +119,16 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
     // 是否曝光
     if (!this._computeIsViewable(selfScrollMetrics, seflFrameMetrics)) {
-      console.info('子级 隐藏');
-      if (this.isInViewport) {
-        this.isInViewport = false;
+      if (this.isVisable) {
+        // console.info('子级 隐藏');
+        this.isVisable = false;
         this.props.onHide && this.props.onHide();
       }
       return;
     }
-    console.info('子级 曝光');
-    if (!this.isInViewport) {
-      this.isInViewport = true;
+    if (!this.isVisable) {
+      // console.info('子级 曝光');
+      this.isVisable = true;
 
       this.props.onShow &&
         this.props.onShow({
@@ -120,7 +138,31 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     }
   }
 
-  _computeIsViewable(scrollMetrics, frameMetrics) {
+  // 手动隐藏接口，用户页面离开或者tab页离开
+  manuallyHide() {
+    this.isVisable = false;
+  }
+
+  // 手动触发展示
+  manuallyShow() {
+    setTimeout(this._isViewable, 100);
+  }
+
+  // 手动触发刷新
+  manuallyRefreshed() {
+    this.isVisable = false;
+    this._getCurrentListRef()._hasViewedKeys.clear();
+    if (!this._getCurrentListRef()._hasRefreshed) {
+      this._getCurrentListRef()._hasRefreshed = true;
+    }
+    if (this.props.onRefreshed) {
+      this.props.onRefreshed();
+    }
+
+    setTimeout(this._isViewable, 500);
+  }
+
+  _computeIsViewable(scrollMetrics: any, frameMetrics: any) {
     const viewPortTop = scrollMetrics.offset;
     const viewPortBottom = viewPortTop + scrollMetrics.visibleLength;
     const itemTop = frameMetrics.offset;
@@ -139,10 +181,25 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         this._getParentListRef().removeScrollListener(this._onScrollHandler);
       }
     }
+
+    // 手动事件
+    if (this._isInNestedVirtuallizedList()) {
+      this._getParentListRef().removeManuallyHideListener(this.manuallyHide);
+      this._getParentListRef().removeManuallyShowListener(this.manuallyShow);
+      this._getParentListRef().removeManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
+    } else {
+      this._getCurrentListRef().removeManuallyHideListener(this.manuallyHide);
+      this._getCurrentListRef().removeManuallyShowListener(this.manuallyShow);
+      this._getCurrentListRef().removeManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
+    }
   }
 
   render() {
-    return <View ref={this.itemRef}>{this.props.children}</View>;
+    return this.props.children;
   }
 
   // 是否在 VirtuallizedList 内
@@ -172,7 +229,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   // 获取 VirtualizedCell 的index
-  _getVirtualizedCellIndex(ListRef, key) {
+  _getVirtualizedCellIndex(ListRef: any, key: any) {
     let _index;
     const { data, getItemCount, getItem, keyExtractor } = ListRef.props;
     const itemCount = getItemCount(data);
@@ -186,13 +243,18 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     return _index;
   }
 
-  // 是否发生过交互
+  // 是否发生过交互，包括滑动和刷新
   _hasInteracted() {
     if (!this._isInNestedVirtuallizedList())
-      return this._getCurrentListRef()._hasInteracted;
+      return (
+        this._getCurrentListRef()._hasInteracted ||
+        this._getCurrentListRef()._hasRefreshed
+      );
     return (
       this._getCurrentListRef()._hasInteracted ||
-      this._getParentListRef()._hasInteracted
+      this._getCurrentListRef()._hasRefreshed ||
+      this._getParentListRef()._hasInteracted ||
+      this._getParentListRef()._hasRefreshed
     );
   }
 
