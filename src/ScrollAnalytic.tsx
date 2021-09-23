@@ -35,6 +35,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._hasViewed = this._hasViewed.bind(this);
     this.manuallyHide = this.manuallyHide.bind(this);
     this.manuallyShow = this.manuallyShow.bind(this);
+    this.manuallyRefreshed = this.manuallyRefreshed.bind(this);
   }
 
   // 是否处于曝光状态
@@ -58,9 +59,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     if (this._isInNestedVirtuallizedList()) {
       this._getParentListRef().addManuallyHideListener(this.manuallyHide);
       this._getParentListRef().addManuallyShowListener(this.manuallyShow);
+      this._getParentListRef().addManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
     } else {
       this._getCurrentListRef().addManuallyHideListener(this.manuallyHide);
       this._getCurrentListRef().addManuallyShowListener(this.manuallyShow);
+      this._getCurrentListRef().addManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
     }
 
     // 计算冷启动曝光
@@ -143,6 +150,16 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     setTimeout(this._isViewable, 100);
   }
 
+  // 手动触发刷新
+  manuallyRefreshed() {
+    this.isVisable = false;
+    this._getCurrentListRef()._hasViewedKeys.clear();
+    if (!this._getCurrentListRef()._hasRefreshed) {
+      this._getCurrentListRef()._hasRefreshed = true;
+    }
+    setTimeout(this._isViewable, 500);
+  }
+
   _computeIsViewable(scrollMetrics: any, frameMetrics: any) {
     const viewPortTop = scrollMetrics.offset;
     const viewPortBottom = viewPortTop + scrollMetrics.visibleLength;
@@ -167,9 +184,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     if (this._isInNestedVirtuallizedList()) {
       this._getParentListRef().removeManuallyHideListener(this.manuallyHide);
       this._getParentListRef().removeManuallyShowListener(this.manuallyShow);
+      this._getParentListRef().removeManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
     } else {
       this._getCurrentListRef().removeManuallyHideListener(this.manuallyHide);
       this._getCurrentListRef().removeManuallyShowListener(this.manuallyShow);
+      this._getCurrentListRef().removeManuallyRefreshedListener(
+        this.manuallyRefreshed
+      );
     }
   }
 
@@ -218,13 +241,18 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     return _index;
   }
 
-  // 是否发生过交互
+  // 是否发生过交互，包括滑动和刷新
   _hasInteracted() {
     if (!this._isInNestedVirtuallizedList())
-      return this._getCurrentListRef()._hasInteracted;
+      return (
+        this._getCurrentListRef()._hasInteracted ||
+        this._getCurrentListRef()._hasRefreshed
+      );
     return (
       this._getCurrentListRef()._hasInteracted ||
-      this._getParentListRef()._hasInteracted
+      this._getCurrentListRef()._hasRefreshed ||
+      this._getParentListRef()._hasInteracted ||
+      this._getParentListRef()._hasRefreshed
     );
   }
 
