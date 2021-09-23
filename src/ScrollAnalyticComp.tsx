@@ -94,11 +94,15 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 返回页面时判断出的exposeType，6或者7
   private tmpFocusExposeType: ExposeType | null = null;
 
+  // 组件的ref
+  private contentRef: React.RefObject<ScrollAnalytics>;
+
   constructor(p: P & Props & ScrollProps) {
     super(p);
     console.log(
       `scrollAnalyticComp内部 打印：this.props.navitaion ${this.props.navigation}`
     );
+    this.contentRef = React.createRef<ScrollAnalytics>();
     // 添加路由监听
     this.addNavigationListener();
     // 添加page状态变化监听
@@ -323,11 +327,13 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 手动通知从其他地方返回到此页面
   private notifyBack = () => {
     //
+    this.contentRef.current?.manuallyShow();
   };
 
   // 手动通知离开页面
   private notifyLeave = () => {
     //
+    this.contentRef.current?.manuallyHide();
   };
 
   // 发送滑动曝光
@@ -399,6 +405,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     return (
       <>
         <ScrollAnalytics
+          ref={this.contentRef}
           {...this.props}
           onShow={this.onShow}
           onHide={this.onHide}
@@ -418,26 +425,44 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   }
 }
 
-function ScrollAnalyticsWithNavitaion(props: Props & ScrollProps) {
-  const navigation = useNavigation();
-  return <ScrollAnalyticContent {...props} />;
+type UseNaviType = <T extends NavigationProp<ParamListBase>>() => T;
+
+function ScrollAnalyticsWithNavitaion(
+  props: Props & ScrollProps & { useNavigation?: UseNaviType }
+) {
+  if (props.useNavigation) {
+    const navigation = props.useNavigation();
+    return <ScrollAnalyticContent navigation={navigation} {...props} />;
+  } else {
+    return <ScrollAnalyticContent {...props} />;
+  }
 }
 
-export function TestUseNavigation2(props: { title: string }) {
-  const navigation = useNavigation();
-  // const navigation = React.useContext(NavigationContext);
-  console.log(`testUseNavigation2OuterProject print ${navigation}`);
-
-  return (
-    <TouchableHighlight onPress={() => navigation.navigate('screen2')}>
-      <View>
-        <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
-      </View>
-    </TouchableHighlight>
-  );
+export function TestUseNavigation2(props: {
+  title: string;
+  useNavigation?: UseNaviType;
+}) {
+  if (props.useNavigation) {
+    const navigation = props.useNavigation();
+    console.log(`testUseNavigation2OuterProject print ${navigation}`);
+    return (
+      <TouchableHighlight onPress={() => navigation.navigate('screen2')}>
+        <View>
+          <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
+        </View>
+      </TouchableHighlight>
+    );
+  } else {
+    return (
+      <TouchableHighlight onPress={() => console.log('没有路由')}>
+        <View>
+          <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
+        </View>
+      </TouchableHighlight>
+    );
+  }
 }
 
-// const ScrollAnalyticComp = React.memo(ScrollAnalyticsWithNavitaion);
+const ScrollAnalyticComp = React.memo(ScrollAnalyticsWithNavitaion);
 
-// export default ScrollAnalyticsWithNavitaion;
-export default ScrollAnalyticContent;
+export default ScrollAnalyticComp;

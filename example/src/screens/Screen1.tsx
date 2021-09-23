@@ -12,7 +12,6 @@ import RouterName from '../router';
 import Utils from '../utils';
 import ListScreen from './ListScreen';
 import { useNavigation } from '@react-navigation/native';
-import TestUseNavigation2InProject from '../components/TestUseNavigation2';
 
 interface HomePageProps {}
 
@@ -107,8 +106,10 @@ export default class Screen1 extends PageAnalytics.Screen<
       <Container>
         <View style={{ height: 300 }}>
           {/* <TestUseNavigation title={'scree1test'} /> */}
-          {/* <TestUseNavigation2 title={'scree1test'} />
-          <TestUseNavigation2InProject title={'scree1test'} /> */}
+          {/* <TestUseNavigation2
+            title={'scree1test'}
+            useNavigation={useNavigation}
+          /> */}
           <ListScreen {...this.props} />
         </View>
         <ScrollView>

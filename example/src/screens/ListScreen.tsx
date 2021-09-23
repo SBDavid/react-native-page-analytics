@@ -8,6 +8,7 @@ import {
   View,
   Text,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
@@ -55,6 +56,7 @@ export default class ListScreen extends React.Component {
         onHide={() => {
           console.log(`hide-- ${index}`);
         }}
+        useNavigation={useNavigation}
       >
         <TouchableHighlight onPress={this.pressHandler}>
           <View

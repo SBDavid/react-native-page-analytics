@@ -6,7 +6,7 @@ export type ShowEvent = {
   hasViewed: Boolean;
 };
 
-type Props = {
+export type Props = {
   onShow?: (e: ShowEvent) => void;
   onHide?: () => void;
   onRefreshed?: () => void;
