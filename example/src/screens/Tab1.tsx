@@ -1,11 +1,17 @@
 import React from 'react';
 import PageAnalytics, { AnalyticProps } from '../../../src';
-import { ScrollView, TouchableHighlight, NativeModules } from 'react-native';
+import {
+  ScrollView,
+  TouchableHighlight,
+  NativeModules,
+  View,
+} from 'react-native';
 
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
+import ListScreen from './ListScreen';
 
 interface HomePageProps {}
 
@@ -29,12 +35,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   }
 
   state: HomePageState = {
-    list: [
-      RouterName.SCREEN1,
-      RouterName.SCREEN2,
-      RouterName.NativeScreen,
-      RouterName.LIST,
-    ],
+    list: [RouterName.SCREEN1, RouterName.SCREEN2, RouterName.NativeScreen],
   };
 
   componentDidMount() {
@@ -94,7 +95,9 @@ export default class Tab1 extends PageAnalytics.Screen<
     return (
       <Container>
         <Content title="Tab1" />
-
+        {/* <View style={{ height: 200 }}>
+          <ListScreen {...this.props} />
+        </View> */}
         <ScrollView>
           {this.state.list.map((item, index) => {
             return (

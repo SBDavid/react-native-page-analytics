@@ -1,14 +1,18 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View, TouchableHighlight, Text } from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
+  TestUseNavigation2,
 } from '../../../src';
 import Content from '../components/Content';
 import Button from '../components/Button';
 import { Container } from './StyledComponents';
 import RouterName from '../router';
 import Utils from '../utils';
+import ListScreen from './ListScreen';
+import { useNavigation } from '@react-navigation/native';
+import TestUseNavigation2InProject from '../components/TestUseNavigation2';
 
 interface HomePageProps {}
 
@@ -16,6 +20,21 @@ interface HomePageState {
   list: string[];
 }
 
+interface TestUseNavigationProps {
+  title: string;
+}
+
+export function TestUseNavigation(props: TestUseNavigationProps) {
+  const navigation = useNavigation();
+
+  return (
+    <TouchableHighlight onPress={() => navigation.navigate(RouterName.SCREEN2)}>
+      <View>
+        <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
+      </View>
+    </TouchableHighlight>
+  );
+}
 export default class Screen1 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
@@ -86,6 +105,12 @@ export default class Screen1 extends PageAnalytics.Screen<
   render() {
     return (
       <Container>
+        <View style={{ height: 300 }}>
+          {/* <TestUseNavigation title={'scree1test'} /> */}
+          {/* <TestUseNavigation2 title={'scree1test'} />
+          <TestUseNavigation2InProject title={'scree1test'} /> */}
+          <ListScreen {...this.props} />
+        </View>
         <ScrollView>
           <Content title="Screen1" />
           <Button

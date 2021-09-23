@@ -5,12 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import RouterName from './router';
 import HomeTab from './screens/HomeTab';
-// import Tab1 from './screens/Tab1';
-// import Tab2 from './screens/Tab2';
-// import Tab2Hook from './screens/Tab2Hook';
-// import Screen1 from './screens/Screen1';
-// import Screen2 from './screens/Screen2';
-// import LazyLoad from './screens/LazyLoad';
+import Tab1 from './screens/Tab1';
+import Tab2 from './screens/Tab2';
+import Tab2Hook from './screens/Tab2Hook';
+import Screen1 from './screens/Screen1';
+import Screen2 from './screens/Screen2';
 import ListScreen from './screens/ListScreen';
 import LazyLoad from 'react-navigation-lazy-screen';
 
@@ -57,6 +56,7 @@ export default class App extends React.PureComponent {
 
   render() {
     // return <Tab2Hook />;
+    // return <Screen1 />;
 
     return (
       <NavigationContainer>
@@ -64,22 +64,24 @@ export default class App extends React.PureComponent {
           <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
 
           {/* 懒加载页面 */}
-          <Stack.Screen
+          {/* <Stack.Screen
             name={RouterName.SCREEN1 as string}
             component={LazyScreen1}
           />
           <Stack.Screen
             name={RouterName.SCREEN2 as string}
             component={LazyScreen2}
-          />
-          <Stack.Screen
-            name={RouterName.LIST as string}
-            component={ListScreen}
-          />
+          /> */}
 
           {/* 非懒加载页面 */}
-          {/* <Stack.Screen name={RouterName.SCREEN1 as string} component={Screen1} /> */}
-          {/* <Stack.Screen name={RouterName.SCREEN2 as string} component={Screen2} /> */}
+          <Stack.Screen
+            name={RouterName.SCREEN1 as string}
+            component={Screen1}
+          />
+          <Stack.Screen
+            name={RouterName.SCREEN2 as string}
+            component={Screen2}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );

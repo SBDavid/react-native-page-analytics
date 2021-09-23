@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {
   AppState,
   AppStateStatus,
@@ -6,24 +6,44 @@ import {
   NativeModules,
   NativeEventEmitter,
   Platform,
+  TouchableHighlight,
+  View,
+  Text,
 } from 'react-native';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
-import ScreenUtils from './utils';
+import { useNavigation, NavigationContext } from '@react-navigation/native';
 import {
   PageEventEmitter,
   isIos,
   CustomAppState,
   PageViewExitEventSource,
   Props,
-  AnalyticDataProps,
-  PageTraceType,
 } from './Screen';
-import ScrollAnalytics, { Props as ScrollProps } from './ScrollAnalytic';
+import ScrollAnalytics, {
+  Props as ScrollProps,
+  ShowEvent,
+} from './ScrollAnalytic';
+
+export enum ExposeType {
+  // 冷启动
+  coldBoot = 0,
+  // 滑动产生的新内容曝光
+  newContent = 3,
+  // 滑动产生的且历史被曝光(3 或 4 在一个页面生命周期内仅上报一次)
+  hasExposed = 4,
+  // 从其他页面返回
+  fromPage = 6,
+  // 从后台返回
+  fromBackground = 7,
+}
+
+// export interface ScreenLifeCycleInfo {
+
+// }
 
 const AndroidGlobalEventEmitter = new NativeEventEmitter(NativeModules.Page);
 const isAndroid = Platform.OS === 'android';
-
-export default class ScrollAnalyticComp<P, S> extends React.Component<
+class ScrollAnalyticContent<P, S> extends React.Component<
   P & Props & ScrollProps,
   S
 > {
@@ -65,58 +85,28 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
     ['inactive', CustomAppState.background],
   ]);
 
-  // currPage
-  protected currPage: string = '';
-
-  // pageview属性
-  private pageViewProps: AnalyticDataProps | null = null;
-
-  // pageExit属性
-  private pageExitProps: AnalyticDataProps | null = null;
-
-  // 设置pageViewProps等待promise
-  private pageViewPropsPromise: Promise<any>;
-
-  // 设置pageViewProps等待resolve
-  private pageViewPropsResolve?: (r: any) => void;
-
-  // 是否首次setPageViewProps
-  private hasSetPageViewProps: boolean = false;
-
-  // 当前已经出发的pageView和pageExit事件记录
-  private pageTraceList: PageTraceType[] = [];
-
-  //
-  private delayCheckTimer: ReturnType<typeof setTimeout> | null = null;
-
-  // 自定义pageView埋点发送方法
-  protected customPageView?: () => void;
-
-  // 自定义pageExit埋点发送方法
-  protected customPageExit?: () => void;
-
-  // 页面key
-  protected pageKey: string;
-
   // 安卓平台是否onBackground
   private androidOnBackground: boolean = false;
 
+  // 页面生命周期信息
+  private lifeCycleHasExposedType: ExposeType | null = null;
+
+  // 返回页面时判断出的exposeType，6或者7
+  private tmpFocusExposeType: ExposeType | null = null;
+
   constructor(p: P & Props & ScrollProps) {
     super(p);
-    this.pageViewPropsPromise = new Promise((resolve) => {
-      this.pageViewPropsResolve = resolve;
-    });
-    this.pageKey = Date.now().toString();
-    // console.log('screen中添加监听');
-    // this.pageShow();
+    console.log(
+      `scrollAnalyticComp内部 打印：this.props.navitaion ${this.props.navigation}`
+    );
     // 添加路由监听
-    // this.addNavigationListener();
-    // // 添加page状态变化监听
-    // this.addPageListener();
-    // // 添加APPstate变化监听
-    // this.addAppStateListener();
-    // // 添加安卓平台onBackground事件监听
-    // this.addAndroidOnBackgroundListener();
+    this.addNavigationListener();
+    // 添加page状态变化监听
+    this.addPageListener();
+    // 添加APPstate变化监听
+    this.addAppStateListener();
+    // 添加安卓平台onBackground事件监听
+    this.addAndroidOnBackgroundListener();
   }
 
   // 添加路由监听
@@ -189,6 +179,9 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
 
   // 安卓平台onBackground事件handler
   private androidOnBackgroundHandler = () => {
+    if (this.props.navigation && !this.props.navigation.isFocused()) {
+      return;
+    }
     console.log('androidOnBackground');
     this.androidOnBackground = true;
   };
@@ -200,9 +193,7 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
 
   // APPstate状态更新防抖
   private appStateChangeHandler = (status: AppStateStatus) => {
-    console.log(
-      `appStateChangeHandler ${status} ${this.currPage} ${Date.now()}`
-    );
+    console.log(`appStateChangeHandler ${status} ${Date.now()}`);
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -220,16 +211,6 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
 
   // APPstate状态变化处理
   private handleAppState = (status: AppStateStatus) => {
-    // if (status === 'active') {
-    //   console.log(`appstate变化，active 页面名：${this.currPage}`);
-    //   this.onFocus();
-    // } else if (status === 'background') {
-    //   console.log(`appstate变化，background 页面名：${this.currPage}`);
-    //   this.onBlur();
-    // } else if (status === 'inactive') {
-    //   console.log(`appstate变化 inactive 页面名：${this.currPage}`);
-    // }
-
     const formerAppState = this.appStateList[this.appStateList.length - 1];
     const currentAppState = this.customAppStateMap.get(status);
 
@@ -239,14 +220,10 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
     this.appStateList.push(currentAppState);
 
     if (currentAppState === CustomAppState.active) {
-      console.log(
-        `appstate变化，active 页面名：${this.currPage} ${Date.now()}`
-      );
+      console.log(`appstate变化，active ${Date.now()}`);
       this.onFocus(PageViewExitEventSource.appState);
     } else {
-      console.log(
-        `appstate变化，background 页面名：${this.currPage} ${Date.now()}`
-      );
+      console.log(`appstate变化，background ${Date.now()}`);
       this.onBlur();
     }
   };
@@ -256,7 +233,7 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
-    console.log(`onResume事件： 页面名：${this.currPage}`);
+    console.log(`onResume事件：`);
     if (isAndroid) {
       if (this.androidOnBackground) {
         // TODO 从后台切换回来，曝光type 6
@@ -265,7 +242,6 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
       }
     }
     this.androidOnBackground = false;
-    this.pageShow();
     this.onFocus(PageViewExitEventSource.page);
   };
 
@@ -274,20 +250,19 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
-    console.log(`onPause事件： 页面名：${this.currPage}`);
+    console.log(`onPause事件：`);
     this.onBlur();
   };
 
   // navigationOnFocus事件
   private onNavigationFocus = () => {
-    console.log(`onNavigationFocus事件： 页面名：${this.currPage}`);
-    this.pageShow();
+    console.log(`onNavigationFocus事件： `);
     this.onFocus(PageViewExitEventSource.navigation);
   };
 
   // navigationOnBlur事件
   private onNavigationBlur = () => {
-    console.log(`onNavigationBlur事件： 页面名：${this.currPage}`);
+    console.log(`onNavigationBlur事件：`);
     this.onBlur();
   };
 
@@ -296,143 +271,138 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
 
   // 页面显示操作
   private onFocus = async (source: PageViewExitEventSource) => {
-    // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
-    // 由首次页面展示埋点由onNavigatiionChange去触发
-    // return;
-    if (
-      this.focusSubs &&
-      this.blurSubs &&
-      source === PageViewExitEventSource.page &&
-      ScreenUtils.getIsFirstPageView()
-    ) {
-      console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
-      ScreenUtils.updateIsFirstPageView(false);
-      return;
+    if (isIos) {
+      if (source === PageViewExitEventSource.navigation) {
+        // 曝光type为6，从其他页面返回, // TODO手动通知
+        this.tmpFocusExposeType = ExposeType.fromPage;
+        this.refreshLifeCycle();
+        this.notifyBack();
+      } else if (source === PageViewExitEventSource.page) {
+        // 曝光type为6，从其他页面返回, // TODO手动通知
+        this.tmpFocusExposeType = ExposeType.fromPage;
+        this.refreshLifeCycle();
+        this.notifyBack();
+      } else if (source === PageViewExitEventSource.appState) {
+        // 曝光type为7，从后台返回, // TODO手动通知
+        this.tmpFocusExposeType = ExposeType.fromBackground;
+        this.refreshLifeCycle();
+        this.notifyBack();
+      }
     }
 
-    if (ScreenUtils.getIsFirstPageView()) {
-      ScreenUtils.updateIsFirstPageView(false);
+    if (isAndroid) {
+      if (source === PageViewExitEventSource.navigation) {
+        // 曝光type为6，从其他页面返回, // TODO手动通知
+        this.tmpFocusExposeType = ExposeType.fromPage;
+        this.refreshLifeCycle();
+        this.notifyBack();
+      } else if (
+        source === PageViewExitEventSource.page ||
+        source === PageViewExitEventSource.appState
+      ) {
+        if (this.androidOnBackground) {
+          // 曝光type为7，从后台返回, // TODO手动通知
+          this.tmpFocusExposeType = ExposeType.fromBackground;
+          this.refreshLifeCycle();
+          this.notifyBack();
+        } else {
+          // 曝光type为6，从其他页面返回, // TODO手动通知
+          this.tmpFocusExposeType = ExposeType.fromPage;
+          this.refreshLifeCycle();
+          this.notifyBack();
+        }
+      }
     }
-    await this.pageViewPropsPromise;
-    ScreenUtils.currPage = this.currPage;
-    this.sendAnalyticAction('focus');
   };
 
   // 页面离开操作
   private onBlur = () => {
-    this.sendAnalyticAction('blur');
+    this.notifyLeave();
   };
 
-  // 上传pageKey
-  private pageShow() {
-    ScreenUtils.getPageShowAction()({ __pageKey: this.pageKey });
-  }
-
-  // 设置pageView埋点属性
-  protected setPageViewProps = (props: AnalyticDataProps) => {
-    if (!this.hasSetPageViewProps) {
-      this.hasSetPageViewProps = true;
-      this.delayCheckFirstPageView();
-    }
-    this.pageViewProps = props;
-    this.pageViewPropsResolve && this.pageViewPropsResolve(null);
+  // 手动通知从其他地方返回到此页面
+  private notifyBack = () => {
+    //
   };
 
-  // 设置pageExit埋点属性
-  protected setPageExitProps = (props: AnalyticDataProps) => {
-    this.pageExitProps = props;
+  // 手动通知离开页面
+  private notifyLeave = () => {
+    //
   };
 
-  // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
-  private delayCheckFirstPageView = () => {
-    this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
-    this.delayCheckTimer = setTimeout(() => {
-      console.log('delaycheckfirstpageview');
-      if (!this.pageTraceList.includes('focus')) {
-        console.log('delaycheckfirstpageview onfocus');
-        this.pageShow();
-        this.onFocus(PageViewExitEventSource.page);
-      }
-    }, 500);
+  // 发送滑动曝光
+  private exposeHandler = (type: ExposeType) => {
+    console.log(`曝光类型：${type}`);
   };
 
-  // 检查能否发送pageView或者pageExit事件，这两个事件应该是成对出现，避免连续发送pageView或者pageExit事件，
-  // 除了首次，首次可以直接发送pageView事件
-  private shouldSend = (type: PageTraceType): boolean => {
-    return (
-      (this.pageTraceList.length === 0 && type === 'focus') ||
-      (this.pageTraceList.length > 0 &&
-        this.pageTraceList[this.pageTraceList.length - 1] !== type)
-    );
+  private updateHasExposedType = (value: ExposeType | null): void => {
+    this.lifeCycleHasExposedType = value;
   };
 
-  // 发送数据操作
-  private sendAnalyticAction = (type: PageTraceType) => {
-    const sendActions = ScreenUtils.getSendAnalyticActions();
+  private refreshLifeCycle = () => {
+    this.lifeCycleHasExposedType = null;
+  };
 
-    if (!sendActions) {
-      console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
+  private shouldExposeScroll = (): boolean => {
+    // 一次生命周期内仅上报一次type为3/4的滑动曝光，如果已经曝光过，不再重复曝光
+    return this.lifeCycleHasExposedType === null;
+  };
+
+  // 发送滑动曝光，区分type
+  // 0 冷启动，
+  // 3 滑动产生的新内容曝光
+  // 4 滑动产生的且历史被曝光过
+  // 6 从其他页面返回
+  // 7 从后台返回
+  // 一个页面生命周期内，滑动曝光(type为 3 或 4)仅上报一次，离开页面后本次页面生命周期结束，返回页面开始一个新的页面生命周期
+  // 在页面的上下左右滑动过程中，type=4事件 可能会多次触发，在一个生命周期内只上报一次
+  private onShow = (e: ShowEvent) => {
+    if (!e.hasInteracted) {
+      this.exposeHandler(ExposeType.coldBoot);
       return;
     }
 
-    const { pageView, pageExit } = sendActions;
-
-    if (!this.shouldSend(type)) {
+    if (e.hasInteracted && !e.hasViewed) {
+      if (!this.shouldExposeScroll()) {
+        return;
+      }
+      // type为 3
+      const exposeType = ExposeType.newContent;
+      this.updateHasExposedType(exposeType);
+      this.exposeHandler(exposeType);
       return;
     }
 
-    if (type === 'focus') {
-      // console.log('sendAnalyticAction focus');
-      if (this.customPageView) {
-        // console.log('customPageView 存在 执行');
-        this.pageTraceList.push('focus');
-        this.customPageView();
+    if (e.hasInteracted && e.hasViewed) {
+      // 从其他页面返回/后台返回时，先手动通知，然后会收到此事件，如果是之前是从其他页面返回，type为6，如果是从后台返回，type为7，否则type为4
+      if (this.tmpFocusExposeType !== null) {
+        // type为 6或7
+        const exposeType = this.tmpFocusExposeType;
+        this.tmpFocusExposeType = null;
+        this.exposeHandler(exposeType);
         return;
       }
-      // console.log(
-      //   `发送页面pageView埋点 页面名: ${ScreenUtils.currPage} pageViewId: ${
-      //     this.pageViewId
-      //   } props: ${this.pageViewProps} ${Date.now()}`
-      // );
-      if (!pageView) {
+      if (!this.shouldExposeScroll()) {
         return;
       }
-      this.pageTraceList.push('focus');
-      // pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
-      return;
-    }
-
-    if (type === 'blur') {
-      // console.log('sendAnalyticAction blur');
-      if (this.customPageExit) {
-        // console.log('customPageExit 存在 执行');
-        this.pageTraceList.push('blur');
-        this.customPageExit();
-        return;
-      }
-      // console.log(
-      //   `发送页面pageExit埋点 页面名: ${ScreenUtils.currPage} pageExitId: ${
-      //     this.pageExitId
-      //   } props: ${this.pageExitProps} ${Date.now()}`
-      // );
-      if (!pageExit) {
-        return;
-      }
-      this.pageTraceList.push('blur');
-      // pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
+      // type为 4
+      const exposeType = ExposeType.hasExposed;
+      this.updateHasExposedType(exposeType);
+      this.exposeHandler(exposeType);
       return;
     }
   };
 
-  // // 设置 动态获取页面离开埋点属性 方法
-  // protected setPageExitPropsGener = (cb: PageExitDataGener) => {
-  //   this.pageExitDataGener = cb;
-  // };
+  private onHide = () => {};
 
   render() {
     return (
       <>
-        <ScrollAnalytics {...this.props} />
+        <ScrollAnalytics
+          {...this.props}
+          onShow={this.onShow}
+          onHide={this.onHide}
+        />
       </>
     );
   }
@@ -444,7 +414,30 @@ export default class ScrollAnalyticComp<P, S> extends React.Component<
     this.onPauseSubs && this.onPauseSubs.remove();
     this.androidOnBackgroundSubs && this.androidOnBackgroundSubs.remove();
     this.debounceTimer && clearTimeout(this.debounceTimer);
-    this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
     AppState.removeEventListener('change', this.appStateChangeHandler);
   }
 }
+
+function ScrollAnalyticsWithNavitaion(props: Props & ScrollProps) {
+  const navigation = useNavigation();
+  return <ScrollAnalyticContent {...props} />;
+}
+
+export function TestUseNavigation2(props: { title: string }) {
+  const navigation = useNavigation();
+  // const navigation = React.useContext(NavigationContext);
+  console.log(`testUseNavigation2OuterProject print ${navigation}`);
+
+  return (
+    <TouchableHighlight onPress={() => navigation.navigate('screen2')}>
+      <View>
+        <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
+      </View>
+    </TouchableHighlight>
+  );
+}
+
+// const ScrollAnalyticComp = React.memo(ScrollAnalyticsWithNavitaion);
+
+// export default ScrollAnalyticsWithNavitaion;
+export default ScrollAnalyticContent;

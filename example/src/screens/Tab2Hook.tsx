@@ -4,12 +4,14 @@ import {
   TouchableHighlight,
   Text,
   NativeModules,
+  View,
 } from 'react-native';
 import PageAnalytics, { AnalyticProps } from '../../../src';
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
+import ListScreen from './ListScreen';
 
 interface HomePageProps {}
 
@@ -116,7 +118,9 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   return (
     <Container>
       <Content title="Tab2" />
-
+      <View style={{ height: 200 }}>
+        <ListScreen {...props} />
+      </View>
       <ScrollView>
         {list.current.map((item, index) => {
           return (

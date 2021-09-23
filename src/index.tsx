@@ -4,6 +4,7 @@ import useScreen from './useScreen';
 import ScrollAnalyticItem from './ScrollAnalyticComp';
 import ScreenUtils, { SendAnalyticFunc } from './utils';
 import type { ShowEvent } from './ScrollAnalytic';
+export * from './ScrollAnalyticComp';
 
 ScreenUtils.setDefaultSendAnalyticActions();
 

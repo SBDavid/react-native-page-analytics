@@ -1,15 +1,17 @@
 import React from 'react';
 import PageAnalytics, { AnalyticProps } from '../../../src';
-import { ScrollView, TouchableHighlight } from 'react-native';
+import { ScrollView, TouchableHighlight, View } from 'react-native';
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
+import ListScreen from './ListScreen';
 
 interface HomePageProps {}
 
 interface HomePageState {
   list: RouterName[];
+  showList: boolean;
 }
 export default class Tab2 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
@@ -28,6 +30,7 @@ export default class Tab2 extends PageAnalytics.Screen<
 
   state: HomePageState = {
     list: [RouterName.SCREEN1, RouterName.SCREEN2],
+    showList: false,
   };
 
   componentDidMount() {
@@ -54,6 +57,7 @@ export default class Tab2 extends PageAnalytics.Screen<
     this.setPageViewProps({
       customData: 'customData',
     });
+    this.setState({ showList: true });
   };
 
   // 用户自定义的页面展示埋点上传方法
@@ -78,6 +82,11 @@ export default class Tab2 extends PageAnalytics.Screen<
     return (
       <Container>
         <Content title="Tab2" />
+        {this.state.showList ? (
+          <View style={{ height: 200 }}>
+            <ListScreen {...this.props} />
+          </View>
+        ) : null}
 
         <ScrollView>
           {this.state.list.map((item, index) => {
