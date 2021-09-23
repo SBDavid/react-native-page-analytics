@@ -9,7 +9,8 @@ export type ShowEvent = {
 
 type Props = {
   onShow?: (e: ShowEvent) => void;
-  onHide?: Function;
+  onHide?: () => void;
+  onRefreshed?: () => void;
   disable?: Boolean;
 };
 
@@ -157,6 +158,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     if (!this._getCurrentListRef()._hasRefreshed) {
       this._getCurrentListRef()._hasRefreshed = true;
     }
+    if (this.props.onRefreshed) {
+      this.props.onRefreshed();
+    }
+
     setTimeout(this._isViewable, 500);
   }
 
