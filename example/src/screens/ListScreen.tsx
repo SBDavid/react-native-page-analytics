@@ -62,7 +62,7 @@ export default class ListScreen extends React.Component {
           <View
             style={{
               width: 200,
-              height: 200,
+              height: 120,
               backgroundColor: 'red',
               display: 'flex',
               justifyContent: 'center',

@@ -99,9 +99,9 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   constructor(p: P & Props & ScrollProps) {
     super(p);
-    console.log(
-      `scrollAnalyticComp内部 打印：this.props.navitaion ${this.props.navigation}`
-    );
+    // console.log(
+    //   `scrollAnalyticComp内部 打印：this.props.navitaion ${this.props.navigation}`
+    // );
     this.contentRef = React.createRef<ScrollAnalytics>();
     // 添加路由监听
     this.addNavigationListener();
@@ -327,12 +327,14 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 手动通知从其他地方返回到此页面
   private notifyBack = () => {
     //
+    console.log('执行manuallyShow');
     this.contentRef.current?.manuallyShow();
   };
 
   // 手动通知离开页面
   private notifyLeave = () => {
     //
+    console.log('执行manuallyHide');
     this.contentRef.current?.manuallyHide();
   };
 
