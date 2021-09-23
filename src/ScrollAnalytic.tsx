@@ -41,8 +41,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 是否处于曝光状态
   isVisable: boolean = false;
-  // 当前节点引用，用于获取元素的位置
-  itemRef = React.createRef<View>();
 
   componentDidMount() {
     if (this.props.disable) return;
@@ -202,7 +200,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   render() {
-    return <View ref={this.itemRef}>{this.props.children}</View>;
+    return this.props.children;
   }
 
   // 是否在 VirtuallizedList 内
