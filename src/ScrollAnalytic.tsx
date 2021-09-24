@@ -167,6 +167,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   _computeIsViewable(scrollMetrics: any, frameMetrics: any) {
+    if (frameMetrics === undefined) {
+      return false;
+    }
+
     const viewPortTop = scrollMetrics.offset;
     const viewPortBottom = viewPortTop + scrollMetrics.visibleLength;
     const itemTop = frameMetrics.offset;
