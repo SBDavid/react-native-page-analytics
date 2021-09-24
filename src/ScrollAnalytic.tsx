@@ -81,61 +81,63 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   _isViewable() {
-    // 如果有父级列表
-    if (this._isInNestedVirtuallizedList()) {
-      const parentRef = this._getParentListRef();
-      // 父级的布局信息
-      const scrollMetrics = parentRef._scrollMetrics;
+    try {
+      // 如果有父级列表
+      if (this._isInNestedVirtuallizedList()) {
+        const parentRef = this._getParentListRef();
+        // 父级的布局信息
+        const scrollMetrics = parentRef._scrollMetrics;
 
-      const parentKey = this._getCurrentListRef()._getCellKey();
-      const parentIndex = this._getVirtualizedCellIndex(parentRef, parentKey);
-      // 父级的相对位置
-      const frameMetrics = parentRef._getFrameMetrics(parentIndex);
+        const parentKey = this._getCurrentListRef()._getCellKey();
+        const parentIndex = this._getVirtualizedCellIndex(parentRef, parentKey);
+        // 父级的相对位置
+        const frameMetrics = parentRef._getFrameMetrics(parentIndex);
 
-      // 父级是否曝光
-      if (this._computeIsViewable(scrollMetrics, frameMetrics)) {
-        if (!this.isVisable) {
-          // console.info('父级 曝光');
+        // 父级是否曝光
+        if (this._computeIsViewable(scrollMetrics, frameMetrics)) {
+          if (!this.isVisable) {
+            // console.info('父级 曝光');
+          }
+        } else {
+          if (this.isVisable) {
+            // console.info('父级 隐藏');
+            this.isVisable = false;
+            this.props.onHide && this.props.onHide();
+          }
+          return;
         }
-      } else {
+      }
+
+      // 自身是否曝光
+      const selfRef = this._getCurrentListRef();
+      const selfScrollMetrics = selfRef._scrollMetrics;
+      const selfIndex = this._getVirtualizedCellIndex(
+        selfRef,
+        this.context.virtualizedCell.cellKey
+      );
+
+      // 相对位置
+      const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
+      // 是否曝光
+      if (!this._computeIsViewable(selfScrollMetrics, seflFrameMetrics)) {
         if (this.isVisable) {
-          // console.info('父级 隐藏');
+          // console.info('子级 隐藏');
           this.isVisable = false;
           this.props.onHide && this.props.onHide();
         }
         return;
       }
-    }
+      if (!this.isVisable) {
+        // console.info('子级 曝光');
+        this.isVisable = true;
 
-    // 自身是否曝光
-    const selfRef = this._getCurrentListRef();
-    const selfScrollMetrics = selfRef._scrollMetrics;
-    const selfIndex = this._getVirtualizedCellIndex(
-      selfRef,
-      this.context.virtualizedCell.cellKey
-    );
-
-    // 相对位置
-    const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
-    // 是否曝光
-    if (!this._computeIsViewable(selfScrollMetrics, seflFrameMetrics)) {
-      if (this.isVisable) {
-        // console.info('子级 隐藏');
-        this.isVisable = false;
-        this.props.onHide && this.props.onHide();
+        this.props.onShow &&
+          this.props.onShow({
+            hasInteracted: this._hasInteracted(),
+            hasViewed: this._hasViewed(),
+          });
       }
-      return;
-    }
-    if (!this.isVisable) {
-      // console.info('子级 曝光');
-      this.isVisable = true;
-
-      this.props.onShow &&
-        this.props.onShow({
-          hasInteracted: this._hasInteracted(),
-          hasViewed: this._hasViewed(),
-        });
-    }
+    } catch (err) {}
   }
 
   // 手动隐藏接口，用户页面离开或者tab页离开

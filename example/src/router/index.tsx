@@ -10,6 +10,7 @@ enum RouterName {
   VirtualizedList = 'VirtualizedList',
   FlatList = 'FlatList',
   SectionList = 'SectionList',
+  TestSameDirectionList = 'TestSameDirectionList',
 }
 
 export default RouterName;

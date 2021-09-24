@@ -1,12 +1,13 @@
 import * as React from 'react';
 import TestItem1 from './TestItem';
 import { VirtualizedList, ListRenderItemInfo } from 'react-native';
+import { TestVirtralLizedList } from './TestVirtualizedList';
 
-export class TestVirtralLizedList extends React.PureComponent<
+export default class TestSameDirectionList extends React.PureComponent<
   {},
   { refreshing: boolean }
 > {
-  listData = ['0', 'p', 'v', 'b', '2', '3', '4', '5', '6', '7', '8'];
+  listData = ['0', '1'];
 
   constructor(prop: any) {
     super(prop);
@@ -18,34 +19,8 @@ export class TestVirtralLizedList extends React.PureComponent<
   }
 
   renderItem(info: ListRenderItemInfo<string>) {
-    if (info.item === 'v') {
-      return (
-        <VirtualizedList
-          horizontal
-          data={['11', 'p']}
-          renderItem={(innerInfo: ListRenderItemInfo<string>) => {
-            return <TestItem1 text={innerInfo.item} />;
-          }}
-          getItemCount={(data) => data.length}
-          getItem={(data, index) => data[index]}
-          keyExtractor={(item) => item}
-        />
-      );
-    }
-
-    if (info.item === 'b') {
-      return (
-        <VirtualizedList
-          horizontal
-          data={['21', '22']}
-          renderItem={(innerInfo: ListRenderItemInfo<string>) => {
-            return <TestItem1 text={innerInfo.item} />;
-          }}
-          getItemCount={(data) => data.length}
-          getItem={(data, index) => data[index]}
-          keyExtractor={(item) => item}
-        />
-      );
+    if (info.item === '1') {
+      return <TestVirtralLizedList />;
     }
 
     return <TestItem1 text={info.item} />;
@@ -55,7 +30,7 @@ export class TestVirtralLizedList extends React.PureComponent<
 
   componentDidMount() {
     setTimeout(() => {
-      // console.info(this.listRef.current?._frames);
+      console.info(this.listRef.current?._frames);
     }, 500);
   }
 

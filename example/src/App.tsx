@@ -15,6 +15,7 @@ import ScrollScreen from './screens/ScrollScreen';
 import { TestVirtralLizedList } from './screens/TestVirtualizedList';
 import TestFlatList from './screens/TestFlatList';
 import TestSectionList from './screens/TestSectionList';
+import TestSameDirectionList from './screens/TestSameDirectionList';
 import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
@@ -101,6 +102,10 @@ export default class App extends React.PureComponent {
           <Stack.Screen
             name={RouterName.SectionList as string}
             component={TestSectionList}
+          />
+          <Stack.Screen
+            name={RouterName.TestSameDirectionList as string}
+            component={TestSameDirectionList}
           />
         </Stack.Navigator>
       </NavigationContainer>
