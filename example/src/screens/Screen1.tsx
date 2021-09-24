@@ -40,9 +40,9 @@ export default class Screen1 extends PageAnalytics.Screen<
 
   componentDidMount() {
     // 添加pageView数据
-    this.syncSetPageViewProps();
-    // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
-    this.setPageExitProps({ trackId: String(100) });
+    // this.syncSetPageViewProps();
+    // // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
+    // this.setPageExitProps({ trackId: String(100) });
   }
 
   componentWillUnmount() {
@@ -72,16 +72,18 @@ export default class Screen1 extends PageAnalytics.Screen<
   };
 
   // 用户自定义的页面展示埋点上传方法
-  // customPageView = () => {
-  //   console.log(
-  //     `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-  //   );
-  // };
+  customPageView = () => {
+    console.log(
+      `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+    );
+  };
 
   // 用户自定义的页面离开埋点上传方法
-  // customPageExit = () => {
-  //   console.log(`发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageExitId}`);
-  // };
+  customPageExit = () => {
+    console.log(
+      `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageExitId}`
+    );
+  };
 
   render() {
     return (

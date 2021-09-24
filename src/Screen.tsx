@@ -49,10 +49,7 @@ export type PageExitDataGener = () => PageViewExitPropsType;
 
 export type PageTraceType = 'focus' | 'blur';
 
-export default abstract class Screen<P, S> extends React.Component<
-  P & Props,
-  S
-> {
+export default class Screen<P, S> extends React.Component<P & Props, S> {
   // focus事件订阅
   private focusSubs?: () => void;
 
@@ -89,28 +86,28 @@ export default abstract class Screen<P, S> extends React.Component<
   ]);
 
   // currPage
-  protected abstract currPage: string;
+  protected currPage?: string;
 
   // pageViewMetaId
-  protected abstract pageViewId: number;
+  protected pageViewId?: number;
 
   // pageExitMetaId
-  protected abstract pageExitId: number;
+  protected pageExitId?: number;
 
-  // pageview属性
-  private pageViewProps: AnalyticDataProps | null = null;
+  // // pageview属性
+  // private pageViewProps: AnalyticDataProps | null = null;
 
-  // pageExit属性
-  private pageExitProps: AnalyticDataProps | null = null;
+  // // pageExit属性
+  // private pageExitProps: AnalyticDataProps | null = null;
 
-  // 设置pageViewProps等待promise
-  private pageViewPropsPromise: Promise<any>;
+  // // 设置pageViewProps等待promise
+  // private pageViewPropsPromise: Promise<any>;
 
-  // 设置pageViewProps等待resolve
-  private pageViewPropsResolve?: (r: any) => void;
+  // // 设置pageViewProps等待resolve
+  // private pageViewPropsResolve?: (r: any) => void;
 
-  // 是否首次setPageViewProps
-  private hasSetPageViewProps: boolean = false;
+  // // 是否首次setPageViewProps
+  // private hasSetPageViewProps: boolean = false;
 
   // 当前已经出发的pageView和pageExit事件记录
   private pageTraceList: PageTraceType[] = [];
@@ -136,7 +133,7 @@ export default abstract class Screen<P, S> extends React.Component<
   protected customPageExit?: () => void;
 
   // 页面key
-  protected pageKey: string;
+  private pageKey: string;
 
   // // 全局currPage
   // protected static currentPage: string;
@@ -152,9 +149,9 @@ export default abstract class Screen<P, S> extends React.Component<
 
   constructor(p: P & Props) {
     super(p);
-    this.pageViewPropsPromise = new Promise((resolve) => {
-      this.pageViewPropsResolve = resolve;
-    });
+    // this.pageViewPropsPromise = new Promise((resolve) => {
+    //   this.pageViewPropsResolve = resolve;
+    // });
     this.pageKey = Date.now().toString();
     console.log('screen中添加监听');
     // this.pageShow();
@@ -164,6 +161,8 @@ export default abstract class Screen<P, S> extends React.Component<
     this.addPageListener();
     // 添加APPstate变化监听
     this.addAppStateListener();
+    //
+    this.delayCheckFirstPageView();
   }
 
   // 添加路由监听
@@ -332,8 +331,8 @@ export default abstract class Screen<P, S> extends React.Component<
     if (ScreenUtils.getIsFirstPageView()) {
       ScreenUtils.updateIsFirstPageView(false);
     }
-    await this.pageViewPropsPromise;
-    ScreenUtils.currPage = this.currPage;
+    // await this.pageViewPropsPromise;
+    // ScreenUtils.currPage = this.currPage;
     this.sendAnalyticAction('focus');
   };
 
@@ -349,17 +348,20 @@ export default abstract class Screen<P, S> extends React.Component<
 
   // 设置pageView埋点属性
   protected setPageViewProps = (props: AnalyticDataProps) => {
-    if (!this.hasSetPageViewProps) {
-      this.hasSetPageViewProps = true;
-      this.delayCheckFirstPageView();
-    }
-    this.pageViewProps = props;
-    this.pageViewPropsResolve && this.pageViewPropsResolve(null);
+    // if (!this.hasSetPageViewProps) {
+    //   this.hasSetPageViewProps = true;
+    //   this.delayCheckFirstPageView();
+    // }
+    // this.pageViewProps = props;
+    // this.pageViewPropsResolve && this.pageViewPropsResolve(null);
+    console.log(props);
+    this.delayCheckFirstPageView();
   };
 
   // 设置pageExit埋点属性
   protected setPageExitProps = (props: AnalyticDataProps) => {
-    this.pageExitProps = props;
+    // this.pageExitProps = props;
+    console.log(props);
   };
 
   // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
@@ -372,7 +374,7 @@ export default abstract class Screen<P, S> extends React.Component<
         this.pageShow();
         this.onFocus(PageViewExitEventSource.page);
       }
-    }, 500);
+    }, 1000);
   };
 
   // 检查能否发送pageView或者pageExit事件，这两个事件应该是成对出现，避免连续发送pageView或者pageExit事件，
@@ -387,14 +389,14 @@ export default abstract class Screen<P, S> extends React.Component<
 
   // 发送数据操作
   private sendAnalyticAction = (type: PageTraceType) => {
-    const sendActions = ScreenUtils.getSendAnalyticActions();
+    // const sendActions = ScreenUtils.getSendAnalyticActions();
 
-    if (!sendActions) {
-      console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
-      return;
-    }
+    // if (!sendActions) {
+    //   console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
+    //   return;
+    // }
 
-    const { pageView, pageExit } = sendActions;
+    // const { pageView, pageExit } = sendActions;
 
     if (!this.shouldSend(type)) {
       return;
@@ -406,19 +408,19 @@ export default abstract class Screen<P, S> extends React.Component<
         // console.log('customPageView 存在 执行');
         this.pageTraceList.push('focus');
         this.customPageView();
-        return;
+        // return;
       }
-      console.log(
-        `发送页面pageView埋点 页面名: ${ScreenUtils.currPage} pageViewId: ${
-          this.pageViewId
-        } props: ${this.pageViewProps} ${Date.now()}`
-      );
-      if (!pageView) {
-        return;
-      }
-      this.pageTraceList.push('focus');
-      pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
-      return;
+      // console.log(
+      //   `发送页面pageView埋点 页面名: ${ScreenUtils.currPage} pageViewId: ${
+      //     this.pageViewId
+      //   } props: ${this.pageViewProps} ${Date.now()}`
+      // );
+      // if (!pageView) {
+      //   return;
+      // }
+      // this.pageTraceList.push('focus');
+      // pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
+      // return;
     }
 
     if (type === 'blur') {
@@ -427,19 +429,19 @@ export default abstract class Screen<P, S> extends React.Component<
         // console.log('customPageExit 存在 执行');
         this.pageTraceList.push('blur');
         this.customPageExit();
-        return;
+        // return;
       }
-      console.log(
-        `发送页面pageExit埋点 页面名: ${ScreenUtils.currPage} pageExitId: ${
-          this.pageExitId
-        } props: ${this.pageExitProps} ${Date.now()}`
-      );
-      if (!pageExit) {
-        return;
-      }
-      this.pageTraceList.push('blur');
-      pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
-      return;
+      // console.log(
+      //   `发送页面pageExit埋点 页面名: ${ScreenUtils.currPage} pageExitId: ${
+      //     this.pageExitId
+      //   } props: ${this.pageExitProps} ${Date.now()}`
+      // );
+      // if (!pageExit) {
+      //   return;
+      // }
+      // this.pageTraceList.push('blur');
+      // pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
+      // return;
     }
   };
 
@@ -449,12 +451,14 @@ export default abstract class Screen<P, S> extends React.Component<
   // };
 
   componentWillUnmount() {
-    this.focusSubs && this.focusSubs();
-    this.blurSubs && this.blurSubs();
-    this.onResumeSubs && this.onResumeSubs.remove();
-    this.onPauseSubs && this.onPauseSubs.remove();
-    this.debounceTimer && clearTimeout(this.debounceTimer);
-    this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
-    AppState.removeEventListener('change', this.appStateChangeHandler);
+    try {
+      this.focusSubs && this.focusSubs();
+      this.blurSubs && this.blurSubs();
+      this.onResumeSubs && this.onResumeSubs.remove();
+      this.onPauseSubs && this.onPauseSubs.remove();
+      this.debounceTimer && clearTimeout(this.debounceTimer);
+      this.delayCheckTimer && clearTimeout(this.delayCheckTimer);
+      AppState.removeEventListener('change', this.appStateChangeHandler);
+    } catch (e) {}
   }
 }

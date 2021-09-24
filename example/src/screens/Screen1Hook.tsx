@@ -17,10 +17,26 @@ interface HomePageState {
 }
 
 export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
+  // 用户自定义的页面展示埋点上传方法
+  const customPageView = useCallback(() => {
+    console.log(
+      `发送页面pageView埋点 自定义 页面名: screen1Hook pageExitId: ${0}`
+    );
+  }, []);
+
+  // 用户自定义的页面离开埋点上传方法
+  const customPageExit = useCallback(() => {
+    console.log(
+      `发送页面pageExit埋点 自定义 页面名: screen1Hook pageExitId: ${0}`
+    );
+  }, []);
+
   const { setPageExitProps, setPageViewProps } = PageAnalytics.useScreen({
     pageViewId: 0,
     pageExitId: 0,
     currPage: 'screen1',
+    customPageView,
+    customPageExit,
     ...props,
   });
 
@@ -37,21 +53,9 @@ export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
 
   useEffect(() => {
     console.log('screen1Hook didmount');
-    syncSetPageViewProps();
+    // syncSetPageViewProps();
     return clearAction;
   }, [syncSetPageViewProps, clearAction]);
-
-  // 用户自定义的页面展示埋点上传方法
-  // customPageView = () => {
-  //   console.log(
-  //     `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-  //   );
-  // };
-
-  // 用户自定义的页面离开埋点上传方法
-  // customPageExit = () => {
-  //   console.log(`发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageExitId}`);
-  // };
 
   return (
     <Container>

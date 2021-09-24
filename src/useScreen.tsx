@@ -12,9 +12,9 @@ import {
 import ScreenUtils from './utils';
 
 interface ScreenHookProps {
-  pageViewId: number;
-  pageExitId: number;
-  currPage: string;
+  pageViewId?: number;
+  pageExitId?: number;
+  currPage?: string;
   customPageView?: () => void;
   customPageExit?: () => void;
   [index: string]: any;
@@ -28,8 +28,8 @@ interface UseScreenReturnType {
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   const {
-    pageViewId,
-    pageExitId,
+    // pageViewId,
+    // pageExitId,
     currPage,
     customPageView,
     customPageExit,
@@ -57,24 +57,24 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // onPause事件订阅
   let onPauseSubsRef = useRef<EmitterSubscription | null>(null);
 
-  // pageview属性
-  let pageViewPropsRef = useRef<AnalyticDataProps | null>(null);
+  // // pageview属性
+  // let pageViewPropsRef = useRef<AnalyticDataProps | null>(null);
 
-  // pageExit属性
-  let pageExitPropsRef = useRef<AnalyticDataProps | null>(null);
+  // // pageExit属性
+  // let pageExitPropsRef = useRef<AnalyticDataProps | null>(null);
 
-  // 设置pageViewProps等待resolve
-  let pageViewPropsResolveRef = useRef<((r: any) => void) | null>(null);
+  // // 设置pageViewProps等待resolve
+  // let pageViewPropsResolveRef = useRef<((r: any) => void) | null>(null);
 
-  // 设置pageViewProps等待promise
-  let pageViewPropsPromiseRef = useRef<Promise<any> | null>(
-    new Promise((resolve) => {
-      pageViewPropsResolveRef.current = resolve;
-    })
-  );
+  // // 设置pageViewProps等待promise
+  // let pageViewPropsPromiseRef = useRef<Promise<any> | null>(
+  //   new Promise((resolve) => {
+  //     pageViewPropsResolveRef.current = resolve;
+  //   })
+  // );
 
-  // 是否首次setPageViewProps
-  let hasSetPageViewPropsRef = useRef<boolean>(false);
+  // // 是否首次setPageViewProps
+  // let hasSetPageViewPropsRef = useRef<boolean>(false);
 
   // 当前已经出发的pageView和pageExit事件记录
   let pageTraceListRef = useRef<PageTraceType[]>([]);
@@ -130,13 +130,13 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 发送数据操作
   let sendAnalyticAction = useCallback(
     (type: PageTraceType) => {
-      const sendActions = ScreenUtils.getSendAnalyticActions();
-      if (!sendActions) {
-        console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
-        return;
-      }
+      // const sendActions = ScreenUtils.getSendAnalyticActions();
+      // if (!sendActions) {
+      //   console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
+      //   return;
+      // }
 
-      const { pageView, pageExit } = sendActions;
+      // const { pageView, pageExit } = sendActions;
 
       if (!shouldSend(type)) {
         return;
@@ -148,46 +148,46 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
           // console.log('customPageView 存在 执行');
           pageTraceListRef.current.push('focus');
           customPageView();
-          return;
+          // return;
         }
-        console.log(
-          `发送页面pageView埋点 页面名: ${currPage} pageViewId: ${pageViewId} props: ${
-            pageViewPropsRef.current
-          } ${Date.now()}`
-        );
-        if (!pageView) {
-          return;
-        }
-        pageTraceListRef.current.push('focus');
-        pageView(pageViewId, currPage, pageViewPropsRef.current || {});
-        return;
+        // console.log(
+        //   `发送页面pageView埋点 页面名: ${currPage} pageViewId: ${pageViewId} props: ${
+        //     pageViewPropsRef.current
+        //   } ${Date.now()}`
+        // );
+        // if (!pageView) {
+        //   return;
+        // }
+        // pageTraceListRef.current.push('focus');
+        // pageView(pageViewId, currPage, pageViewPropsRef.current || {});
+        // return;
       }
 
       if (type === 'blur') {
-        // console.log('sendAnalyticAction blur');
+        console.log('sendAnalyticAction blur');
         if (customPageExit) {
           // console.log('customPageExit 存在 执行');
           pageTraceListRef.current.push('blur');
           customPageExit();
-          return;
+          // return;
         }
-        console.log(
-          `发送页面pageExit埋点 页面名: ${currPage} pageExitId: ${pageExitId} props: ${
-            pageExitPropsRef.current
-          } ${Date.now()}`
-        );
-        if (!pageExit) {
-          return;
-        }
-        pageTraceListRef.current.push('blur');
-        pageExit(pageExitId, currPage, pageExitPropsRef.current || {});
-        return;
+        // console.log(
+        //   `发送页面pageExit埋点 页面名: ${currPage} pageExitId: ${pageExitId} props: ${
+        //     pageExitPropsRef.current
+        //   } ${Date.now()}`
+        // );
+        // if (!pageExit) {
+        //   return;
+        // }
+        // pageTraceListRef.current.push('blur');
+        // pageExit(pageExitId, currPage, pageExitPropsRef.current || {});
+        // return;
       }
     },
     [
-      currPage,
-      pageViewId,
-      pageExitId,
+      // currPage,
+      // pageViewId,
+      // pageExitId,
       customPageView,
       customPageExit,
       shouldSend,
@@ -212,12 +212,14 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       if (ScreenUtils.getIsFirstPageView()) {
         ScreenUtils.updateIsFirstPageView(false);
       }
-      await pageViewPropsPromiseRef.current;
-      // Screen.currentPage = currPage;
-      ScreenUtils.currPage = currPage;
+      // await pageViewPropsPromiseRef.current;
+      // ScreenUtils.currPage = currPage;
       sendAnalyticAction('focus');
     },
-    [currPage, sendAnalyticAction]
+    [
+      // currPage,
+      sendAnalyticAction,
+    ]
   );
 
   // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
@@ -236,12 +238,14 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 设置pageView埋点属性
   let setPageViewProps = useCallback<UpdatePagePropsFunc>(
     (prop: AnalyticDataProps) => {
-      if (!hasSetPageViewPropsRef.current) {
-        hasSetPageViewPropsRef.current = true;
-        delayCheckFirstPageView();
-      }
-      pageViewPropsRef.current = prop;
-      pageViewPropsResolveRef.current && pageViewPropsResolveRef.current(null);
+      // if (!hasSetPageViewPropsRef.current) {
+      //   hasSetPageViewPropsRef.current = true;
+      //   delayCheckFirstPageView();
+      // }
+      // pageViewPropsRef.current = prop;
+      // pageViewPropsResolveRef.current && pageViewPropsResolveRef.current(null);
+      console.log(prop);
+      delayCheckFirstPageView();
     },
     [delayCheckFirstPageView]
   );
@@ -249,7 +253,8 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 设置pageExit埋点属性
   let setPageExitProps = useCallback<UpdatePagePropsFunc>(
     (prop: AnalyticDataProps) => {
-      pageExitPropsRef.current = prop;
+      // pageExitPropsRef.current = prop;
+      console.log(prop);
     },
     []
   );
@@ -424,19 +429,22 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 移除监听
   let removeListeners = useCallback(() => {
-    focusSubsRef.current && focusSubsRef.current();
-    blurSubsRef.current && blurSubsRef.current();
-    onResumeSubsRef.current && onResumeSubsRef.current.remove();
-    onPauseSubsRef.current && onPauseSubsRef.current.remove();
-    debounceTimerRef.current && clearTimeout(debounceTimerRef.current);
-    delayCheckTimerRef.current && clearTimeout(delayCheckTimerRef.current);
-    AppState.removeEventListener('change', appStateChangeHandler);
+    try {
+      focusSubsRef.current && focusSubsRef.current();
+      blurSubsRef.current && blurSubsRef.current();
+      onResumeSubsRef.current && onResumeSubsRef.current.remove();
+      onPauseSubsRef.current && onPauseSubsRef.current.remove();
+      debounceTimerRef.current && clearTimeout(debounceTimerRef.current);
+      delayCheckTimerRef.current && clearTimeout(delayCheckTimerRef.current);
+      AppState.removeEventListener('change', appStateChangeHandler);
+    } catch (e) {}
   }, [appStateChangeHandler]);
 
   useEffect(() => {
     pageKeyRef.current = Date.now().toString();
     // pageShow();
     addListeners();
+    delayCheckFirstPageView();
     return removeListeners;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

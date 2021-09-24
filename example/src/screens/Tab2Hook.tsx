@@ -89,12 +89,12 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   // }
 
   useEffect(() => {
-    Utils.delay(500).then(() => {
-      setPageViewProps({
-        customData: 'customData',
-      });
-      setPageExitProps({ trackId: String(100) });
-    });
+    // Utils.delay(500).then(() => {
+    //   setPageViewProps({
+    //     customData: 'customData',
+    //   });
+    //   setPageExitProps({ trackId: String(100) });
+    // });
     // timer.current = setTimeout(() => {
     //   setCount(count + 1);
     // }, 1000);
