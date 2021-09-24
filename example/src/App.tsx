@@ -5,17 +5,19 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import RouterName from './router';
 import HomeTab from './screens/HomeTab';
-import Tab1 from './screens/Tab1';
-import Tab2 from './screens/Tab2';
 import Tab2Hook from './screens/Tab2Hook';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
-import ListScreen from './screens/ListScreen';
 import ScrollScreen from './screens/ScrollScreen';
 import { TestVirtralLizedList } from './screens/TestVirtualizedList';
 import TestFlatList from './screens/TestFlatList';
 import TestSectionList from './screens/TestSectionList';
 import TestSameDirectionList from './screens/TestSameDirectionList';
+// import Tab1 from './screens/Tab1';
+// import Tab2 from './screens/Tab2';
+// import Screen1 from './screens/Screen1';
+// import Screen2 from './screens/Screen2';
+// import LazyLoad from './screens/LazyLoad';
 import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
