@@ -29,7 +29,16 @@ export default class Tab1 extends PageAnalytics.Screen<
   }
 
   state: HomePageState = {
-    list: [RouterName.SCREEN1, RouterName.SCREEN2, RouterName.NativeScreen],
+    list: [
+      RouterName.SCREEN1,
+      RouterName.SCREEN2,
+      RouterName.NativeScreen,
+      RouterName.ScrollScreen,
+      RouterName.VirtualizedList,
+      RouterName.FlatList,
+      RouterName.SectionList,
+      RouterName.TestSameDirectionList,
+    ],
   };
 
   componentDidMount() {

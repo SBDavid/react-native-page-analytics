@@ -121,9 +121,6 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   return (
     <Container>
       <Content title="Tab2" />
-      <View style={{ height: 200 }}>
-        <ListScreen {...props} />
-      </View>
       <ScrollView>
         {list.current.map((item, index) => {
           return (
