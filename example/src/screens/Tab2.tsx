@@ -82,11 +82,6 @@ export default class Tab2 extends PageAnalytics.Screen<
     return (
       <Container>
         <Content title="Tab2" />
-        {this.state.showList ? (
-          <View style={{ height: 200 }}>
-            <ListScreen {...this.props} />
-          </View>
-        ) : null}
 
         <ScrollView>
           {this.state.list.map((item, index) => {

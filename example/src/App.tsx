@@ -11,6 +11,7 @@ import Tab2Hook from './screens/Tab2Hook';
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
 import ListScreen from './screens/ListScreen';
+import ScrollScreen from './screens/ScrollScreen';
 import LazyLoad from 'react-navigation-lazy-screen';
 
 const Stack = createStackNavigator();
@@ -62,6 +63,10 @@ export default class App extends React.PureComponent {
       <NavigationContainer>
         <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
           <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
+          <Stack.Screen
+            name={RouterName.ScrollScreen as string}
+            component={ScrollScreen}
+          />
 
           {/* 懒加载页面 */}
           {/* <Stack.Screen

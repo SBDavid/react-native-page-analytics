@@ -6,18 +6,16 @@ import {
   NativeModules,
   NativeEventEmitter,
   Platform,
-  TouchableHighlight,
-  View,
-  Text,
 } from 'react-native';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { useNavigation, NavigationContext } from '@react-navigation/native';
 import {
   PageEventEmitter,
   isIos,
   CustomAppState,
   PageViewExitEventSource,
   Props,
+  CustomNavigationState,
+  CustomPageState,
 } from './Screen';
 import ScrollAnalytics, {
   Props as ScrollProps,
@@ -69,6 +67,12 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 当前页面维护的APPstate数组
   private appStateList: CustomAppState[] = [];
 
+  // 当前navigation变化的状态记录
+  private navigationState: CustomNavigationState | null = null;
+
+  // 当前page变化的状态记录
+  private pageState: CustomPageState | null = null;
+
   // debounce时长
   private readonly debounceDuration: number = 1500;
 
@@ -91,11 +95,18 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 页面生命周期信息
   private lifeCycleHasExposedType: ExposeType | null = null;
 
-  // 返回页面时判断出的exposeType，6或者7
+  // 返回页面时判断出的临时变量exposeType，6或者7，在onShow事件中使用
   private tmpFocusExposeType: ExposeType | null = null;
 
   // 组件的ref
   private contentRef: React.RefObject<ScrollAnalytics>;
+
+  // 延时检查是否收到onShow事件，在调用manuallyShow事件后，100ms后会触发onShow事件，如果超过100ms未收到onShow事件
+  // 说明此元素被隐藏，不用触发onShow事件，清空记录的临时 从后台页面回来/其他页面回来的 变量
+  private checkOnShowTimer: ReturnType<typeof setTimeout> | null = null;
+
+  //
+  private readonly checkDelayDuration: number = 150;
 
   constructor(p: P & Props & ScrollProps) {
     super(p);
@@ -225,10 +236,10 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
     if (currentAppState === CustomAppState.active) {
       console.log(`appstate变化，active ${Date.now()}`);
-      this.onFocus(PageViewExitEventSource.appState);
+      this.onFocus(PageViewExitEventSource.appState, formerAppState);
     } else {
       console.log(`appstate变化，background ${Date.now()}`);
-      this.onBlur();
+      this.onBlur(PageViewExitEventSource.appState);
     }
   };
 
@@ -238,15 +249,8 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       return;
     }
     console.log(`onResume事件：`);
-    if (isAndroid) {
-      if (this.androidOnBackground) {
-        // TODO 从后台切换回来，曝光type 6
-      } else {
-        // TODO 从Native页面切换回来，曝光type 7
-      }
-    }
-    this.androidOnBackground = false;
     this.onFocus(PageViewExitEventSource.page);
+    this.androidOnBackground = false;
   };
 
   // 页面与native页面相互跳转的处理
@@ -255,7 +259,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       return;
     }
     console.log(`onPause事件：`);
-    this.onBlur();
+    this.onBlur(PageViewExitEventSource.page);
   };
 
   // navigationOnFocus事件
@@ -267,28 +271,39 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // navigationOnBlur事件
   private onNavigationBlur = () => {
     console.log(`onNavigationBlur事件：`);
-    this.onBlur();
+    this.onBlur(PageViewExitEventSource.navigation);
   };
 
   // 处理从后台切换回来
   // private
 
   // 页面显示操作
-  private onFocus = async (source: PageViewExitEventSource) => {
+  private onFocus = async (
+    source: PageViewExitEventSource,
+    formerAppState?: CustomAppState
+  ) => {
     if (isIos) {
       if (source === PageViewExitEventSource.navigation) {
-        // 曝光type为6，从其他页面返回, // TODO手动通知
-        this.tmpFocusExposeType = ExposeType.fromPage;
+        // 曝光type为6，从其他页面返回, 手动通知
+        if (this.navigationState === CustomNavigationState.blur) {
+          this.tmpFocusExposeType = ExposeType.fromPage;
+        }
+        this.navigationState === CustomNavigationState.focus;
         this.refreshLifeCycle();
         this.notifyBack();
       } else if (source === PageViewExitEventSource.page) {
-        // 曝光type为6，从其他页面返回, // TODO手动通知
-        this.tmpFocusExposeType = ExposeType.fromPage;
+        // 曝光type为6，从其他页面返回, 手动通知
+        if (this.pageState === CustomPageState.pause) {
+          this.tmpFocusExposeType = ExposeType.fromPage;
+        }
+        this.pageState = CustomPageState.resume;
         this.refreshLifeCycle();
         this.notifyBack();
       } else if (source === PageViewExitEventSource.appState) {
-        // 曝光type为7，从后台返回, // TODO手动通知
-        this.tmpFocusExposeType = ExposeType.fromBackground;
+        // 曝光type为7，从后台返回, 手动通知
+        if (formerAppState === CustomAppState.background) {
+          this.tmpFocusExposeType = ExposeType.fromBackground;
+        }
         this.refreshLifeCycle();
         this.notifyBack();
       }
@@ -296,8 +311,11 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
     if (isAndroid) {
       if (source === PageViewExitEventSource.navigation) {
-        // 曝光type为6，从其他页面返回, // TODO手动通知
-        this.tmpFocusExposeType = ExposeType.fromPage;
+        // 曝光type为6，从其他页面返回, 手动通知
+        if (this.navigationState === CustomNavigationState.blur) {
+          this.tmpFocusExposeType = ExposeType.fromPage;
+        }
+        this.navigationState = CustomNavigationState.focus;
         this.refreshLifeCycle();
         this.notifyBack();
       } else if (
@@ -305,13 +323,19 @@ class ScrollAnalyticContent<P, S> extends React.Component<
         source === PageViewExitEventSource.appState
       ) {
         if (this.androidOnBackground) {
-          // 曝光type为7，从后台返回, // TODO手动通知
+          // 曝光type为7，从后台返回, 手动通知
+          this.pageState = CustomPageState.resume;
+          console.log('androidOnBackground frombackground');
           this.tmpFocusExposeType = ExposeType.fromBackground;
           this.refreshLifeCycle();
           this.notifyBack();
         } else {
-          // 曝光type为6，从其他页面返回, // TODO手动通知
-          this.tmpFocusExposeType = ExposeType.fromPage;
+          // 曝光type为6，从其他页面返回, 手动通知
+          if (this.pageState === CustomPageState.pause) {
+            console.log('androidOnBackground frompage');
+            this.tmpFocusExposeType = ExposeType.fromPage;
+          }
+          this.pageState = CustomPageState.resume;
           this.refreshLifeCycle();
           this.notifyBack();
         }
@@ -320,7 +344,14 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   };
 
   // 页面离开操作
-  private onBlur = () => {
+  private onBlur = (source: PageViewExitEventSource) => {
+    if (source === PageViewExitEventSource.navigation) {
+      this.navigationState = CustomNavigationState.blur;
+    } else if (source === PageViewExitEventSource.page) {
+      this.pageState = CustomPageState.pause;
+    } else if (source === PageViewExitEventSource.appState) {
+      //
+    }
     this.notifyLeave();
   };
 
@@ -329,6 +360,11 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     //
     console.log('执行manuallyShow');
     this.contentRef.current?.manuallyShow();
+
+    this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
+    this.checkOnShowTimer = setTimeout(() => {
+      this.tmpFocusExposeType = null;
+    }, this.checkDelayDuration);
   };
 
   // 手动通知离开页面
@@ -339,11 +375,13 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   };
 
   // 发送滑动曝光
-  private exposeHandler = (type: ExposeType) => {
+  private exposeHandler = (type: ExposeType, e: ShowEvent) => {
     console.log(`曝光类型：${type}`);
+    this.props.onShow && this.props.onShow(e);
+    console.log('    ');
   };
 
-  private updateHasExposedType = (value: ExposeType | null): void => {
+  private updateHasExposedType = (value: ExposeType): void => {
     this.lifeCycleHasExposedType = value;
   };
 
@@ -352,7 +390,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   };
 
   private shouldExposeScroll = (): boolean => {
-    // 一次生命周期内仅上报一次type为3/4的滑动曝光，如果已经曝光过，不再重复曝光
+    // 一次生命周期内仅上报一次type(任何一种type类型)，如果已经曝光过，不再重复曝光
     return this.lifeCycleHasExposedType === null;
   };
 
@@ -365,8 +403,11 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 一个页面生命周期内，滑动曝光(type为 3 或 4)仅上报一次，离开页面后本次页面生命周期结束，返回页面开始一个新的页面生命周期
   // 在页面的上下左右滑动过程中，type=4事件 可能会多次触发，在一个生命周期内只上报一次
   private onShow = (e: ShowEvent) => {
+    console.log(`onshow ${e.hasInteracted} ${e.hasViewed}`);
     if (!e.hasInteracted) {
-      this.exposeHandler(ExposeType.coldBoot);
+      const exposeType = ExposeType.coldBoot;
+      this.updateHasExposedType(exposeType);
+      this.exposeHandler(exposeType, e);
       return;
     }
 
@@ -377,7 +418,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       // type为 3
       const exposeType = ExposeType.newContent;
       this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType);
+      this.exposeHandler(exposeType, e);
       return;
     }
 
@@ -387,7 +428,8 @@ class ScrollAnalyticContent<P, S> extends React.Component<
         // type为 6或7
         const exposeType = this.tmpFocusExposeType;
         this.tmpFocusExposeType = null;
-        this.exposeHandler(exposeType);
+        this.updateHasExposedType(exposeType);
+        this.exposeHandler(exposeType, e);
         return;
       }
       if (!this.shouldExposeScroll()) {
@@ -396,12 +438,19 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       // type为 4
       const exposeType = ExposeType.hasExposed;
       this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType);
+      this.exposeHandler(exposeType, e);
       return;
     }
   };
 
-  private onHide = () => {};
+  private onHide = () => {
+    console.log('hide');
+  };
+
+  private onRefreshed = () => {
+    console.log('onRefreshed');
+    this.refreshLifeCycle();
+  };
 
   render() {
     return (
@@ -411,6 +460,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
           {...this.props}
           onShow={this.onShow}
           onHide={this.onHide}
+          onRefreshed={this.onRefreshed}
         />
       </>
     );
@@ -423,6 +473,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     this.onPauseSubs && this.onPauseSubs.remove();
     this.androidOnBackgroundSubs && this.androidOnBackgroundSubs.remove();
     this.debounceTimer && clearTimeout(this.debounceTimer);
+    this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
     AppState.removeEventListener('change', this.appStateChangeHandler);
   }
 }
@@ -437,31 +488,6 @@ function ScrollAnalyticsWithNavitaion(
     return <ScrollAnalyticContent navigation={navigation} {...props} />;
   } else {
     return <ScrollAnalyticContent {...props} />;
-  }
-}
-
-export function TestUseNavigation2(props: {
-  title: string;
-  useNavigation?: UseNaviType;
-}) {
-  if (props.useNavigation) {
-    const navigation = props.useNavigation();
-    console.log(`testUseNavigation2OuterProject print ${navigation}`);
-    return (
-      <TouchableHighlight onPress={() => navigation.navigate('screen2')}>
-        <View>
-          <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
-        </View>
-      </TouchableHighlight>
-    );
-  } else {
-    return (
-      <TouchableHighlight onPress={() => console.log('没有路由')}>
-        <View>
-          <Text style={{ fontSize: 25, color: 'red' }}>{props.title}</Text>
-        </View>
-      </TouchableHighlight>
-    );
   }
 }
 

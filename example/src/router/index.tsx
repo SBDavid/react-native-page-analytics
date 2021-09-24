@@ -6,6 +6,7 @@ enum RouterName {
   TAB2 = 'tab2',
   TAB3 = 'tab3',
   NativeScreen = 'native_screen',
+  ScrollScreen = 'scroll_screen',
 }
 
 export default RouterName;

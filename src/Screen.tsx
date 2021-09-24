@@ -26,6 +26,16 @@ export enum CustomAppState {
   background = 'background',
 }
 
+export enum CustomNavigationState {
+  focus = 'focus',
+  blur = 'blur',
+}
+
+export enum CustomPageState {
+  pause = 'pause',
+  resume = 'resume',
+}
+
 // 触发onFocus, onBlur动作的事件来源，分为 Page状态变化、APPstate状态变化、navigation状态变化三种
 export enum PageViewExitEventSource {
   page = 'page',
