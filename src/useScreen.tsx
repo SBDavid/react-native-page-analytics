@@ -15,8 +15,8 @@ interface ScreenHookProps {
   pageViewId?: number;
   pageExitId?: number;
   currPage?: string;
-  customPageView?: () => void;
-  customPageExit?: () => void;
+  customPageView: () => void;
+  customPageExit: () => void;
   [index: string]: any;
 }
 
