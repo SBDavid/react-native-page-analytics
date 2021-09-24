@@ -76,7 +76,10 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
     (item: RouterName) => {
       if (item === RouterName.NativeScreen) {
         // 跳转到账号绑定页
-        NativeModules.Page.start('iting://open?msg_type=84');
+        // NativeModules.Page.start('iting://open?msg_type=84');
+        NativeModules.Page.start(
+          'iting://open?msg_type=14&url=https://www.baidu.com'
+        );
       } else {
         props?.navigation?.navigate(item);
       }

@@ -33,6 +33,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   };
 
   componentDidMount() {
+    this.setPageViewProps;
     // // 添加pageView数据
     // this.syncSetPageViewProps();
     // // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
@@ -76,7 +77,10 @@ export default class Tab1 extends PageAnalytics.Screen<
   handlePress = (item: RouterName) => {
     if (item === RouterName.NativeScreen) {
       // 跳转到账号绑定页
-      NativeModules.Page.start('iting://open?msg_type=84');
+      // NativeModules.Page.start('iting://open?msg_type=84');
+      NativeModules.Page.start(
+        'iting://open?msg_type=14&url=https://www.baidu.com'
+      );
     } else {
       this.props?.navigation?.navigate(item);
     }
