@@ -67,8 +67,8 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps, Curren
 
 | 属性             | 类型        | 可选     | 含义               |
 | :---            | :---        | :---    | :---              |
-| customPageView  | () => void  |   是    | 页面展示埋点方法 |
-| customPageExit  | () => void  |   是    | 自定义页面隐藏埋点方法 |
+| customPageView  | () => void  |   否    | 页面展示埋点方法 |
+| customPageExit  | () => void  |   否    | 自定义页面隐藏埋点方法 |
 
 
 <br />
