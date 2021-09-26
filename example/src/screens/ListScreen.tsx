@@ -75,17 +75,19 @@ export default class ListScreen extends React.Component<
     return (
       <PageAnalytics.ScrollAnalyticComp
         key={index}
-        {...this.props}
-        onShow={(e: ScrollShowEvent) => {
-          console.log(`show index -- ${item} ${index + 1}`);
+        onShow={(exposeType: number) => {
+          console.log(
+            `onShow  ${item}  index:${index + 1}  type: ${exposeType}`
+          );
         }}
         onHide={() => {
-          console.log(`hide index -- ${item} ${index + 1}`);
+          console.log(`onHide  ${item}  index:${index + 1}`);
         }}
         onRefreshed={() => {
-          console.log(`refresh-- ${index + 1}`);
+          console.log(`onRefreshed  ${item}  index:${index + 1}`);
         }}
         useNavigation={useNavigation}
+        {...this.props}
       >
         <TouchableHighlight onPress={this.pressHandler}>
           <View

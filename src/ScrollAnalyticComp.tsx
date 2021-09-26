@@ -18,9 +18,15 @@ import {
   CustomPageState,
 } from './Screen';
 import ScrollAnalytics, {
-  Props as ScrollProps,
+  // Props as ScrollProps,
   ShowEvent,
 } from './ScrollAnalytic';
+
+interface ScrollProps {
+  onShow: (type: number) => void;
+  onHide?: () => void;
+  onRefreshed?: () => void;
+}
 
 export enum ExposeType {
   // 冷启动
@@ -375,10 +381,8 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   };
 
   // 发送滑动曝光
-  private exposeHandler = (type: ExposeType, e: ShowEvent) => {
-    console.log(`曝光类型：${type}`);
-    this.props.onShow && this.props.onShow(e);
-    console.log('    ');
+  private exposeHandler = (type: ExposeType) => {
+    this.props.onShow(type);
   };
 
   private updateHasExposedType = (value: ExposeType): void => {
@@ -405,9 +409,10 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private onShow = (e: ShowEvent) => {
     console.log(`onshow ${e.hasInteracted} ${e.hasViewed}`);
     if (!e.hasInteracted) {
+      // type为 0
       const exposeType = ExposeType.coldBoot;
       this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType, e);
+      this.exposeHandler(exposeType);
       return;
     }
 
@@ -418,7 +423,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       // type为 3
       const exposeType = ExposeType.newContent;
       this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType, e);
+      this.exposeHandler(exposeType);
       return;
     }
 
@@ -429,7 +434,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
         const exposeType = this.tmpFocusExposeType;
         this.tmpFocusExposeType = null;
         this.updateHasExposedType(exposeType);
-        this.exposeHandler(exposeType, e);
+        this.exposeHandler(exposeType);
         return;
       }
       if (!this.shouldExposeScroll()) {
@@ -438,18 +443,18 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       // type为 4
       const exposeType = ExposeType.hasExposed;
       this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType, e);
+      this.exposeHandler(exposeType);
       return;
     }
   };
 
   private onHide = () => {
-    console.log('hide');
+    this.props.onHide && this.props.onHide();
   };
 
   private onRefreshed = () => {
-    console.log('onRefreshed');
     this.refreshLifeCycle();
+    this.props.onRefreshed && this.props.onRefreshed();
   };
 
   render() {
