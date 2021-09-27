@@ -96,7 +96,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         // 滑动距离
         const scrollOffset = currentList._scrollMetrics.offset;
         // 距离0位置的布局偏移
-        let layoutOffset = currentList._getFrameMetrics(currentCellIndex).offset;
+        let layoutOffset =
+          currentList._getFrameMetrics(currentCellIndex).offset;
 
         // 计算累计的偏移距离
         if (isHorizontal && prevHorizontal !== isHorizontal) {
