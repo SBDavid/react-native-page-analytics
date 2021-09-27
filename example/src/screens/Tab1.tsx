@@ -1,17 +1,11 @@
 import React from 'react';
 import PageAnalytics, { AnalyticProps } from '../../../src';
-import {
-  ScrollView,
-  TouchableHighlight,
-  NativeModules,
-  View,
-} from 'react-native';
+import { ScrollView, TouchableHighlight, NativeModules } from 'react-native';
 
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
-import ListScreen from './ListScreen';
 
 interface HomePageProps {}
 
@@ -23,12 +17,12 @@ export default class Tab1 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
 > {
-  //
-  pageViewId: number = 0;
-  //
-  pageExitId: number = 0;
-  //
-  currPage: string = 'tab1';
+  // //
+  // pageViewId: number = 0;
+  // //
+  // pageExitId: number = 0;
+  // //
+  // currPage: string = 'tab1';
 
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
@@ -48,10 +42,11 @@ export default class Tab1 extends PageAnalytics.Screen<
   };
 
   componentDidMount() {
-    // 添加pageView数据
-    this.syncSetPageViewProps();
-    // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
-    this.setPageExitProps({ trackId: String(100) });
+    this.setPageViewProps;
+    // // 添加pageView数据
+    // this.syncSetPageViewProps();
+    // // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
+    // this.setPageExitProps({ trackId: String(100) });
   }
 
   componentWillUnmount() {
@@ -60,18 +55,18 @@ export default class Tab1 extends PageAnalytics.Screen<
   }
 
   // 用户自定义的页面展示埋点上传方法
-  // customPageView = () => {
-  //   console.log(
-  //     `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-  //   );
-  // };
+  customPageView = () => {
+    console.log(
+      `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+    );
+  };
 
   // 用户自定义的页面离开埋点上传方法
-  // customPageExit = () => {
-  //   console.log(
-  //     `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-  //   );
-  // };
+  customPageExit = () => {
+    console.log(
+      `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+    );
+  };
 
   // 同步设置pageViewProps
   syncSetPageViewProps = () => {
@@ -104,9 +99,7 @@ export default class Tab1 extends PageAnalytics.Screen<
     return (
       <Container>
         <Content title="Tab1" />
-        {/* <View style={{ height: 200 }}>
-          <ListScreen {...this.props} />
-        </View> */}
+
         <ScrollView>
           {this.state.list.map((item, index) => {
             return (

@@ -91,9 +91,9 @@ export default class HomeTab extends React.Component<HomeTabProps> {
         tabBar={(props) => <TabButton {...props} />}
       >
         {/* 懒加载页面 */}
-        <Tab.Screen name={RouterName.TAB1} component={Tab1} />
-        <Tab.Screen name={RouterName.TAB2} component={Tab2} />
-        <Tab.Screen name={RouterName.TAB3} component={Tab3} />
+        <Tab.Screen name={RouterName.TAB1} component={LazyTab1} />
+        <Tab.Screen name={RouterName.TAB2} component={LazyTab2} />
+        <Tab.Screen name={RouterName.TAB3} component={LazyTab3} />
 
         {/* 非懒加载页面 */}
         {/* <Tab.Screen name={RouterName.TAB1} component={Tab1} />

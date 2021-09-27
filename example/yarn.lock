@@ -4065,9 +4065,15 @@ react-native-screens@2.10.1:
   resolved "https://registry.nlark.com/react-native-screens/download/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
   integrity sha1-BtIvrofvDOUcYWw0oZlybbFAO5U=
 
+<<<<<<< HEAD
 "react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63.3":
   version "0.63.2"
   resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#594bbaa48157ce8241e7326326d5973c871d15a5"
+=======
+"react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63.2":
+  version "0.63.2"
+  resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#dac5608589e20c8741d460e1732959ecd17795ac"
+>>>>>>> 74e851334313e0fd5a40e39ff943216668620735
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@react-native-community/cli-platform-android" "^4.7.0"

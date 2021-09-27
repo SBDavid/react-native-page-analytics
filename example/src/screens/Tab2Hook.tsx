@@ -78,7 +78,10 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
     (item: RouterName) => {
       if (item === RouterName.NativeScreen) {
         // 跳转到账号绑定页
-        NativeModules.Page.start('iting://open?msg_type=84');
+        // NativeModules.Page.start('iting://open?msg_type=84');
+        NativeModules.Page.start(
+          'iting://open?msg_type=14&url=https://www.baidu.com'
+        );
       } else {
         props?.navigation?.navigate(item);
       }
@@ -91,12 +94,12 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   // }
 
   useEffect(() => {
-    Utils.delay(500).then(() => {
-      setPageViewProps({
-        customData: 'customData',
-      });
-      setPageExitProps({ trackId: String(100) });
-    });
+    // Utils.delay(500).then(() => {
+    //   setPageViewProps({
+    //     customData: 'customData',
+    //   });
+    //   setPageExitProps({ trackId: String(100) });
+    // });
     // timer.current = setTimeout(() => {
     //   setCount(count + 1);
     // }, 1000);
@@ -118,9 +121,6 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   return (
     <Container>
       <Content title="Tab2" />
-      <View style={{ height: 200 }}>
-        <ListScreen {...props} />
-      </View>
       <ScrollView>
         {list.current.map((item, index) => {
           return (
