@@ -1,13 +1,13 @@
 import * as React from 'react';
-import TestItem1 from './TestItem';
+import TestItem1 from './TestItem2';
 import { VirtualizedList, ListRenderItemInfo } from 'react-native';
-import { TestVirtralLizedList } from './TestVirtualizedList';
+import { TestVirtralLizedList } from './TestVirtualizedList2';
 
 export default class TestSameDirectionList extends React.PureComponent<
   {},
   { refreshing: boolean }
 > {
-  listData = ['0', '1'];
+  listData = ['1'];
 
   constructor(prop: any) {
     super(prop);
@@ -30,7 +30,7 @@ export default class TestSameDirectionList extends React.PureComponent<
 
   componentDidMount() {
     setTimeout(() => {
-      console.info(this.listRef.current?._frames);
+      // console.info(this.listRef.current?._frames);
     }, 500);
   }
 

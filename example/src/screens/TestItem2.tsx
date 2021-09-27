@@ -27,6 +27,7 @@ export default class TestItem1 extends React.PureComponent<
           console.info(this.props.text, '隐藏');
           this.setState({ isViewable: false });
         }}
+        debugTitle={this.props.text}
         // disable
       >
         <View style={{ height: 200, width: 300, opacity: 1 }}>
