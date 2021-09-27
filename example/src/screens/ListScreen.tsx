@@ -147,6 +147,7 @@ export default class ListScreen extends React.Component<
               justifyContent: 'center',
               alignItems: 'center',
             }}
+            key={item}
           >
             <Button
               title={item.toString()}
