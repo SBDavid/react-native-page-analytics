@@ -98,16 +98,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       let layoutOffset = currentList._getFrameMetrics(currentCellIndex).offset;
 
       // 计算累计的偏移距离
-      // if (isHorizontal) {
-      //   offsetX =
-      //     offsetX -
-      //     (prevHorizontal !== isHorizontal ? scrollOffset : 0) + layoutOffset;
-      // } else {
-      //   offsetY =
-      //     offsetY -
-      //     (prevHorizontal !== isHorizontal ? scrollOffset : 0) + layoutOffset;
-      // }
-
       if (isHorizontal && prevHorizontal !== isHorizontal) {
         offsetX = offsetX - scrollOffset + layoutOffset;
       }
@@ -257,17 +247,12 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 是否发生过交互，包括滑动和刷新
   _hasInteracted() {
-    if (!this._isInNestedVirtuallizedList())
-      return (
-        this._getCurrentListRef()._hasInteracted ||
-        this._getCurrentListRef()._hasRefreshed
-      );
-    return (
-      this._getCurrentListRef()._hasInteracted ||
-      this._getCurrentListRef()._hasRefreshed ||
-      this._getParentListRef()._hasInteracted ||
-      this._getParentListRef()._hasRefreshed
-    );
+    let currentList = this._getCurrentListRef();
+    do {
+      if (currentList._hasInteracted) return true;
+      currentList = currentList._getParentListRef();
+    } while (currentList);
+    return false;
   }
 
   // 是否是首次出现
