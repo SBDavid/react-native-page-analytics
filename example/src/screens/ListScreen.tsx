@@ -74,7 +74,7 @@ export default class ListScreen extends React.Component<
     // return <TestUseNavigation title={item} />;
     return (
       <PageAnalytics.ScrollAnalyticComp
-        key={index}
+        // key={index}
         onShow={(exposeType: number) => {
           console.log(
             `onShow  ${item}  index:${index + 1}  type: ${exposeType}`

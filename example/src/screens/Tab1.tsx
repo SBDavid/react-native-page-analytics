@@ -42,7 +42,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   };
 
   componentDidMount() {
-    this.setPageViewProps;
+    // this.setPageViewProps;
     // // 添加pageView数据
     // this.syncSetPageViewProps();
     // // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
@@ -56,32 +56,28 @@ export default class Tab1 extends PageAnalytics.Screen<
 
   // 用户自定义的页面展示埋点上传方法
   customPageView = () => {
-    console.log(
-      `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-    );
+    console.log(`发送页面pageView埋点 自定义 页面名: Tab1 pageExitId: 0`);
   };
 
   // 用户自定义的页面离开埋点上传方法
   customPageExit = () => {
-    console.log(
-      `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-    );
+    console.log(`发送页面pageExit埋点 自定义 页面名: Tab1 pageExitId: 0`);
   };
 
-  // 同步设置pageViewProps
-  syncSetPageViewProps = () => {
-    this.setPageViewProps({
-      customData: 'customData',
-    });
-  };
+  // // 同步设置pageViewProps
+  // syncSetPageViewProps = () => {
+  //   this.setPageViewProps({
+  //     customData: 'customData',
+  //   });
+  // };
 
-  // 异步设置pageViewProps
-  asyncSetPageViewProps = async () => {
-    await Utils.delay(500);
-    this.setPageViewProps({
-      customData: 'customData',
-    });
-  };
+  // // 异步设置pageViewProps
+  // asyncSetPageViewProps = async () => {
+  //   await Utils.delay(500);
+  //   this.setPageViewProps({
+  //     customData: 'customData',
+  //   });
+  // };
 
   handlePress = (item: RouterName) => {
     if (item === RouterName.NativeScreen) {

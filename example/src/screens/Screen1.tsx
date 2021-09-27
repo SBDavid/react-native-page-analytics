@@ -24,14 +24,14 @@ export default class Screen1 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
 > {
-  //
-  pageViewId: number = 0;
-  //
-  pageExitId: number = 0;
-  //
-  currPage: string = 'screen1';
+  // //
+  // pageViewId: number = 0;
+  // //
+  // pageExitId: number = 0;
+  // //
+  // currPage: string = 'screen1';
 
-  metaId: number = 0;
+  // metaId: number = 0;
 
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
@@ -53,39 +53,39 @@ export default class Screen1 extends PageAnalytics.Screen<
     super.componentWillUnmount();
   }
 
-  // 生成页面离开埋点数据
-  customPageExitDataGener: PageExitDataGenerType = () => ({
-    metaId: this.metaId,
-    currPage: this.currPage,
-    props: { customData: 'customData' },
-  });
+  // // 生成页面离开埋点数据
+  // customPageExitDataGener: PageExitDataGenerType = () => ({
+  //   metaId: this.metaId,
+  //   currPage: this.currPage,
+  //   props: { customData: 'customData' },
+  // });
 
-  // 同步设置pageViewProps
-  syncSetPageViewProps = () => {
-    this.setPageViewProps({
-      customPageProp: 'data',
-    });
-  };
+  // // 同步设置pageViewProps
+  // syncSetPageViewProps = () => {
+  //   this.setPageViewProps({
+  //     customPageProp: 'data',
+  //   });
+  // };
 
-  // 异步设置pageViewProps
-  asyncSetPageViewProps = async () => {
-    await Utils.delay(500);
-    this.setPageViewProps({
-      customPageProp: 'data',
-    });
-  };
+  // // 异步设置pageViewProps
+  // asyncSetPageViewProps = async () => {
+  //   await Utils.delay(500);
+  //   this.setPageViewProps({
+  //     customPageProp: 'data',
+  //   });
+  // };
 
   // 用户自定义的页面展示埋点上传方法
   customPageView = () => {
     console.log(
-      `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
+      `发送页面pageView埋点 自定义 页面名: Screen1 pageExitId: ${this.pageViewId}`
     );
   };
 
   // 用户自定义的页面离开埋点上传方法
   customPageExit = () => {
     console.log(
-      `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageExitId}`
+      `发送页面pageExit埋点 自定义 页面名: Screen1 pageExitId: ${this.pageExitId}`
     );
   };
 
