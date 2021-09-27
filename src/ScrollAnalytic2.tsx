@@ -278,6 +278,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     return new Promise<{
       width: number;
       height: number;
+      left?: number;
+      top?: number;
     }>((resolve, reject) => {
       if (
         this.outmostListWidth !== undefined &&
@@ -296,7 +298,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
             if (width !== 0 && height !== 0) {
               this.outmostListWidth = width;
               this.outmostListHeight = height;
-              resolve({ width, height });
+              resolve({ width, height, left, top });
             }
 
             reject('获取最外层列表的 Size 失败');
