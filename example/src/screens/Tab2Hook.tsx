@@ -55,9 +55,9 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   // }
 
   const { setPageViewProps, setPageExitProps } = PageAnalytics.useScreen({
-    pageViewId,
-    pageExitId,
-    currPage,
+    // pageViewId,
+    // pageExitId,
+    // currPage,
     customPageView,
     customPageExit,
     ...props,

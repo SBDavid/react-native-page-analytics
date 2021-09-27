@@ -17,12 +17,12 @@ export default class Screen2 extends PageAnalytics.Screen<
   HomePageProps & AnalyticProps,
   HomePageState
 > {
-  //
-  pageViewId: number = 0;
-  //
-  pageExitId: number = 0;
-  //
-  currPage: string = 'screen2';
+  // //
+  // pageViewId: number = 0;
+  // //
+  // pageExitId: number = 0;
+  // //
+  // currPage: string = 'screen2';
 
   constructor(props: HomePageProps & AnalyticProps) {
     super(props);
@@ -60,16 +60,12 @@ export default class Screen2 extends PageAnalytics.Screen<
 
   // 用户自定义的页面展示埋点上传方法
   customPageView = () => {
-    console.log(
-      `发送页面pageView埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-    );
+    console.log(`发送页面pageView埋点 自定义 页面名: Screen2 pageExitId: 0`);
   };
 
   // 用户自定义的页面离开埋点上传方法
   customPageExit = () => {
-    console.log(
-      `发送页面pageExit埋点 自定义 页面名: ${this.currPage} pageExitId: ${this.pageViewId}`
-    );
+    console.log(`发送页面pageExit埋点 自定义 页面名: Screen2 pageExitId: 0`);
   };
 
   render() {
