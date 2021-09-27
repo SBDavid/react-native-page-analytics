@@ -20,7 +20,7 @@ import {
 import ScrollAnalytics, {
   // Props as ScrollProps,
   ShowEvent,
-} from './ScrollAnalytic';
+} from './ScrollAnalytic2';
 
 interface ScrollProps {
   onShow: (type: number) => void;
