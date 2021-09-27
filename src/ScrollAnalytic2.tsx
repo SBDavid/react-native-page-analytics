@@ -79,65 +79,69 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   async _isViewable() {
-    // 获取最外层的容器布局信息
-    const outMostSize = await this._getOutmostListSize();
-    // 获取 item 的 size
-    const itemSize = await this._getSelfMeasureLayout();
-    // 获取所有的偏移量加总
-    let offsetX = 0;
-    let offsetY = 0;
-    let currentList = this._getCurrentListRef();
-    let currentCellIndex = this.context.virtualizedCell.cellIndex;
-    let prevHorizontal: number | undefined;
-    do {
-      // 当前移动方向
-      const isHorizontal = currentList.props.horizontal;
-      // 滑动距离
-      const scrollOffset = currentList._scrollMetrics.offset;
-      // 距离0位置的布局偏移
-      let layoutOffset = currentList._getFrameMetrics(currentCellIndex).offset;
+    try {
+      // 获取最外层的容器布局信息
+      const outMostSize = await this._getOutmostListSize();
+      // 获取 item 的 size
+      const itemSize = await this._getSelfMeasureLayout();
+      // 获取所有的偏移量加总
+      let offsetX = 0;
+      let offsetY = 0;
+      let currentList = this._getCurrentListRef();
+      let currentCellIndex = this.context.virtualizedCell.cellIndex;
+      let prevHorizontal: number | undefined;
+      do {
+        // 当前移动方向
+        const isHorizontal = currentList.props.horizontal;
+        // 滑动距离
+        const scrollOffset = currentList._scrollMetrics.offset;
+        // 距离0位置的布局偏移
+        let layoutOffset = currentList._getFrameMetrics(currentCellIndex).offset;
 
-      // 计算累计的偏移距离
-      if (isHorizontal && prevHorizontal !== isHorizontal) {
-        offsetX = offsetX - scrollOffset + layoutOffset;
+        // 计算累计的偏移距离
+        if (isHorizontal && prevHorizontal !== isHorizontal) {
+          offsetX = offsetX - scrollOffset + layoutOffset;
+        }
+        if (!isHorizontal && prevHorizontal !== isHorizontal) {
+          offsetY = offsetY - scrollOffset + layoutOffset;
+        }
+
+        // 设置下一轮循环
+        if (currentList && currentList.context.virtualizedCell) {
+          currentCellIndex = currentList.context.virtualizedCell.cellIndex;
+        }
+        currentList = currentList._getParentListRef();
+        prevHorizontal = isHorizontal;
+      } while (currentList);
+
+      const top = offsetY;
+      const bottom = top + itemSize.height;
+      const left = offsetX;
+      const right = left + itemSize.width;
+
+      const visable =
+        top <= outMostSize.height + 1 &&
+        top >= 0 &&
+        bottom <= outMostSize.height + 1 &&
+        left <= outMostSize.width + 1 &&
+        left >= 0 &&
+        right <= outMostSize.width + 1;
+
+      if (!this.isVisable && visable) {
+        this.isVisable = true;
+        this.props.onShow &&
+          this.props.onShow({
+            hasInteracted: this._hasInteracted(),
+            hasViewed: this._hasViewed(),
+          });
       }
-      if (!isHorizontal && prevHorizontal !== isHorizontal) {
-        offsetY = offsetY - scrollOffset + layoutOffset;
+
+      if (this.isVisable && !visable) {
+        this.isVisable = false;
+        this.props.onHide && this.props.onHide();
       }
-
-      // 设置下一轮循环
-      if (currentList && currentList.context.virtualizedCell) {
-        currentCellIndex = currentList.context.virtualizedCell.cellIndex;
-      }
-      currentList = currentList._getParentListRef();
-      prevHorizontal = isHorizontal;
-    } while (currentList);
-
-    const top = offsetY;
-    const bottom = top + itemSize.height;
-    const left = offsetX;
-    const right = left + itemSize.width;
-
-    const visable =
-      top <= outMostSize.height + 1 &&
-      top >= 0 &&
-      bottom <= outMostSize.height + 1 &&
-      left <= outMostSize.width + 1 &&
-      left >= 0 &&
-      right <= outMostSize.width + 1;
-
-    if (!this.isVisable && visable) {
-      this.isVisable = true;
-      this.props.onShow &&
-        this.props.onShow({
-          hasInteracted: this._hasInteracted(),
-          hasViewed: this._hasViewed(),
-        });
-    }
-
-    if (this.isVisable && !visable) {
-      this.isVisable = false;
-      this.props.onHide && this.props.onHide();
+    } catch (err) {
+      console.error(err);
     }
   }
 
