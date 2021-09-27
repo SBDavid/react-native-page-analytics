@@ -253,7 +253,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   _hasInteracted() {
     let currentList = this._getCurrentListRef();
     do {
-      if (currentList._hasInteracted) return true;
+      if (currentList._hasInteracted || currentList._hasRefreshed) return true;
       currentList = currentList._getParentListRef();
     } while (currentList);
     return false;
