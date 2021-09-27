@@ -22,7 +22,7 @@ import ScrollAnalytics, {
   ShowEvent,
 } from './ScrollAnalytic2';
 
-interface ScrollProps {
+export interface ScrollProps {
   onShow: (type: number) => void;
   onHide?: () => void;
   onRefreshed?: () => void;
