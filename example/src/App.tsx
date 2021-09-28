@@ -13,6 +13,8 @@ import { TestVirtralLizedList } from './screens/TestVirtualizedList';
 import TestFlatList from './screens/TestFlatList';
 import TestSectionList from './screens/TestSectionList';
 import TestSameDirectionList from './screens/TestSameDirectionList';
+import TestRecycleView from './screens/TestRecycleView';
+import TestWapper from './screens/TestWrapper';
 // import Tab1 from './screens/Tab1';
 // import Tab2 from './screens/Tab2';
 // import Screen1 from './screens/Screen1';
@@ -108,6 +110,14 @@ export default class App extends React.PureComponent {
           <Stack.Screen
             name={RouterName.TestSameDirectionList as string}
             component={TestSameDirectionList}
+          />
+          <Stack.Screen
+            name={RouterName.TestRecycleView as string}
+            component={TestRecycleView}
+          />
+          <Stack.Screen
+            name={RouterName.TestWrapper as string}
+            component={TestWapper}
           />
         </Stack.Navigator>
       </NavigationContainer>

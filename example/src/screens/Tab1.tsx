@@ -38,6 +38,8 @@ export default class Tab1 extends PageAnalytics.Screen<
       RouterName.FlatList,
       RouterName.SectionList,
       RouterName.TestSameDirectionList,
+      RouterName.TestRecycleView,
+      RouterName.TestWrapper,
     ],
   };
 

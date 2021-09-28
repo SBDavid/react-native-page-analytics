@@ -11,6 +11,8 @@ enum RouterName {
   FlatList = 'FlatList',
   SectionList = 'SectionList',
   TestSameDirectionList = 'TestSameDirectionList',
+  TestRecycleView = 'TestRecycleView',
+  TestWrapper = 'TestWrapper',
 }
 
 export default RouterName;

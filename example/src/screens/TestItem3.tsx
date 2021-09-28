@@ -18,6 +18,7 @@ export default class TestItem1 extends React.PureComponent<
   render() {
     return (
       <ScrollAnalytics
+        _key={this.props.text}
         onShow={(e) => {
           console.info(this.props.text, '曝光');
           this.setState(e);
@@ -27,6 +28,7 @@ export default class TestItem1 extends React.PureComponent<
           console.info(this.props.text, '隐藏');
           this.setState({ isViewable: false });
         }}
+        debugTitle={this.props.text}
         // disable
       >
         <View style={{ height: 200, width: 300, opacity: 1 }}>
