@@ -16,6 +16,7 @@ import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
 import Button from '../components/Button';
+import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
 
 interface HomePageProps {}
 
@@ -74,6 +75,7 @@ export default class ListScreen extends React.Component<
     // return <TestUseNavigation title={item} />;
     return (
       <PageAnalytics.ScrollAnalyticComp
+        itemKey={index}
         // key={index}
         onShow={(exposeType: number) => {
           console.log(
@@ -185,22 +187,36 @@ export default class ListScreen extends React.Component<
           }}
         >
           <View>
-            <FlatList
-              ref={this.list1Ref}
-              data={this.state.list1}
-              renderItem={this.createItem}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={this.createSeperator}
+            <ScrollAnalyticWapper
+              buildChildren={(onScroll, onRefreshed) => {
+                return (
+                  <FlatList
+                    onScroll={onScroll}
+                    ref={this.list1Ref}
+                    data={this.state.list1}
+                    renderItem={this.createItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    ItemSeparatorComponent={this.createSeperator}
+                  />
+                );
+              }}
             />
           </View>
           <View style={{ width: 10 }} />
           <View>
-            <FlatList
-              ref={this.list2Ref}
-              data={this.state.list2}
-              renderItem={this.createItem}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={this.createSeperator}
+            <ScrollAnalyticWapper
+              buildChildren={(onScroll, onRefreshed) => {
+                return (
+                  <FlatList
+                    onScroll={onScroll}
+                    ref={this.list2Ref}
+                    data={this.state.list2}
+                    renderItem={this.createItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    ItemSeparatorComponent={this.createSeperator}
+                  />
+                );
+              }}
             />
           </View>
         </View>

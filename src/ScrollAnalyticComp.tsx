@@ -20,9 +20,10 @@ import {
 import ScrollAnalytics, {
   // Props as ScrollProps,
   ShowEvent,
-} from './ScrollAnalytic2';
+} from './ScrollAnalytic3';
 
 export interface ScrollProps {
+  itemKey: React.Key;
   onShow: (type: number) => void;
   onHide?: () => void;
   onRefreshed?: () => void;
@@ -461,6 +462,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     return (
       <>
         <ScrollAnalytics
+          _key={this.props.itemKey}
           ref={this.contentRef}
           {...this.props}
           onShow={this.onShow}
