@@ -39,7 +39,7 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
   // 往下传递的上下文
   static childContextTypes = {
-    hasInteracted: PropTypes.func,
+    getHasInteracted: PropTypes.func,
     setHasInteracted: PropTypes.func,
     hasViewedKeys: PropTypes.object,
     getWrapperSize: PropTypes.func,
@@ -60,7 +60,7 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
   getChildContext() {
     return {
-      hasInteracted: this.getHasInteracted,
+      getHasInteracted: this.getHasInteracted,
       setHasInteracted: this.setHasInteracted,
       hasViewedKeys: this.hasViewedKeys,
       getWrapperSize: this.getWrapperSize,
@@ -86,6 +86,7 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     this.getWrapperSize = this.getWrapperSize.bind(this);
     this.getWrapperRef = this.getWrapperRef.bind(this);
     this.getHasInteracted = this.getHasInteracted.bind(this);
+    this.setHasInteracted = this.setHasInteracted.bind(this);
 
     this.triggerScroll = this.triggerScroll.bind(this);
     this.addScrollListener = this.addScrollListener.bind(this);

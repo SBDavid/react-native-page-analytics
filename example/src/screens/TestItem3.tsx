@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import ScrollAnalytics from '../../../src/ScrollAnalytic3';
 
 export default class TestItem1 extends React.PureComponent<
@@ -15,10 +15,13 @@ export default class TestItem1 extends React.PureComponent<
     };
   }
 
+  ref = React.createRef<ScrollAnalytics>();
+
   render() {
     return (
       <ScrollAnalytics
         _key={this.props.text}
+        ref={this.ref}
         onShow={(e) => {
           console.info(this.props.text, '曝光');
           this.setState(e);
@@ -42,6 +45,18 @@ export default class TestItem1 extends React.PureComponent<
           <Text style={{ fontSize: 20 }}>
             {'hasViewed: ' + this.state.hasViewed}
           </Text>
+          <Button
+            title={'show'}
+            onPress={() => {
+              this.ref.current?.manuallyShow();
+            }}
+          />
+          <Button
+            title={'hide'}
+            onPress={() => {
+              this.ref.current?.manuallyHide();
+            }}
+          />
         </View>
       </ScrollAnalytics>
     );

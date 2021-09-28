@@ -19,7 +19,7 @@ export type Props = {
 export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 当前节点必然处于列表中
   static contextTypes = {
-    hasInteracted: PropTypes.func,
+    getHasInteracted: PropTypes.func,
     setHasInteracted: PropTypes.func,
     hasViewedKeys: PropTypes.object,
     getWrapperSize: PropTypes.func,
@@ -98,7 +98,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         this.isVisable = true;
         this.props.onShow &&
           this.props.onShow({
-            hasInteracted: this.context.hasInteracted(),
+            hasInteracted: this.context.getHasInteracted(),
             hasViewed: this._hasViewed(),
           });
       }

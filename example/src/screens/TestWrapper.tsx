@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { ListRenderItemInfo, VirtualizedList } from 'react-native';
+import {
+  ListRenderItemInfo,
+  VirtualizedList,
+  View,
+  Button,
+  FlatList,
+} from 'react-native';
 import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
 import TestItem1 from '../../src/screens/TestItem3';
 
@@ -42,36 +48,52 @@ export default class TestWrapper extends React.PureComponent<
     return <TestItem1 text={info.item} />;
   }
 
-  listRef = React.createRef<VirtualizedList<string>>();
+  listRef = React.createRef<ScrollAnalyticWapper>();
 
   render() {
     return (
-      <ScrollAnalyticWapper
-        buildChildren={(triggerScroll, triggerRefreshed) => {
-          this.triggerScroll = triggerScroll;
-          return (
-            <VirtualizedList
-              ref={this.listRef}
-              data={this.listData}
-              renderItem={this.renderItem}
-              getItemCount={(data) => data.length}
-              getItem={(data, index) => data[index]}
-              keyExtractor={(item) => item}
-              refreshing={this.state.refreshing}
-              onScroll={() => {
-                triggerScroll();
-              }}
-              onRefresh={() => {
-                this.setState({ refreshing: true });
-                setTimeout(() => {
-                  triggerRefreshed();
-                  this.setState({ refreshing: false });
-                }, 200);
-              }}
-            />
-          );
-        }}
-      />
+      <View>
+        <Button
+          title={'手动隐藏'}
+          onPress={() => {
+            // @ts-ignore
+            this.listRef?.current?.triggerHide();
+          }}
+        />
+        <Button
+          title={'手动曝光'}
+          onPress={() => {
+            // @ts-ignore
+            this.listRef?.current?.triggerShow();
+          }}
+        />
+        <ScrollAnalyticWapper
+          ref={this.listRef}
+          buildChildren={(triggerScroll, triggerRefreshed) => {
+            this.triggerScroll = triggerScroll;
+            return (
+              <FlatList
+                data={this.listData}
+                renderItem={this.renderItem}
+                // getItemCount={(data) => data.length}
+                // getItem={(data, index) => data[index]}
+                keyExtractor={(item) => item}
+                refreshing={this.state.refreshing}
+                onScroll={() => {
+                  triggerScroll();
+                }}
+                onRefresh={() => {
+                  this.setState({ refreshing: true });
+                  setTimeout(() => {
+                    triggerRefreshed();
+                    this.setState({ refreshing: false });
+                  }, 200);
+                }}
+              />
+            );
+          }}
+        />
+      </View>
     );
   }
 }
