@@ -1,9 +1,6 @@
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
-import PageAnalytics, {
-  AnalyticPropsParams,
-  SendAnalyticFuncType,
-} from '../../../src';
+import PageAnalytics, { AnalyticPropsParams } from '../../../src';
 import {
   createBottomTabNavigator,
   BottomTabBarProps,
@@ -68,21 +65,7 @@ function TabButton({ state, navigation }: BottomTabBarProps) {
 export default class HomeTab extends React.Component<HomeTabProps> {
   constructor(props: HomeTabProps) {
     super(props);
-    // 设置埋点数据上传方法
-    PageAnalytics.ScreenUtils.setSendAnalyticActions({
-      pageView: HomeTab.sendAnalyTicOperation,
-      pageExit: HomeTab.sendAnalyTicOperation,
-    });
   }
-
-  static sendAnalyTicOperation: SendAnalyticFuncType = (
-    metaId: number,
-    currPage: string,
-    props: AnalyticPropsParams
-  ) => {
-    // let result = `发送数据 ${metaId} ${currPage} ${props}`;
-    console.log(`发送数据 ${metaId} ${currPage} ${props}`);
-  };
 
   render() {
     return (

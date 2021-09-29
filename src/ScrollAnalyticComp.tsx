@@ -139,15 +139,15 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   //
   private checkIfDisabled = (): boolean => {
-    if (this.context) {
-      console.log(
-        `this.context on : ${this.context.isDisablePageAnalytics} ${this.checkDelayDuration}`
-      );
-    } else {
-      console.log(
-        `this.context on : ${this.context} ${this.checkDelayDuration}`
-      );
-    }
+    // if (this.context) {
+    //   console.log(
+    //     `this.context on : ${this.context.isDisablePageAnalytics} ${this.checkDelayDuration}`
+    //   );
+    // } else {
+    //   console.log(
+    //     `this.context on : ${this.context} ${this.checkDelayDuration}`
+    //   );
+    // }
     // return false;
     return (
       this.context.isDisablePageAnalytics !== undefined &&
@@ -391,17 +391,19 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // 手动通知从其他地方返回到此页面
   private notifyBack = () => {
-    //
-    console.log('执行manuallyShow');
-
     this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
     this.checkOnShowTimer = setTimeout(() => {
       this.tmpFocusExposeType = null;
     }, this.checkDelayDuration);
 
+    console.log(
+      `this.checkIfDisabled(): ${this.props.itemKey} ${this.checkIfDisabled()}`
+    );
     if (this.checkIfDisabled()) {
       return;
     }
+    //
+    console.log('执行manuallyShow');
     this.contentRef.current?.manuallyShow();
   };
 

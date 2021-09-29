@@ -43,9 +43,9 @@ export default class ListScreen extends React.Component<
     list1: Array(10).fill('list1'),
     list2: Array(6).fill('list2'),
     tabList: [0, 1],
-    selectedTab: 1,
-    list1Diabled: true,
-    list2Diabled: false,
+    selectedTab: 0,
+    list1Diabled: false,
+    list2Diabled: true,
   };
 
   screenWidth: number;
@@ -68,7 +68,7 @@ export default class ListScreen extends React.Component<
     // return <TestUseNavigation title={item} />;
     return (
       <PageAnalytics.ScrollAnalyticComp
-        itemKey={index}
+        itemKey={item + '  ' + index}
         // key={index}
         onShow={(exposeType: number) => {
           console.log(
