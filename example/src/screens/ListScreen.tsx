@@ -45,21 +45,9 @@ export default class ListScreen extends React.Component<
 
   screenWidth: number;
 
-  list1Ref: React.RefObject<
-    FlatList & {
-      triggerManuallyRefreshed: any;
-      triggerManuallyHide: any;
-      triggerManuallyShow: any;
-    }
-  > = React.createRef();
+  list1Ref: React.RefObject<ScrollAnalyticWapper> = React.createRef();
 
-  list2Ref: React.RefObject<
-    FlatList & {
-      triggerManuallyRefreshed: any;
-      triggerManuallyHide: any;
-      triggerManuallyShow: any;
-    }
-  > = React.createRef();
+  list2Ref: React.RefObject<ScrollAnalyticWapper> = React.createRef();
 
   componentDidMount() {}
 
@@ -115,20 +103,20 @@ export default class ListScreen extends React.Component<
 
   tabHandler = (item: number) => {
     if (item === 0) {
-      this.list2Ref.current?.triggerManuallyHide();
-      this.list1Ref.current?.triggerManuallyShow();
+      this.list2Ref.current?.triggerHide();
+      this.list1Ref.current?.triggerShow();
     } else {
-      this.list1Ref.current?.triggerManuallyHide();
-      this.list2Ref.current?.triggerManuallyShow();
+      this.list1Ref.current?.triggerHide();
+      this.list2Ref.current?.triggerShow();
     }
     this.setState({ selectedTab: item });
   };
 
   refreshHandler = (item: number) => {
     if (item === this.state.tabList[0]) {
-      this.list1Ref.current?.triggerManuallyRefreshed();
+      this.list1Ref.current?.triggerRefreshed();
     } else {
-      this.list2Ref.current?.triggerManuallyRefreshed();
+      this.list2Ref.current?.triggerRefreshed();
     }
   };
 
@@ -188,11 +176,11 @@ export default class ListScreen extends React.Component<
         >
           <View>
             <ScrollAnalyticWapper
+              ref={this.list1Ref}
               buildChildren={(onScroll, onRefreshed) => {
                 return (
                   <FlatList
                     onScroll={onScroll}
-                    ref={this.list1Ref}
                     data={this.state.list1}
                     renderItem={this.createItem}
                     keyExtractor={(item, index) => index.toString()}
@@ -205,11 +193,11 @@ export default class ListScreen extends React.Component<
           <View style={{ width: 10 }} />
           <View>
             <ScrollAnalyticWapper
+              ref={this.list2Ref}
               buildChildren={(onScroll, onRefreshed) => {
                 return (
                   <FlatList
                     onScroll={onScroll}
-                    ref={this.list2Ref}
                     data={this.state.list2}
                     renderItem={this.createItem}
                     keyExtractor={(item, index) => index.toString()}
