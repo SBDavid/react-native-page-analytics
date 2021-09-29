@@ -130,7 +130,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动触发展示
   manuallyShow() {
-    setTimeout(this._isViewable, 100);
+    setTimeout(() => {
+      InteractionManager.runAfterInteractions(() => {
+        this._isViewable();
+      });
+    }, 100);
   }
 
   // 手动触发刷新
