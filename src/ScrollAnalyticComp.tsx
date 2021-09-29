@@ -422,6 +422,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       return;
     }
     InteractionManager.runAfterInteractions(() => {
+      console.log('checkExposedWhenRefreshLifeCycle');
       this.contentRef.current
         ?.manuallyIsVisable()
         .then(({ isVisable, hasInteracted, hasViewed }) => {
