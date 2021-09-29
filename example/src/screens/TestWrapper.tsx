@@ -54,7 +54,7 @@ export default class TestWrapper extends React.PureComponent<
 
   render() {
     return (
-      <View>
+      <View style={{borderWidth: 2, borderColor: 'red', flex: 1}}>
         <Button
           title={'手动隐藏'}
           onPress={() => {

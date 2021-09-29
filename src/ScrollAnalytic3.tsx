@@ -57,6 +57,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   componentDidMount() {
     if (this.props.disable) return;
+    if (this.context.addScrollListener === undefined) return;
 
     // 绑定事件
     this.context.addScrollListener(this._onScrollHandler);
@@ -179,6 +180,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   componentWillUnmount() {
     if (this.props.disable) return;
+    if (this.context.addScrollListener === undefined) return;
 
     // 绑定事件
     this.context.removeScrollListener(this._onScrollHandler);
@@ -190,8 +192,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   render() {
     return (
       <View
+        style={{ flex: -1 }}
         ref={this.itemRef}
-        style={{ backgroundColor: 'transparent' }}
+        collapsable={false}
         onLayout={() => {
           InteractionManager.runAfterInteractions(() => {
             this.layoutPromiseResolve && this.layoutPromiseResolve();
