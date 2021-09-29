@@ -21,6 +21,7 @@ import ScrollAnalytics, {
   // Props as ScrollProps,
   ShowEvent,
 } from './ScrollAnalytic3';
+import PropTypes from 'prop-types';
 
 export interface ScrollProps {
   itemKey: React.Key;
@@ -115,6 +116,11 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   //
   private readonly checkDelayDuration: number = 150;
 
+  //
+  static contextTypes = {
+    isDisablePageAnalytics: PropTypes.func,
+  };
+
   constructor(p: P & Props & ScrollProps) {
     super(p);
     // console.log(
@@ -130,6 +136,24 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     // 添加安卓平台onBackground事件监听
     this.addAndroidOnBackgroundListener();
   }
+
+  //
+  private checkIfDisabled = (): boolean => {
+    if (this.context) {
+      console.log(
+        `this.context on : ${this.context.isDisablePageAnalytics} ${this.checkDelayDuration}`
+      );
+    } else {
+      console.log(
+        `this.context on : ${this.context} ${this.checkDelayDuration}`
+      );
+    }
+    return false;
+    // return (
+    //   this.context.isDisablePageAnalytics !== undefined &&
+    //   this.context.isDisablePageAnalytics()
+    // );
+  };
 
   // 添加路由监听
   private addNavigationListener = () => {
@@ -201,10 +225,13 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // 安卓平台onBackground事件handler
   private androidOnBackgroundHandler = () => {
+    if (this.checkIfDisabled()) {
+      return;
+    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
-    console.log('androidOnBackground');
+    console.log('androidOnBackground触发');
     this.androidOnBackground = true;
   };
 
@@ -215,6 +242,10 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // APPstate状态更新防抖
   private appStateChangeHandler = (status: AppStateStatus) => {
+    console.log('appStateChangeHandler');
+    if (this.checkIfDisabled()) {
+      return;
+    }
     console.log(`appStateChangeHandler ${status} ${Date.now()}`);
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
@@ -252,6 +283,10 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // 页面与native页面相互跳转的处理
   private onResumeHandler = () => {
+    console.log('onResumeHandler');
+    if (this.checkIfDisabled()) {
+      return;
+    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -262,6 +297,10 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // 页面与native页面相互跳转的处理
   private onPauseHandler = () => {
+    console.log('onPauseHandler');
+    if (this.checkIfDisabled()) {
+      return;
+    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -272,12 +311,18 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // navigationOnFocus事件
   private onNavigationFocus = () => {
     console.log(`onNavigationFocus事件： `);
+    if (this.checkIfDisabled()) {
+      return;
+    }
     this.onFocus(PageViewExitEventSource.navigation);
   };
 
   // navigationOnBlur事件
   private onNavigationBlur = () => {
     console.log(`onNavigationBlur事件：`);
+    if (this.checkIfDisabled()) {
+      return;
+    }
     this.onBlur(PageViewExitEventSource.navigation);
   };
 
@@ -499,5 +544,6 @@ function ScrollAnalyticsWithNavitaion(
 }
 
 const ScrollAnalyticComp = React.memo(ScrollAnalyticsWithNavitaion);
+// const ScrollAnalyticComp = ScrollAnalyticContent;
 
 export default ScrollAnalyticComp;

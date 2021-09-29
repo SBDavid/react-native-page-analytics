@@ -17,6 +17,7 @@ import Utils from '../utils';
 import RouterName from '../router';
 import Button from '../components/Button';
 import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
+import DisableWrapper from '../../../src/DisableWrapper';
 
 interface HomePageProps {}
 
@@ -25,6 +26,8 @@ interface HomePageState {
   list2: string[];
   tabList: number[];
   selectedTab: number;
+  list1Diabled: boolean;
+  list2Diabled: boolean;
 }
 
 export default class ListScreen extends React.Component<
@@ -40,7 +43,9 @@ export default class ListScreen extends React.Component<
     list1: Array(10).fill('list1'),
     list2: Array(6).fill('list2'),
     tabList: [0, 1],
-    selectedTab: 0,
+    selectedTab: 1,
+    list1Diabled: true,
+    list2Diabled: false,
   };
 
   screenWidth: number;
@@ -103,9 +108,11 @@ export default class ListScreen extends React.Component<
 
   tabHandler = (item: number) => {
     if (item === 0) {
+      this.setState({ list1Diabled: false, list2Diabled: true });
       this.list2Ref.current?.triggerHide();
       this.list1Ref.current?.triggerShow();
     } else {
+      this.setState({ list1Diabled: true, list2Diabled: false });
       this.list1Ref.current?.triggerHide();
       this.list2Ref.current?.triggerShow();
     }
@@ -175,37 +182,41 @@ export default class ListScreen extends React.Component<
           }}
         >
           <View>
-            <ScrollAnalyticWapper
-              ref={this.list1Ref}
-              buildChildren={(onScroll, onRefreshed) => {
-                return (
-                  <FlatList
-                    onScroll={onScroll}
-                    data={this.state.list1}
-                    renderItem={this.createItem}
-                    keyExtractor={(item, index) => index.toString()}
-                    ItemSeparatorComponent={this.createSeperator}
-                  />
-                );
-              }}
-            />
+            <DisableWrapper disable={this.state.list1Diabled}>
+              <ScrollAnalyticWapper
+                ref={this.list1Ref}
+                buildChildren={(onScroll, onRefreshed) => {
+                  return (
+                    <FlatList
+                      onScroll={onScroll}
+                      data={this.state.list1}
+                      renderItem={this.createItem}
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={this.createSeperator}
+                    />
+                  );
+                }}
+              />
+            </DisableWrapper>
           </View>
           <View style={{ width: 10 }} />
           <View>
-            <ScrollAnalyticWapper
-              ref={this.list2Ref}
-              buildChildren={(onScroll, onRefreshed) => {
-                return (
-                  <FlatList
-                    onScroll={onScroll}
-                    data={this.state.list2}
-                    renderItem={this.createItem}
-                    keyExtractor={(item, index) => index.toString()}
-                    ItemSeparatorComponent={this.createSeperator}
-                  />
-                );
-              }}
-            />
+            <DisableWrapper disable={this.state.list2Diabled}>
+              <ScrollAnalyticWapper
+                ref={this.list2Ref}
+                buildChildren={(onScroll, onRefreshed) => {
+                  return (
+                    <FlatList
+                      onScroll={onScroll}
+                      data={this.state.list2}
+                      renderItem={this.createItem}
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={this.createSeperator}
+                    />
+                  );
+                }}
+              />
+            </DisableWrapper>
           </View>
         </View>
       </>
