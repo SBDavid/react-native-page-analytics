@@ -8,6 +8,7 @@ import {
   View,
   Text,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -173,7 +174,6 @@ export default class ListScreen extends React.Component<
             height: 400,
             display: 'flex',
             flexDirection: 'row',
-            // justifyContent: 'flex-start',
             marginTop: 20,
             marginLeft:
               this.state.selectedTab === this.state.tabList[0]
@@ -181,7 +181,14 @@ export default class ListScreen extends React.Component<
                 : -this.screenWidth,
           }}
         >
-          <View>
+          <View
+            style={{
+              paddingHorizontal: 10,
+              width: this.screenWidth,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
             <DisableWrapper disable={this.state.list1Diabled}>
               <ScrollAnalyticWapper
                 ref={this.list1Ref}
@@ -199,8 +206,14 @@ export default class ListScreen extends React.Component<
               />
             </DisableWrapper>
           </View>
-          <View style={{ width: 10 }} />
-          <View>
+          <View
+            style={{
+              paddingHorizontal: 10,
+              width: this.screenWidth,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
             <DisableWrapper disable={this.state.list2Diabled}>
               <ScrollAnalyticWapper
                 ref={this.list2Ref}

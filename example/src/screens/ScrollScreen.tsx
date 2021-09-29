@@ -103,13 +103,13 @@ export default class ScrollScreen extends PageAnalytics.Screen<
 
   render() {
     return (
-      <Container style={{ justifyContent: 'flex-start' }}>
-        <View style={{ height: 400, marginTop: 5 }}>
-          {/* <TestUseNavigation title={'scree1test'} /> */}
-          {/* <TestUseNavigation2
-            title={'scree1test'}
-            useNavigation={useNavigation}
-          /> */}
+      <Container>
+        <View
+          style={{
+            width: '100%',
+            height: 400,
+          }}
+        >
           <ListScreen {...this.props} />
         </View>
         <View style={{ marginTop: 100 }}>

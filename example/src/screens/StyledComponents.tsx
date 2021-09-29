@@ -6,7 +6,8 @@ export const Container = styled(View)`
   height: 100%;
   background-color: green;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
 `;
 
