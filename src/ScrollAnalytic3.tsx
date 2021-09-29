@@ -121,6 +121,30 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     }
   }
 
+  // 手动查询是否为可见状态
+  async manuallyIsVisable() {
+    // size
+    const selfSize = await this._getSelfMeasureLayout();
+    const wrapperSize = await this.context.getWrapperSize();
+
+    // 判断是否漏出
+    const res =
+      selfSize.left + 1 >= wrapperSize.left &&
+      selfSize.left + selfSize.width <=
+        wrapperSize.left + wrapperSize.width + 1 &&
+      selfSize.top + 1 >= wrapperSize.top &&
+      selfSize.top + selfSize.height <=
+        wrapperSize.top + wrapperSize.height + 1;
+
+    if (res) this.isVisable = true;
+
+    return {
+      isVisable: res,
+      hasInteracted: this.context.getHasInteracted(),
+      hasViewed: this._hasViewed(),
+    };
+  }
+
   // 手动隐藏接口，用户页面离开或者tab页离开
   manuallyHide() {
     this.isVisable = false;
