@@ -1,5 +1,11 @@
 import React from 'react';
-import { ScrollView, View, TouchableHighlight, Text } from 'react-native';
+import {
+  ScrollView,
+  View,
+  TouchableHighlight,
+  Text,
+  NativeModules,
+} from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
@@ -112,6 +118,16 @@ export default class ScrollScreen extends PageAnalytics.Screen<
               this.props?.navigation?.navigate(RouterName.SCREEN2);
             }}
             title="去Screen2"
+          />
+        </View>
+        <View>
+          <Button
+            handler={() => {
+              NativeModules.Page.start(
+                'iting://open?msg_type=14&url=https://www.baidu.com'
+              );
+            }}
+            title="去NativeScreen"
           />
         </View>
       </Container>

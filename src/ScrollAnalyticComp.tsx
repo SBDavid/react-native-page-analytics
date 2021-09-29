@@ -323,36 +323,68 @@ class ScrollAnalyticContent<P, S> extends React.Component<
         // if (this.navigationState === CustomNavigationState.blur) {
         //   this.tmpFocusExposeType = ExposeType.fromPage;
         // }
-        const tmpType =
-          this.navigationState === CustomNavigationState.blur
-            ? ExposeType.fromPage
-            : null;
-        this.navigationState = CustomNavigationState.focus;
-        this.refreshLifeCycle();
-        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        if (this.navigationState === CustomNavigationState.blur) {
+          const tmpType =
+            this.navigationState === CustomNavigationState.blur
+              ? ExposeType.fromPage
+              : null;
+          this.navigationState = CustomNavigationState.focus;
+          this.refreshLifeCycle();
+          this.checkExposedWhenRefreshLifeCycle(tmpType);
+        }
+        // const tmpType =
+        //   this.navigationState === CustomNavigationState.blur
+        //     ? ExposeType.fromPage
+        //     : null;
+        // this.navigationState = CustomNavigationState.focus;
+        // this.refreshLifeCycle();
+        // this.checkExposedWhenRefreshLifeCycle(tmpType);
         // this.notifyBack();
       } else if (source === PageViewExitEventSource.page) {
         // 曝光type为6，从其他页面返回, 手动通知
-        const tmpType =
-          this.pageState === CustomPageState.pause ? ExposeType.fromPage : null;
-        // if (this.pageState === CustomPageState.pause) {
-        //   this.tmpFocusExposeType = ExposeType.fromPage;
-        // }
-        this.pageState = CustomPageState.resume;
-        this.refreshLifeCycle();
-        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        if (this.pageState === CustomPageState.pause) {
+          const tmpType =
+            this.pageState === CustomPageState.pause
+              ? ExposeType.fromPage
+              : null;
+          // if (this.pageState === CustomPageState.pause) {
+          //   this.tmpFocusExposeType = ExposeType.fromPage;
+          // }
+          this.pageState = CustomPageState.resume;
+          this.refreshLifeCycle();
+          this.checkExposedWhenRefreshLifeCycle(tmpType);
+        }
+        // const tmpType =
+        //   this.pageState === CustomPageState.pause ? ExposeType.fromPage : null;
+        // // if (this.pageState === CustomPageState.pause) {
+        // //   this.tmpFocusExposeType = ExposeType.fromPage;
+        // // }
+        // this.pageState = CustomPageState.resume;
+        // this.refreshLifeCycle();
+        // this.checkExposedWhenRefreshLifeCycle(tmpType);
         // this.notifyBack();
       } else if (source === PageViewExitEventSource.appState) {
         // 曝光type为7，从后台返回, 手动通知
-        const tmpType =
-          formerAppState === CustomAppState.background
-            ? ExposeType.fromBackground
-            : null;
-        // if (formerAppState === CustomAppState.background) {
-        //   this.tmpFocusExposeType = ExposeType.fromBackground;
-        // }
-        this.refreshLifeCycle();
-        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        if (formerAppState === CustomAppState.background) {
+          const tmpType =
+            formerAppState === CustomAppState.background
+              ? ExposeType.fromBackground
+              : null;
+          // if (formerAppState === CustomAppState.background) {
+          //   this.tmpFocusExposeType = ExposeType.fromBackground;
+          // }
+          this.refreshLifeCycle();
+          this.checkExposedWhenRefreshLifeCycle(tmpType);
+        }
+        // const tmpType =
+        //   formerAppState === CustomAppState.background
+        //     ? ExposeType.fromBackground
+        //     : null;
+        // // if (formerAppState === CustomAppState.background) {
+        // //   this.tmpFocusExposeType = ExposeType.fromBackground;
+        // // }
+        // this.refreshLifeCycle();
+        // this.checkExposedWhenRefreshLifeCycle(tmpType);
         // this.notifyBack();
       }
     }
@@ -360,16 +392,28 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     if (isAndroid) {
       if (source === PageViewExitEventSource.navigation) {
         // 曝光type为6，从其他页面返回, 手动通知
-        const tmpType =
-          this.navigationState === CustomNavigationState.blur
-            ? ExposeType.fromPage
-            : null;
-        // if (this.navigationState === CustomNavigationState.blur) {
-        //   this.tmpFocusExposeType = ExposeType.fromPage;
-        // }
-        this.navigationState = CustomNavigationState.focus;
-        this.refreshLifeCycle();
-        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        if (this.navigationState === CustomNavigationState.blur) {
+          const tmpType =
+            this.navigationState === CustomNavigationState.blur
+              ? ExposeType.fromPage
+              : null;
+          // if (this.navigationState === CustomNavigationState.blur) {
+          //   this.tmpFocusExposeType = ExposeType.fromPage;
+          // }
+          this.navigationState = CustomNavigationState.focus;
+          this.refreshLifeCycle();
+          this.checkExposedWhenRefreshLifeCycle(tmpType);
+        }
+        // const tmpType =
+        //   this.navigationState === CustomNavigationState.blur
+        //     ? ExposeType.fromPage
+        //     : null;
+        // // if (this.navigationState === CustomNavigationState.blur) {
+        // //   this.tmpFocusExposeType = ExposeType.fromPage;
+        // // }
+        // this.navigationState = CustomNavigationState.focus;
+        // this.refreshLifeCycle();
+        // this.checkExposedWhenRefreshLifeCycle(tmpType);
         // this.notifyBack();
       } else if (
         source === PageViewExitEventSource.page ||
@@ -385,17 +429,30 @@ class ScrollAnalyticContent<P, S> extends React.Component<
           // this.notifyBack();
         } else {
           // 曝光type为6，从其他页面返回, 手动通知
-          const tmpType =
-            this.pageState === CustomPageState.pause
-              ? ExposeType.fromPage
-              : null;
-          // if (this.pageState === CustomPageState.pause) {
-          //   console.log('androidOnBackground frompage');
-          //   this.tmpFocusExposeType = ExposeType.fromPage;
-          // }
-          this.pageState = CustomPageState.resume;
-          this.refreshLifeCycle();
-          this.checkExposedWhenRefreshLifeCycle(tmpType);
+          if (this.pageState === CustomPageState.pause) {
+            const tmpType =
+              this.pageState === CustomPageState.pause
+                ? ExposeType.fromPage
+                : null;
+            // if (this.pageState === CustomPageState.pause) {
+            //   console.log('androidOnBackground frompage');
+            //   this.tmpFocusExposeType = ExposeType.fromPage;
+            // }
+            this.pageState = CustomPageState.resume;
+            this.refreshLifeCycle();
+            this.checkExposedWhenRefreshLifeCycle(tmpType);
+          }
+          // const tmpType =
+          //   this.pageState === CustomPageState.pause
+          //     ? ExposeType.fromPage
+          //     : null;
+          // // if (this.pageState === CustomPageState.pause) {
+          // //   console.log('androidOnBackground frompage');
+          // //   this.tmpFocusExposeType = ExposeType.fromPage;
+          // // }
+          // this.pageState = CustomPageState.resume;
+          // this.refreshLifeCycle();
+          // this.checkExposedWhenRefreshLifeCycle(tmpType);
           // this.notifyBack();
         }
       }
@@ -574,8 +631,13 @@ type UseNaviType = <T extends NavigationProp<ParamListBase>>() => T;
 function ScrollAnalyticsWithNavitaion(
   props: Props & ScrollProps & { useNavigation?: UseNaviType }
 ) {
+  let navigation;
   if (props.useNavigation) {
-    const navigation = props.useNavigation();
+    try {
+      navigation = props.useNavigation();
+    } catch (e) {}
+  }
+  if (navigation) {
     return <ScrollAnalyticContent navigation={navigation} {...props} />;
   } else {
     return <ScrollAnalyticContent {...props} />;
