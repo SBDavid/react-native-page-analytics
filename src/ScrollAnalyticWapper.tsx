@@ -155,14 +155,6 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
         ref={this.ref}
         onLayout={() => {
           InteractionManager.runAfterInteractions(() => {
-            this.ref.current?.measureInWindow(
-              (x: number, y: number, width: number, height: number) => {
-                this.top = y;
-                this.left = x;
-                this.height = height;
-                this.weight = width;
-              }
-            );
             this._sizeResolve && this._sizeResolve(null);
           });
         }}
@@ -175,12 +167,23 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
   // 获取 size
   async getWrapperSize() {
     await this._sizePromise;
-    return {
-      width: this.weight,
-      height: this.height,
-      left: this.left,
-      top: this.top,
-    };
+    return new Promise((resolve) => {
+      this.ref.current?.measureInWindow(
+        (x: number, y: number, width: number, height: number) => {
+          this.top = y;
+          this.left = x;
+          this.height = height;
+          this.weight = width;
+
+          resolve({
+            width: this.weight,
+            height: this.height,
+            left: this.left,
+            top: this.top,
+          });
+        }
+      );
+    });
   }
 
   async getWrapperRef() {
