@@ -136,13 +136,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       selfSize.top + selfSize.height <=
         wrapperSize.top + wrapperSize.height + 1;
 
-    if (res) this.isVisable = true;
-
-    return {
+    const manuallyRes = {
       isVisable: res,
       hasInteracted: this.context.getHasInteracted(),
       hasViewed: this._hasViewed(),
     };
+
+    if (res) this.isVisable = true;
+
+    return manuallyRes;
   }
 
   // 手动隐藏接口，用户页面离开或者tab页离开
