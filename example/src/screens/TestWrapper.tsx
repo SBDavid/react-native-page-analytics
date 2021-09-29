@@ -7,11 +7,12 @@ import {
   FlatList,
 } from 'react-native';
 import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
+import DisableWrapper from '../../../src/DisableWrapper';
 import TestItem1 from '../../src/screens/TestItem3';
 
 export default class TestWrapper extends React.PureComponent<
   {},
-  { refreshing: boolean }
+  { refreshing: boolean; disable: boolean }
 > {
   listData = ['0', 'p', '1', '2', '3', '4', '5', '6', '7', '8'];
 
@@ -21,6 +22,7 @@ export default class TestWrapper extends React.PureComponent<
 
     this.state = {
       refreshing: false,
+      disable: false,
     };
   }
 
@@ -67,32 +69,48 @@ export default class TestWrapper extends React.PureComponent<
             this.listRef?.current?.triggerShow();
           }}
         />
-        <ScrollAnalyticWapper
-          ref={this.listRef}
-          buildChildren={(triggerScroll, triggerRefreshed) => {
-            this.triggerScroll = triggerScroll;
-            return (
-              <FlatList
-                data={this.listData}
-                renderItem={this.renderItem}
-                // getItemCount={(data) => data.length}
-                // getItem={(data, index) => data[index]}
-                keyExtractor={(item) => item}
-                refreshing={this.state.refreshing}
-                onScroll={() => {
-                  triggerScroll();
-                }}
-                onRefresh={() => {
-                  this.setState({ refreshing: true });
-                  setTimeout(() => {
-                    triggerRefreshed();
-                    this.setState({ refreshing: false });
-                  }, 200);
-                }}
-              />
-            );
+        <Button
+          title={'打开曝光'}
+          onPress={() => {
+            this.setState({ disable: false });
           }}
         />
+        <Button
+          title={'关闭曝光'}
+          onPress={() => {
+            this.setState({ disable: true });
+          }}
+        />
+        <DisableWrapper disable={this.state.disable}>
+          <DisableWrapper disable={false}>
+            <ScrollAnalyticWapper
+              ref={this.listRef}
+              buildChildren={(triggerScroll, triggerRefreshed) => {
+                this.triggerScroll = triggerScroll;
+                return (
+                  <FlatList
+                    data={this.listData}
+                    renderItem={this.renderItem}
+                    // getItemCount={(data) => data.length}
+                    // getItem={(data, index) => data[index]}
+                    keyExtractor={(item) => item}
+                    refreshing={this.state.refreshing}
+                    onScroll={() => {
+                      triggerScroll();
+                    }}
+                    onRefresh={() => {
+                      this.setState({ refreshing: true });
+                      setTimeout(() => {
+                        triggerRefreshed();
+                        this.setState({ refreshing: false });
+                      }, 200);
+                    }}
+                  />
+                );
+              }}
+            />
+          </DisableWrapper>
+        </DisableWrapper>
       </View>
     );
   }

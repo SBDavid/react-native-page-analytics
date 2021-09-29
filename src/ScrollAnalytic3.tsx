@@ -36,6 +36,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
     addShowListener: PropTypes.func,
     removeShowListener: PropTypes.func,
+
+    isDisablePageAnalytics: PropTypes.func,
   };
 
   constructor(props: Props) {
@@ -79,6 +81,13 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   });
   async _isViewable() {
     try {
+      if (
+        this.context.isDisablePageAnalytics !== undefined &&
+        this.context.isDisablePageAnalytics()
+      ) {
+        return;
+      }
+
       // size
       const selfSize = await this._getSelfMeasureLayout();
       const wrapperSize = await this.context.getWrapperSize();
