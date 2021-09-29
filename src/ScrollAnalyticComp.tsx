@@ -114,7 +114,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private checkOnShowTimer: ReturnType<typeof setTimeout> | null = null;
 
   //
-  private readonly checkDelayDuration: number = 150;
+  private readonly checkDelayDuration: number = 200;
 
   //
   static contextTypes = {
@@ -225,9 +225,6 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
   // 安卓平台onBackground事件handler
   private androidOnBackgroundHandler = () => {
-    if (this.checkIfDisabled()) {
-      return;
-    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -243,9 +240,6 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // APPstate状态更新防抖
   private appStateChangeHandler = (status: AppStateStatus) => {
     console.log('appStateChangeHandler');
-    if (this.checkIfDisabled()) {
-      return;
-    }
     console.log(`appStateChangeHandler ${status} ${Date.now()}`);
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
@@ -284,9 +278,6 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 页面与native页面相互跳转的处理
   private onResumeHandler = () => {
     console.log('onResumeHandler');
-    if (this.checkIfDisabled()) {
-      return;
-    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -298,9 +289,6 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 页面与native页面相互跳转的处理
   private onPauseHandler = () => {
     console.log('onPauseHandler');
-    if (this.checkIfDisabled()) {
-      return;
-    }
     if (this.props.navigation && !this.props.navigation.isFocused()) {
       return;
     }
@@ -311,18 +299,12 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // navigationOnFocus事件
   private onNavigationFocus = () => {
     console.log(`onNavigationFocus事件： `);
-    if (this.checkIfDisabled()) {
-      return;
-    }
     this.onFocus(PageViewExitEventSource.navigation);
   };
 
   // navigationOnBlur事件
   private onNavigationBlur = () => {
     console.log(`onNavigationBlur事件：`);
-    if (this.checkIfDisabled()) {
-      return;
-    }
     this.onBlur(PageViewExitEventSource.navigation);
   };
 
@@ -411,12 +393,16 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private notifyBack = () => {
     //
     console.log('执行manuallyShow');
-    this.contentRef.current?.manuallyShow();
 
     this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
     this.checkOnShowTimer = setTimeout(() => {
       this.tmpFocusExposeType = null;
     }, this.checkDelayDuration);
+
+    if (this.checkIfDisabled()) {
+      return;
+    }
+    this.contentRef.current?.manuallyShow();
   };
 
   // 手动通知离开页面
