@@ -110,6 +110,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
             hasInteracted: this.context.getHasInteracted(),
             hasViewed: this._hasViewed(),
           });
+        this.context.hasViewedKeys.add(this.props._key);
       }
 
       if (!res && this.isVisable) {
@@ -142,7 +143,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       hasViewed: this._hasViewed(),
     };
 
-    if (res) this.isVisable = true;
+    if (res) {
+      this.isVisable = true;
+      this.context.hasViewedKeys.add(this.props._key);
+    }
 
     return manuallyRes;
   }
@@ -204,7 +208,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     if (this.context.hasViewedKeys.has(this.props._key)) {
       return true;
     }
-    this.context.hasViewedKeys.add(this.props._key);
     return false;
   }
 
