@@ -6,6 +6,7 @@ import {
   NativeModules,
   NativeEventEmitter,
   Platform,
+  InteractionManager,
 } from 'react-native';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 import {
@@ -319,39 +320,57 @@ class ScrollAnalyticContent<P, S> extends React.Component<
     if (isIos) {
       if (source === PageViewExitEventSource.navigation) {
         // 曝光type为6，从其他页面返回, 手动通知
-        if (this.navigationState === CustomNavigationState.blur) {
-          this.tmpFocusExposeType = ExposeType.fromPage;
-        }
-        this.navigationState === CustomNavigationState.focus;
+        // if (this.navigationState === CustomNavigationState.blur) {
+        //   this.tmpFocusExposeType = ExposeType.fromPage;
+        // }
+        const tmpType =
+          this.navigationState === CustomNavigationState.blur
+            ? ExposeType.fromPage
+            : null;
+        this.navigationState = CustomNavigationState.focus;
         this.refreshLifeCycle();
-        this.notifyBack();
+        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        // this.notifyBack();
       } else if (source === PageViewExitEventSource.page) {
         // 曝光type为6，从其他页面返回, 手动通知
-        if (this.pageState === CustomPageState.pause) {
-          this.tmpFocusExposeType = ExposeType.fromPage;
-        }
+        const tmpType =
+          this.pageState === CustomPageState.pause ? ExposeType.fromPage : null;
+        // if (this.pageState === CustomPageState.pause) {
+        //   this.tmpFocusExposeType = ExposeType.fromPage;
+        // }
         this.pageState = CustomPageState.resume;
         this.refreshLifeCycle();
-        this.notifyBack();
+        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        // this.notifyBack();
       } else if (source === PageViewExitEventSource.appState) {
         // 曝光type为7，从后台返回, 手动通知
-        if (formerAppState === CustomAppState.background) {
-          this.tmpFocusExposeType = ExposeType.fromBackground;
-        }
+        const tmpType =
+          formerAppState === CustomAppState.background
+            ? ExposeType.fromBackground
+            : null;
+        // if (formerAppState === CustomAppState.background) {
+        //   this.tmpFocusExposeType = ExposeType.fromBackground;
+        // }
         this.refreshLifeCycle();
-        this.notifyBack();
+        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        // this.notifyBack();
       }
     }
 
     if (isAndroid) {
       if (source === PageViewExitEventSource.navigation) {
         // 曝光type为6，从其他页面返回, 手动通知
-        if (this.navigationState === CustomNavigationState.blur) {
-          this.tmpFocusExposeType = ExposeType.fromPage;
-        }
+        const tmpType =
+          this.navigationState === CustomNavigationState.blur
+            ? ExposeType.fromPage
+            : null;
+        // if (this.navigationState === CustomNavigationState.blur) {
+        //   this.tmpFocusExposeType = ExposeType.fromPage;
+        // }
         this.navigationState = CustomNavigationState.focus;
         this.refreshLifeCycle();
-        this.notifyBack();
+        this.checkExposedWhenRefreshLifeCycle(tmpType);
+        // this.notifyBack();
       } else if (
         source === PageViewExitEventSource.page ||
         source === PageViewExitEventSource.appState
@@ -360,18 +379,24 @@ class ScrollAnalyticContent<P, S> extends React.Component<
           // 曝光type为7，从后台返回, 手动通知
           this.pageState = CustomPageState.resume;
           console.log('androidOnBackground frombackground');
-          this.tmpFocusExposeType = ExposeType.fromBackground;
+          // this.tmpFocusExposeType = ExposeType.fromBackground;
           this.refreshLifeCycle();
-          this.notifyBack();
+          this.checkExposedWhenRefreshLifeCycle(ExposeType.fromBackground);
+          // this.notifyBack();
         } else {
           // 曝光type为6，从其他页面返回, 手动通知
-          if (this.pageState === CustomPageState.pause) {
-            console.log('androidOnBackground frompage');
-            this.tmpFocusExposeType = ExposeType.fromPage;
-          }
+          const tmpType =
+            this.pageState === CustomPageState.pause
+              ? ExposeType.fromPage
+              : null;
+          // if (this.pageState === CustomPageState.pause) {
+          //   console.log('androidOnBackground frompage');
+          //   this.tmpFocusExposeType = ExposeType.fromPage;
+          // }
           this.pageState = CustomPageState.resume;
           this.refreshLifeCycle();
-          this.notifyBack();
+          this.checkExposedWhenRefreshLifeCycle(tmpType);
+          // this.notifyBack();
         }
       }
     }
@@ -387,6 +412,28 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       //
     }
     this.notifyLeave();
+  };
+
+  // 手动查询曝光类型，在页面生命周期刷新时
+  private checkExposedWhenRefreshLifeCycle = (
+    exposeType: ExposeType | null
+  ) => {
+    if (this.checkIfDisabled()) {
+      return;
+    }
+    InteractionManager.runAfterInteractions(() => {
+      this.contentRef.current
+        ?.manuallyIsVisable()
+        .then(({ isVisable, hasInteracted, hasViewed }) => {
+          if (!isVisable || !exposeType) {
+            return;
+          }
+          if (hasInteracted && hasViewed) {
+            this.updateHasExposedType(exposeType);
+            this.exposeHandler(exposeType);
+          }
+        });
+    });
   };
 
   // 手动通知从其他地方返回到此页面
@@ -443,6 +490,9 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private onShow = (e: ShowEvent) => {
     console.log(`onshow ${e.hasInteracted} ${e.hasViewed}`);
     if (!e.hasInteracted) {
+      if (!this.shouldExposeScroll()) {
+        return;
+      }
       // type为 0
       const exposeType = ExposeType.coldBoot;
       this.updateHasExposedType(exposeType);
@@ -463,14 +513,14 @@ class ScrollAnalyticContent<P, S> extends React.Component<
 
     if (e.hasInteracted && e.hasViewed) {
       // 从其他页面返回/后台返回时，先手动通知，然后会收到此事件，如果是之前是从其他页面返回，type为6，如果是从后台返回，type为7，否则type为4
-      if (this.tmpFocusExposeType !== null) {
-        // type为 6或7
-        const exposeType = this.tmpFocusExposeType;
-        this.tmpFocusExposeType = null;
-        this.updateHasExposedType(exposeType);
-        this.exposeHandler(exposeType);
-        return;
-      }
+      // if (this.tmpFocusExposeType !== null) {
+      //   // type为 6或7
+      //   const exposeType = this.tmpFocusExposeType;
+      //   this.tmpFocusExposeType = null;
+      //   this.updateHasExposedType(exposeType);
+      //   this.exposeHandler(exposeType);
+      //   return;
+      // }
       if (!this.shouldExposeScroll()) {
         return;
       }
