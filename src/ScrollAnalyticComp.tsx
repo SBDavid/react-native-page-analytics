@@ -148,11 +148,11 @@ class ScrollAnalyticContent<P, S> extends React.Component<
         `this.context on : ${this.context} ${this.checkDelayDuration}`
       );
     }
-    return false;
-    // return (
-    //   this.context.isDisablePageAnalytics !== undefined &&
-    //   this.context.isDisablePageAnalytics()
-    // );
+    // return false;
+    return (
+      this.context.isDisablePageAnalytics !== undefined &&
+      this.context.isDisablePageAnalytics()
+    );
   };
 
   // 添加路由监听
