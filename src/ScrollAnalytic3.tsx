@@ -192,7 +192,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   render() {
     return (
       <View
-        style={{ flex: -1 }}
+        style={{ flex: 1 }}
         ref={this.itemRef}
         collapsable={false}
         onLayout={() => {
