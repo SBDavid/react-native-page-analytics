@@ -56,6 +56,9 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
     addShowListener: PropTypes.func,
     removeShowListener: PropTypes.func,
+
+    triggerScroll: PropTypes.func,
+    triggerRefreshed: PropTypes.func,
   };
 
   getChildContext() {
@@ -77,6 +80,9 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
       addShowListener: this.addShowListener,
       removeShowListener: this.removeShowListener,
+
+      triggerScroll: this.triggerScroll,
+      triggerRefreshed: this.triggerRefreshed,
     };
   }
 
