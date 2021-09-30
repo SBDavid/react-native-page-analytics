@@ -105,7 +105,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private lifeCycleHasExposedType: ExposeType | null = null;
 
   // 返回页面时判断出的临时变量exposeType，6或者7，在onShow事件中使用
-  private tmpFocusExposeType: ExposeType | null = null;
+  // private tmpFocusExposeType: ExposeType | null = null;
 
   // 组件的ref
   private contentRef: React.RefObject<ScrollAnalytics>;
@@ -115,7 +115,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   private checkOnShowTimer: ReturnType<typeof setTimeout> | null = null;
 
   //
-  private readonly checkDelayDuration: number = 200;
+  // private readonly checkDelayDuration: number = 200;
 
   //
   static contextTypes = {
@@ -495,22 +495,22 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   };
 
   // 手动通知从其他地方返回到此页面
-  private notifyBack = () => {
-    this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
-    this.checkOnShowTimer = setTimeout(() => {
-      this.tmpFocusExposeType = null;
-    }, this.checkDelayDuration);
+  // private notifyBack = () => {
+  //   this.checkOnShowTimer && clearTimeout(this.checkOnShowTimer);
+  //   this.checkOnShowTimer = setTimeout(() => {
+  //     this.tmpFocusExposeType = null;
+  //   }, this.checkDelayDuration);
 
-    console.log(
-      `this.checkIfDisabled(): ${this.props.itemKey} ${this.checkIfDisabled()}`
-    );
-    if (this.checkIfDisabled()) {
-      return;
-    }
-    //
-    console.log('执行manuallyShow');
-    this.contentRef.current?.manuallyShow();
-  };
+  //   console.log(
+  //     `this.checkIfDisabled(): ${this.props.itemKey} ${this.checkIfDisabled()}`
+  //   );
+  //   if (this.checkIfDisabled()) {
+  //     return;
+  //   }
+  //   //
+  //   console.log('执行manuallyShow');
+  //   this.contentRef.current?.manuallyShow();
+  // };
 
   // 手动通知离开页面
   private notifyLeave = () => {
