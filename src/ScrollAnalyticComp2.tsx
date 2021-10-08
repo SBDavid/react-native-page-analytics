@@ -1,23 +1,6 @@
 import * as React from 'react';
-import {
-  AppState,
-  AppStateStatus,
-  EmitterSubscription,
-  NativeModules,
-  NativeEventEmitter,
-  Platform,
-  InteractionManager,
-} from 'react-native';
-import type { NavigationProp, ParamListBase } from '@react-navigation/native';
-import {
-  PageEventEmitter,
-  isIos,
-  CustomAppState,
-  PageViewExitEventSource,
-  Props,
-  CustomNavigationState,
-  CustomPageState,
-} from './Screen';
+import { EmitterSubscription, InteractionManager } from 'react-native';
+import type { Props } from './Screen';
 import {
   GlobalEventEmitter,
   CustomScrollAnalyticEvent,
@@ -51,9 +34,6 @@ export enum ExposeType {
 // export interface ScreenLifeCycleInfo {
 
 // }
-
-const AndroidGlobalEventEmitter = new NativeEventEmitter(NativeModules.Page);
-const isAndroid = Platform.OS === 'android';
 class ScrollAnalyticContent<P, S> extends React.Component<
   P & Props & ScrollProps,
   S
