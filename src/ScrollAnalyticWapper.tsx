@@ -2,12 +2,15 @@ import * as React from 'react';
 import { View, InteractionManager } from 'react-native';
 import EventEmitter from 'eventemitter3';
 import PropTypes from 'prop-types';
+import ScrollAnalyticStoreWrapper from './ScrollAnalyticStoreWrapper';
+import type { UseNaviType } from './ScrollAnalyticStoreWrapper';
 
 type Props = {
   buildChildren: (
     triggerScroll: () => void,
     triggerRefreshed: () => void
   ) => JSX.Element;
+  useNavigation?: UseNaviType;
 };
 
 export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
@@ -157,17 +160,19 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
   render() {
     return (
-      <View
-        style={{ flex: 1 }}
-        ref={this.ref}
-        onLayout={() => {
-          InteractionManager.runAfterInteractions(() => {
-            this._sizeResolve && this._sizeResolve(null);
-          });
-        }}
-      >
-        {this.props.buildChildren(this.triggerScroll, this.triggerRefreshed)}
-      </View>
+      <ScrollAnalyticStoreWrapper useNavigation={this.props.useNavigation}>
+        <View
+          style={{ flex: 1 }}
+          ref={this.ref}
+          onLayout={() => {
+            InteractionManager.runAfterInteractions(() => {
+              this._sizeResolve && this._sizeResolve(null);
+            });
+          }}
+        >
+          {this.props.buildChildren(this.triggerScroll, this.triggerRefreshed)}
+        </View>
+      </ScrollAnalyticStoreWrapper>
     );
   }
 

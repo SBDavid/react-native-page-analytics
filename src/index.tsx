@@ -3,7 +3,7 @@ import PureScreen from './PureScreen';
 import useScreen from './useScreen';
 import ScrollAnalyticWapper from './ScrollAnalyticWapper';
 import DisableWapper from './DisableWrapper';
-import ScrollAnalyticComp from './ScrollAnalyticComp';
+import ScrollAnalyticComp from './ScrollAnalyticComp2';
 import type { ShowEvent } from './ScrollAnalytic';
 
 export type AnalyticProps = Props;

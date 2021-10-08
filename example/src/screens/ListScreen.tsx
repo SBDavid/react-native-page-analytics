@@ -82,7 +82,7 @@ export default class ListScreen extends React.Component<
         onRefreshed={() => {
           console.log(`onRefreshed  ${item}  index:${index + 1}`);
         }}
-        useNavigation={useNavigation}
+        // useNavigation={useNavigation}
         {...this.props}
       >
         <TouchableHighlight onPress={this.pressHandler}>
@@ -192,6 +192,7 @@ export default class ListScreen extends React.Component<
             <DisableWrapper disable={this.state.list1Diabled}>
               <ScrollAnalyticWapper
                 ref={this.list1Ref}
+                useNavigation={useNavigation}
                 buildChildren={(onScroll, onRefreshed) => {
                   return (
                     <FlatList
@@ -217,6 +218,7 @@ export default class ListScreen extends React.Component<
             <DisableWrapper disable={this.state.list2Diabled}>
               <ScrollAnalyticWapper
                 ref={this.list2Ref}
+                useNavigation={useNavigation}
                 buildChildren={(onScroll, onRefreshed) => {
                   return (
                     <FlatList
