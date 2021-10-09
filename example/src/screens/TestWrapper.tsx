@@ -54,7 +54,7 @@ export default class TestWrapper extends React.PureComponent<
 
   render() {
     return (
-      <View style={{borderWidth: 2, borderColor: 'red', flex: 1}}>
+      <View style={{ borderWidth: 2, borderColor: 'red', flex: 1 }}>
         <Button
           title={'手动隐藏'}
           onPress={() => {
@@ -84,6 +84,7 @@ export default class TestWrapper extends React.PureComponent<
         <DisableWrapper disable={this.state.disable}>
           <DisableWrapper disable={false}>
             <ScrollAnalyticWapper
+              viewStyle={{ flex: 1 }}
               ref={this.listRef}
               buildChildren={(triggerScroll, triggerRefreshed) => {
                 this.triggerScroll = triggerScroll;

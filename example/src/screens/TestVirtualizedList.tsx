@@ -2,14 +2,15 @@ import * as React from 'react';
 import TestItem1 from './TestItem';
 import { VirtualizedList, ListRenderItemInfo } from 'react-native';
 import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
+import Sender from '../../../src/ScrollEventSender';
 
 export class TestVirtralLizedList extends React.PureComponent<
   {},
   { refreshing: boolean }
 > {
-  // listData = ['0', 'p', 'v', 'b', '2', '3', '4', '5', '6', '7', '8'];
+  listData = ['0', 'p', 'v', 'b', '2', '3', '4', '5', '6', '7', '8'];
 
-  listData = ['v'];
+  // listData = ['v'];
 
   constructor(prop: any) {
     super(prop);
@@ -47,6 +48,7 @@ export class TestVirtralLizedList extends React.PureComponent<
           keyExtractor={(item) => item}
           onScroll={() => {
             this.triggerScroll && this.triggerScroll();
+            // Sender.send('test', 'scroll');
           }}
         />
       );
@@ -71,6 +73,7 @@ export class TestVirtralLizedList extends React.PureComponent<
           keyExtractor={(item) => item}
           onScroll={() => {
             this.triggerScroll && this.triggerScroll();
+            // Sender.send('test', 'scroll');
           }}
         />
       );
@@ -90,6 +93,7 @@ export class TestVirtralLizedList extends React.PureComponent<
   render() {
     return (
       <ScrollAnalyticWapper
+        id={'test'}
         buildChildren={(triggerScroll, triggerRefresh) => {
           this.triggerScroll = triggerScroll;
           return (
@@ -100,13 +104,16 @@ export class TestVirtralLizedList extends React.PureComponent<
               getItemCount={(data) => data.length}
               getItem={(data, index) => data[index]}
               keyExtractor={(item) => item}
-              onScroll={triggerScroll}
+              onScroll={() => {
+                triggerScroll();
+                // Sender.send('test', 'scroll');
+              }}
               refreshing={this.state.refreshing}
               onRefresh={() => {
                 this.setState({ refreshing: true });
                 setTimeout(() => {
                   this.setState({ refreshing: false });
-                  triggerRefresh();
+                  Sender.send('test', 'refreshed');
                 }, 200);
               }}
             />

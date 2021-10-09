@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { View, InteractionManager } from 'react-native';
+import { View, InteractionManager, StyleProp, ViewStyle } from 'react-native';
 import EventEmitter from 'eventemitter3';
 import PropTypes from 'prop-types';
 import ScrollAnalyticStoreWrapper from './ScrollAnalyticStoreWrapper';
 import type { UseNaviType } from './ScrollAnalyticStoreWrapper';
+import Sender from './ScrollEventSender';
 
 type Props = {
+  id?: String;
+  viewStyle?: StyleProp<ViewStyle>;
   buildChildren: (
     triggerScroll: () => void,
     triggerRefreshed: () => void
@@ -112,6 +115,16 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     this.triggerShow = this.triggerShow.bind(this);
     this.addShowListener = this.addShowListener.bind(this);
     this.removeShowListener = this.removeShowListener.bind(this);
+
+    this.globalEventHandler = this.globalEventHandler.bind(this);
+  }
+
+  componentDidMount() {
+    Sender.addListener(this.globalEventHandler);
+  }
+
+  componentWillUnmount() {
+    Sender.removeListener(this.globalEventHandler);
   }
 
   triggerScroll() {
@@ -123,6 +136,18 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
   }
   removeScrollListener(handler: () => void) {
     this.emitter.removeListener('scroll', handler);
+  }
+
+  globalEventHandler(event: { id: String; name: 'scroll' | 'refreshed' }) {
+    if (event.id === this.props.id) {
+      if (event.name === 'scroll') {
+        this.triggerScroll();
+      }
+
+      if (event.name === 'refreshed') {
+        this.triggerRefreshed();
+      }
+    }
   }
 
   triggerRefreshed() {
@@ -162,6 +187,11 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     return (
       <ScrollAnalyticStoreWrapper useNavigation={this.props.useNavigation}>
         <View
+          style={
+            this.props.viewStyle === undefined
+              ? {}
+              : (this.props.viewStyle as StyleProp<ViewStyle>)
+          }
           ref={this.ref}
           onLayout={() => {
             InteractionManager.runAfterInteractions(() => {

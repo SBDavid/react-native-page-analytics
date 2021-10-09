@@ -99,6 +99,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       }
 
       if (!this._isVisableInAsVirtualizedList()) {
+        if (this.isVisable) {
+          this.isVisable = false;
+          this.props.onHide && this.props.onHide();
+        }
         return;
       }
 
