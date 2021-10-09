@@ -156,7 +156,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
     if (!this._isVisableInAsVirtualizedList()) {
-      return false;
+      return {
+        isVisable: false,
+        hasInteracted: this.context.getHasInteracted(),
+        hasViewed: this._hasViewed(),
+      };
     }
 
     // size
