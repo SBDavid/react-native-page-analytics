@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, HeaderTitle } from '@react-navigation/stack';
 
 import RouterName from './router';
 import HomeTab from './screens/HomeTab';
@@ -21,6 +21,7 @@ import TestWapper from './screens/TestWrapper';
 // import Screen2 from './screens/Screen2';
 // import LazyLoad from './screens/LazyLoad';
 import LazyLoad from 'react-navigation-lazy-screen';
+import { View } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -99,6 +100,10 @@ export default class App extends React.PureComponent {
           <Stack.Screen
             name={RouterName.VirtualizedList as string}
             component={TestVirtralLizedList}
+            options={{
+              headerTitle: () => <View />,
+              header: () => <View />,
+            }}
           />
           <Stack.Screen
             name={RouterName.FlatList as string}

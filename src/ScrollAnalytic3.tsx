@@ -57,7 +57,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._isInVirtuallizedList = this._isInVirtuallizedList.bind(this);
     this._getCurrentListRef = this._getCurrentListRef.bind(this);
     this._computeIsViewable = this._computeIsViewable.bind(this);
-    this._isVisableInAsVirtualizedList = this._isVisableInAsVirtualizedList.bind(this);
+    this._isVisableInAsVirtualizedList =
+      this._isVisableInAsVirtualizedList.bind(this);
   }
 
   // 是否处于曝光状态

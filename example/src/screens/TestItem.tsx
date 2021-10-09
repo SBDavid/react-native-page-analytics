@@ -18,6 +18,7 @@ export default class TestItem1 extends React.PureComponent<
   render() {
     return (
       <ScrollAnalytics
+        debugTitle={this.props.text}
         onShow={(e) => {
           console.info(this.props.text, '曝光');
           this.setState(e);
