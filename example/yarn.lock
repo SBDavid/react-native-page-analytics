@@ -1043,17 +1043,17 @@
     serve-static "^1.13.1"
     ws "^1.1.0"
 
-"@xmly/cli@^0.3.0-alpha":
-  version "0.3.0-alpha"
-  resolved "http://xnpm.ximalaya.com/@xmly/cli/download/@xmly/cli-0.3.0-alpha.tgz#580fcfa21a5361bb75f06609080f8832c3ebd623"
-  integrity sha1-WA/PohpTYbt18GYJCA+IMsPr1iM=
+"@xmly/cli@^0.2.15":
+  version "0.2.15"
+  resolved "http://xnpm.ximalaya.com/@xmly/cli/download/@xmly/cli-0.2.15.tgz#0f5f677df6e42851c397c1a4d2126b7f764e031c"
+  integrity sha1-D19nffbkKFHDl8Gk0hJrf3ZOAxw=
   dependencies:
     "@hapi/joi" "^15.0.3"
     "@react-native-community/cli-debugger-ui" "^4.9.0"
     "@react-native-community/cli-tools" "^4.11.0"
     "@react-native-community/cli-types" "^4.10.1"
     "@xmly/cli-server-api" "^0.1.0"
-    "@xmly/metro" "^0.3.0-alpha"
+    "@xmly/metro" "^0.2.10"
     app-root-path "^3.0.0"
     archiver "^2.1.1"
     chalk "^3.0.0"
@@ -1085,10 +1085,10 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@xmly/metro@^0.3.0-alpha":
-  version "0.3.0-alpha"
-  resolved "http://xnpm.ximalaya.com/@xmly/metro/download/@xmly/metro-0.3.0-alpha.tgz#5ade27c851b43eb994bd42df2f797ea5f887d237"
-  integrity sha1-Wt4nyFG0PrmUvULfL3l+pfiH0jc=
+"@xmly/metro@^0.2.10":
+  version "0.2.10"
+  resolved "http://xnpm.ximalaya.com/@xmly/metro/download/@xmly/metro-0.2.10.tgz#bcc4b6e9cfaafcccd4e47652d51f0b1a6e4ee412"
+  integrity sha1-vMS26c+q/MzU5HZS1R8LGm5O5BI=
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@babel/core" "^7.0.0"
@@ -4073,14 +4073,14 @@ react-native-screens@2.10.1:
   resolved "https://registry.nlark.com/react-native-screens/download/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
   integrity sha1-BtIvrofvDOUcYWw0oZlybbFAO5U=
 
-"react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63.4":
+"react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63-dev":
   version "0.63.2"
-  resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#4c743ecece38286485d7ff1e720f72e6b73a6a91"
+  resolved "git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#8e58242c60fa7b63d8f1196cfae02d888bf315d7"
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@react-native-community/cli-platform-android" "^4.7.0"
     "@react-native-community/cli-platform-ios" "^4.7.0"
-    "@xmly/cli" "^0.3.0-alpha"
+    "@xmly/cli" "^0.2.15"
     abort-controller "^3.0.0"
     anser "^1.4.9"
     base64-js "^1.1.2"
