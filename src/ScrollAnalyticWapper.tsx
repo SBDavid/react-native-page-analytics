@@ -162,7 +162,6 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     return (
       <ScrollAnalyticStoreWrapper useNavigation={this.props.useNavigation}>
         <View
-          style={{ flex: 1 }}
           ref={this.ref}
           onLayout={() => {
             InteractionManager.runAfterInteractions(() => {
