@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { View, InteractionManager } from 'react-native';
+import { View, InteractionManager, Platform } from 'react-native';
 
 export type ShowEvent = {
   hasInteracted: Boolean;
@@ -19,6 +19,9 @@ export type Props = {
 export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 当前节点必然处于列表中
   static contextTypes = {
+    virtualizedCell: PropTypes.object,
+    virtualizedList: PropTypes.object,
+
     getHasInteracted: PropTypes.func,
     setHasInteracted: PropTypes.func,
     hasViewedKeys: PropTypes.object,
@@ -50,6 +53,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this.manuallyShow = this.manuallyShow.bind(this);
     this.manuallyRefreshed = this.manuallyRefreshed.bind(this);
     this._getSelfMeasureLayout = this._getSelfMeasureLayout.bind(this);
+
+    this._isInVirtuallizedList = this._isInVirtuallizedList.bind(this);
+    this._getCurrentListRef = this._getCurrentListRef.bind(this);
+    this._computeIsViewable = this._computeIsViewable.bind(this);
+    this._isVisableInAsVirtualizedList = this._isVisableInAsVirtualizedList.bind(this);
   }
 
   // 是否处于曝光状态
@@ -89,6 +97,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         return;
       }
 
+      if (!this._isVisableInAsVirtualizedList()) {
+        return;
+      }
+
       // size
       const selfSize = await this._getSelfMeasureLayout();
       const wrapperSize = await this.context.getWrapperSize();
@@ -123,8 +135,30 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     }
   }
 
+  _isVisableInAsVirtualizedList() {
+    if (!this._isInVirtuallizedList() || Platform.OS === 'ios') {
+      return true;
+    }
+
+    const selfRef = this._getCurrentListRef();
+    const selfScrollMetrics = selfRef._scrollMetrics;
+    const selfIndex = this._getVirtualizedCellIndex(
+      selfRef,
+      this.context.virtualizedCell.cellKey
+    );
+
+    // 相对位置
+    const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
+
+    return this._computeIsViewable(selfScrollMetrics, seflFrameMetrics);
+  }
+
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
+    if (!this._isVisableInAsVirtualizedList()) {
+      return false;
+    }
+
     // size
     const selfSize = await this._getSelfMeasureLayout();
     const wrapperSize = await this.context.getWrapperSize();
@@ -232,5 +266,42 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         }
       );
     });
+  }
+
+  _computeIsViewable(scrollMetrics: any, frameMetrics: any) {
+    if (frameMetrics === undefined) {
+      return false;
+    }
+
+    const viewPortTop = scrollMetrics.offset;
+    const viewPortBottom = viewPortTop + scrollMetrics.visibleLength;
+    const itemTop = frameMetrics.offset;
+    const itemBottom = itemTop + frameMetrics.length;
+    return viewPortTop - 1 <= itemTop && viewPortBottom + 1 >= itemBottom;
+  }
+
+  // 是否在 VirtuallizedList 内
+  _isInVirtuallizedList() {
+    return this.context.virtualizedList !== undefined;
+  }
+
+  // 获取当前节点的列表ref
+  _getCurrentListRef() {
+    return this.context.virtualizedList.getOutermostParentListRef();
+  }
+
+  // 获取 VirtualizedCell 的index
+  _getVirtualizedCellIndex(ListRef: any, key: any) {
+    let _index;
+    const { data, getItemCount, getItem, keyExtractor } = ListRef.props;
+    const itemCount = getItemCount(data);
+    for (let index = 0; index < itemCount; index++) {
+      const item = getItem(data, index);
+      if (key === keyExtractor(item, index)) {
+        _index = index;
+        break;
+      }
+    }
+    return _index;
   }
 }
