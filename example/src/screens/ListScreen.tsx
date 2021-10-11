@@ -1,5 +1,12 @@
 import React from 'react';
-import PageAnalytics, { AnalyticProps, ScrollShowEvent } from '../../../src';
+import PageAnalytics, {
+  AnalyticProps,
+  ScrollShowEvent,
+  ScrollEventSender,
+  ScrollAnalyticComp,
+  ScrollAnalyticWapper,
+  DisableWrapper,
+} from '../../../src';
 import {
   ScrollView,
   TouchableHighlight,
@@ -17,8 +24,6 @@ import { Container, Item, ItemText } from './StyledComponents';
 import Utils from '../utils';
 import RouterName from '../router';
 import Button from '../components/Button';
-import ScrollAnalyticWapper from '../../../src/ScrollAnalyticWapper';
-import DisableWrapper from '../../../src/DisableWrapper';
 
 interface HomePageProps {}
 
@@ -68,7 +73,7 @@ export default class ListScreen extends React.Component<
   createItem = ({ item, index }: { item: string; index: number }) => {
     // return <TestUseNavigation title={item} />;
     return (
-      <PageAnalytics.ScrollAnalyticComp
+      <ScrollAnalyticComp
         itemKey={item + '  ' + index}
         // key={index}
         onShow={(exposeType: number) => {
@@ -101,7 +106,7 @@ export default class ListScreen extends React.Component<
             }`}</Text>
           </View>
         </TouchableHighlight>
-      </PageAnalytics.ScrollAnalyticComp>
+      </ScrollAnalyticComp>
     );
   };
 
