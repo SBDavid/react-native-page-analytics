@@ -47,8 +47,8 @@ export class TestVirtralLizedList extends React.PureComponent<
           getItem={(data, index) => data[index]}
           keyExtractor={(item) => item}
           onScroll={() => {
-            this.triggerScroll && this.triggerScroll();
-            // Sender.send('test', 'scroll');
+            // this.triggerScroll && this.triggerScroll();
+            Sender.send('test', 'scroll');
           }}
         />
       );
@@ -72,8 +72,8 @@ export class TestVirtralLizedList extends React.PureComponent<
           getItem={(data, index) => data[index]}
           keyExtractor={(item) => item}
           onScroll={() => {
-            this.triggerScroll && this.triggerScroll();
-            // Sender.send('test', 'scroll');
+            // this.triggerScroll && this.triggerScroll();
+            Sender.send('test', 'scroll');
           }}
         />
       );
@@ -105,8 +105,8 @@ export class TestVirtralLizedList extends React.PureComponent<
               getItem={(data, index) => data[index]}
               keyExtractor={(item) => item}
               onScroll={() => {
-                triggerScroll();
-                // Sender.send('test', 'scroll');
+                // triggerScroll();
+                Sender.send('test', 'scroll');
               }}
               refreshing={this.state.refreshing}
               onRefresh={() => {
