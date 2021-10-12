@@ -36,9 +36,9 @@ export default class DisableWapper extends React.Component<Props> {
     }
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
 
   render() {
     return this.props.children;

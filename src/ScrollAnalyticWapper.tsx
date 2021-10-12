@@ -3,8 +3,8 @@ import { View, InteractionManager, StyleProp, ViewStyle } from 'react-native';
 import EventEmitter from 'eventemitter3';
 import PropTypes from 'prop-types';
 import ScrollAnalyticStoreWrapper from './ScrollAnalyticStoreWrapper';
-import type { UseNaviType } from './ScrollAnalyticStoreWrapper';
 import Sender from './ScrollEventSender';
+import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 type Props = {
   id?: String;
@@ -13,10 +13,10 @@ type Props = {
     triggerScroll: () => void,
     triggerRefreshed: () => void
   ) => JSX.Element;
-  useNavigation?: UseNaviType;
+  navigation?: NavigationProp<ParamListBase>;
 };
 
-export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
+export class ScrollAnalyticWapper extends React.PureComponent<Props> {
   // 是否交互过
   hasInteracted = false;
   getHasInteracted() {
@@ -65,6 +65,9 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
     triggerScroll: PropTypes.func,
     triggerRefreshed: PropTypes.func,
+
+    hasNavigation: PropTypes.func,
+    isNavigationFocused: PropTypes.func,
   };
 
   getChildContext() {
@@ -89,6 +92,9 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
       triggerScroll: this.triggerScroll,
       triggerRefreshed: this.triggerRefreshed,
+
+      hasNavigation: this.hasNavigation,
+      isNavigationFocused: this.isNavigationFocused,
     };
   }
 
@@ -117,6 +123,9 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     this.removeShowListener = this.removeShowListener.bind(this);
 
     this.globalEventHandler = this.globalEventHandler.bind(this);
+
+    this.hasNavigation = this.hasNavigation.bind(this);
+    this.isNavigationFocused = this.isNavigationFocused.bind(this);
   }
 
   componentDidMount() {
@@ -185,7 +194,7 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
   render() {
     return (
-      <ScrollAnalyticStoreWrapper useNavigation={this.props.useNavigation}>
+      <ScrollAnalyticStoreWrapper navigation={this.props.navigation}>
         <View
           style={
             this.props.viewStyle === undefined
@@ -231,4 +240,37 @@ export default class ScrollAnalyticWapper extends React.PureComponent<Props> {
     await this._sizePromise;
     return this.ref;
   }
+
+  // 判断当前是否处于路由focus状态
+  hasNavigation() {
+    return this.props.navigation !== undefined;
+  }
+  isNavigationFocused() {
+    return this.props.navigation?.isFocused();
+  }
 }
+
+export type UseNaviType = <T extends NavigationProp<ParamListBase>>() => T;
+function ScrollAnalyticWapperWithNavitaion(props: {
+  useNavigation?: UseNaviType;
+  id?: String;
+  viewStyle?: StyleProp<ViewStyle>;
+  buildChildren: (
+    triggerScroll: () => void,
+    triggerRefreshed: () => void
+  ) => JSX.Element;
+}) {
+  let navigation;
+  if (props.useNavigation) {
+    try {
+      navigation = props.useNavigation();
+    } catch (e) {}
+  }
+  if (navigation) {
+    return <ScrollAnalyticWapper navigation={navigation} {...props} />;
+  } else {
+    return <ScrollAnalyticWapper {...props} />;
+  }
+}
+
+export default ScrollAnalyticWapperWithNavitaion;

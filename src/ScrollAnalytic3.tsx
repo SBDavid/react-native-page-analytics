@@ -41,6 +41,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     removeShowListener: PropTypes.func,
 
     isDisablePageAnalytics: PropTypes.func,
+
+    hasNavigation: PropTypes.func,
+    isNavigationFocused: PropTypes.func,
   };
 
   constructor(props: Props) {
@@ -78,7 +81,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._cancelTimeout0 = setTimeout(async () => {
       await this.layoutPromise;
       this._isViewable();
-      this.setState({});
     }, 100);
   }
 
@@ -98,6 +100,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         this.context.isDisablePageAnalytics !== undefined &&
         this.context.isDisablePageAnalytics()
       ) {
+        return;
+      }
+
+      if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
         return;
       }
 
@@ -253,7 +259,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   render() {
     return (
       <View
-        style={{ flex: 1 }}
         ref={this.itemRef}
         collapsable={false}
         onLayout={() => {

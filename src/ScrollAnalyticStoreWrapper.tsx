@@ -36,7 +36,10 @@ export const GlobalEventEmitter =
 const AndroidGlobalEventEmitter = new NativeEventEmitter(NativeModules.Page);
 const isAndroid = Platform.OS === 'android';
 
-class ScrollAnalyticStore<P, S> extends React.Component<P & CustomProps, S> {
+export default class ScrollAnalyticStore<P, S> extends React.Component<
+  P & CustomProps,
+  S
+> {
   //
   static childContextTypes = {
     updateItemHasExposedType: PropTypes.func,
@@ -595,23 +598,23 @@ class ScrollAnalyticStore<P, S> extends React.Component<P & CustomProps, S> {
 
 export type UseNaviType = <T extends NavigationProp<ParamListBase>>() => T;
 
-function ScrollAnalyticsWithNavitaion(props: {
-  useNavigation?: UseNaviType;
-  [index: string]: any;
-}) {
-  let navigation;
-  if (props.useNavigation) {
-    try {
-      navigation = props.useNavigation();
-    } catch (e) {}
-  }
-  if (navigation) {
-    return <ScrollAnalyticStore navigation={navigation} {...props} />;
-  } else {
-    return <ScrollAnalyticStore {...props} />;
-  }
-}
+// function ScrollAnalyticsWithNavitaion(props: {
+//   useNavigation?: UseNaviType;
+//   [index: string]: any;
+// }) {
+//   let navigation;
+//   if (props.useNavigation) {
+//     try {
+//       navigation = props.useNavigation();
+//     } catch (e) {}
+//   }
+//   if (navigation) {
+//     return <ScrollAnalyticStore navigation={navigation} {...props} />;
+//   } else {
+//     return <ScrollAnalyticStore {...props} />;
+//   }
+// }
 
-const ScrollAnalyticStoreWrapper = React.memo(ScrollAnalyticsWithNavitaion);
+// const ScrollAnalyticStoreWrapper = React.memo(ScrollAnalyticsWithNavitaion);
 
-export default ScrollAnalyticStoreWrapper;
+// export default ScrollAnalyticStoreWrapper;
