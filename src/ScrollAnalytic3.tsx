@@ -64,6 +64,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 是否处于曝光状态
   isVisable: boolean = false;
 
+  _cancelTimeout0: NodeJS.Timeout | undefined;
   componentDidMount() {
     if (this.props.disable) return;
     if (this.context.addScrollListener === undefined) return;
@@ -74,8 +75,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this.context.addShowListener(this.manuallyShow);
     this.context.addRefreshedListener(this.manuallyRefreshed);
     // 计算冷启动曝光
-    setTimeout(async () => {
+    this._cancelTimeout0 = setTimeout(async () => {
+      await this.layoutPromise;
       this._isViewable();
+      this.setState({});
     }, 100);
   }
 
@@ -147,6 +150,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
     const selfRef = this._getCurrentListRef();
     const selfScrollMetrics = selfRef._scrollMetrics;
+
+    if (selfScrollMetrics === undefined) {
+      return false;
+    }
+
     const selfIndex = this._getVirtualizedCellIndex(
       selfRef,
       this.context.virtualizedCell.cellKey
@@ -154,6 +162,13 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
     // 相对位置
     const seflFrameMetrics = selfRef._getFrameMetrics(selfIndex);
+
+    if (
+      seflFrameMetrics === undefined ||
+      selfScrollMetrics.contentLength === 0
+    ) {
+      return 0;
+    }
 
     return this._computeIsViewable(selfScrollMetrics, seflFrameMetrics);
   }
@@ -224,6 +239,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   componentWillUnmount() {
     if (this.props.disable) return;
     if (this.context.addScrollListener === undefined) return;
+
+    if (this._cancelTimeout) clearTimeout(this._cancelTimeout);
+    if (this._cancelTimeout0) clearTimeout(this._cancelTimeout0);
 
     // 绑定事件
     this.context.removeScrollListener(this._onScrollHandler);
