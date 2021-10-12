@@ -13,6 +13,7 @@ type Props = {
     triggerScroll: () => void,
     triggerRefreshed: () => void
   ) => JSX.Element;
+  isNormalVirtualizedList?: Boolean;
   navigation?: NavigationProp<ParamListBase>;
 };
 
@@ -68,6 +69,8 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
     hasNavigation: PropTypes.func,
     isNavigationFocused: PropTypes.func,
+
+    isNormalVirtualizedList: PropTypes.bool,
   };
 
   getChildContext() {
@@ -95,6 +98,10 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
       hasNavigation: this.hasNavigation,
       isNavigationFocused: this.isNavigationFocused,
+
+      isNormalVirtualizedList:
+        this.props.isNormalVirtualizedList === undefined ||
+        this.props.isNormalVirtualizedList === true,
     };
   }
 

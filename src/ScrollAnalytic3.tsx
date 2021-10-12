@@ -44,6 +44,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
     hasNavigation: PropTypes.func,
     isNavigationFocused: PropTypes.func,
+
+    isNormalVirtualizedList: PropTypes.bool,
   };
 
   constructor(props: Props) {
@@ -62,6 +64,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._computeIsViewable = this._computeIsViewable.bind(this);
     this._isVisableInAsVirtualizedList =
       this._isVisableInAsVirtualizedList.bind(this);
+    this.manuallyIsVisable = this.manuallyIsVisable.bind(this);
   }
 
   // 是否处于曝光状态
@@ -107,7 +110,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         return;
       }
 
-      if (!this._isVisableInAsVirtualizedList()) {
+      if (
+        this.context.isNormalVirtualizedList &&
+        !this._isVisableInAsVirtualizedList()
+      ) {
         if (this.isVisable) {
           this.isVisable = false;
           this.props.onHide && this.props.onHide();
@@ -181,7 +187,18 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
-    if (!this._isVisableInAsVirtualizedList()) {
+    if (
+      this.context.isNormalVirtualizedList &&
+      !this._isVisableInAsVirtualizedList()
+    ) {
+      return {
+        isVisable: false,
+        hasInteracted: this.context.getHasInteracted(),
+        hasViewed: this._hasViewed(),
+      };
+    }
+
+    if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
       return {
         isVisable: false,
         hasInteracted: this.context.getHasInteracted(),
