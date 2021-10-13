@@ -14,6 +14,7 @@ export type Props = {
   onRefreshed?: () => void;
   disable?: Boolean;
   debugTitle?: string;
+  isNormalVirtualizedList?: boolean;
 };
 
 export default class ScrollAnalytics extends React.PureComponent<Props> {
@@ -111,7 +112,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       }
 
       if (
-        this.context.isNormalVirtualizedList &&
+        (this.context.isNormalVirtualizedList ||
+          this.props.isNormalVirtualizedList !== false) &&
         !this._isVisableInAsVirtualizedList()
       ) {
         if (this.isVisable) {
@@ -188,7 +190,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
     if (
-      this.context.isNormalVirtualizedList &&
+      (this.context.isNormalVirtualizedList ||
+        this.props.isNormalVirtualizedList !== false) &&
       !this._isVisableInAsVirtualizedList()
     ) {
       return {
