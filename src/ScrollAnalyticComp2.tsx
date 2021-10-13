@@ -16,6 +16,7 @@ export interface ScrollProps {
   onShow: (type: number) => void;
   onHide?: () => void;
   onRefreshed?: () => void;
+  isNormalVirtualizedList?: boolean;
 }
 
 export enum ExposeType {
@@ -657,6 +658,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
           onShow={this.onShow}
           onHide={this.onHide}
           onRefreshed={this.onRefreshed}
+          isNormalVirtualizedList={this.props.isNormalVirtualizedList}
         />
       </>
     );
