@@ -559,7 +559,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
   // 手动通知离开页面
   private notifyLeave = () => {
     //
-    console.log('执行manuallyHide');
+    // console.log('执行manuallyHide');
     this.contentRef.current?.manuallyHide();
   };
 
