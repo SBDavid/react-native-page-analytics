@@ -337,32 +337,33 @@ export default class ScrollAnalyticStore<P, S> extends React.Component<
     if (isIos) {
       if (source === PageViewExitEventSource.navigation) {
         // 曝光type为6，从其他页面返回, 手动通知
+        let exposeType: ExposeType | null = null;
         if (this.navigationState === CustomNavigationState.blur) {
-          const exposeType =
+          exposeType =
             this.navigationState === CustomNavigationState.blur
               ? ExposeType.fromPage
               : null;
-          this.navigationState = CustomNavigationState.focus;
+
           this.refreshLifeCycle();
-          this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
-            exposeType,
-          });
-          // this.checkExposedWhenRefreshLifeCycle(tmpType);
         }
+        this.navigationState = CustomNavigationState.focus;
+        this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
+          exposeType,
+        });
       } else if (source === PageViewExitEventSource.page) {
         // 曝光type为6，从其他页面返回, 手动通知
+        let exposeType: ExposeType | null = null;
         if (this.pageState === CustomPageState.pause) {
-          const exposeType =
+          exposeType =
             this.pageState === CustomPageState.pause
               ? ExposeType.fromPage
               : null;
-          this.pageState = CustomPageState.resume;
           this.refreshLifeCycle();
-          this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
-            exposeType,
-          });
-          // this.checkExposedWhenRefreshLifeCycle(tmpType);
         }
+        this.pageState = CustomPageState.resume;
+        this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
+          exposeType,
+        });
       } else if (source === PageViewExitEventSource.appState) {
         // 曝光type为7，从后台返回, 手动通知
         if (formerAppState === CustomAppState.background) {
@@ -374,7 +375,6 @@ export default class ScrollAnalyticStore<P, S> extends React.Component<
           this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
             exposeType,
           });
-          // this.checkExposedWhenRefreshLifeCycle(tmpType);
         }
       }
     }
@@ -382,18 +382,18 @@ export default class ScrollAnalyticStore<P, S> extends React.Component<
     if (isAndroid) {
       if (source === PageViewExitEventSource.navigation) {
         // 曝光type为6，从其他页面返回, 手动通知
+        let exposeType: ExposeType | null = null;
         if (this.navigationState === CustomNavigationState.blur) {
-          const exposeType =
+          exposeType =
             this.navigationState === CustomNavigationState.blur
               ? ExposeType.fromPage
               : null;
-          this.navigationState = CustomNavigationState.focus;
           this.refreshLifeCycle();
-          this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
-            exposeType,
-          });
-          // this.checkExposedWhenRefreshLifeCycle(tmpType);
         }
+        this.navigationState = CustomNavigationState.focus;
+        this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
+          exposeType,
+        });
       } else if (
         source === PageViewExitEventSource.page ||
         source === PageViewExitEventSource.appState
@@ -410,18 +410,18 @@ export default class ScrollAnalyticStore<P, S> extends React.Component<
           // this.checkExposedWhenRefreshLifeCycle(ExposeType.fromBackground);
         } else {
           // 曝光type为6，从其他页面返回, 手动通知
+          let exposeType: ExposeType | null = null;
           if (this.pageState === CustomPageState.pause) {
-            const exposeType =
+            exposeType =
               this.pageState === CustomPageState.pause
                 ? ExposeType.fromPage
                 : null;
-            this.pageState = CustomPageState.resume;
             this.refreshLifeCycle();
-            this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
-              exposeType,
-            });
-            // this.checkExposedWhenRefreshLifeCycle(tmpType);
           }
+          this.pageState = CustomPageState.resume;
+          this.sendCustomEvent(CustomScrollAnalyticEvent.onFocus, {
+            exposeType,
+          });
         }
       }
     }

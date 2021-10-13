@@ -505,23 +505,34 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       return;
     }
     InteractionManager.runAfterInteractions(() => {
-      console.log('checkExposedWhenRefreshLifeCycle');
       this.contentRef.current
         ?.manuallyIsVisable()
         .then(({ isVisable, hasInteracted, hasViewed }) => {
-          if (!isVisable || !exposeType) {
-            return;
-          }
-          if (!this.context.shouldItemExposeScroll(this.props.itemKey)) {
+          if (
+            !isVisable ||
+            !this.context.shouldItemExposeScroll(this.props.itemKey)
+          ) {
             return;
           }
           if (hasInteracted && hasViewed) {
+            if (!exposeType) {
+              return;
+            }
             this.context.updateItemHasExposedType(
               this.props.itemKey,
               exposeType
             );
-            // this.updateHasExposedType(exposeType);
             this.exposeHandler(exposeType);
+          } else {
+            let useExposeType = exposeType;
+            if (useExposeType === null) {
+              useExposeType = ExposeType.coldBoot;
+            }
+            this.context.updateItemHasExposedType(
+              this.props.itemKey,
+              useExposeType
+            );
+            this.exposeHandler(useExposeType);
           }
         });
     });

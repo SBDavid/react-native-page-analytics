@@ -1,6 +1,6 @@
 {
   "name": "@xmly/react-native-page-analytics",
-  "version": "0.3.13-alpha",
+  "version": "0.3.14-alpha",
   "description": "empty",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
