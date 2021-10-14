@@ -136,6 +136,14 @@ useScreen
 
   2. 兼容没有使用react-navigation的项目，对于没有使用路由的单RN页面项目，会对APPstate状态变化、RN页面与Native页面互跳 这两种场景做了处理
 
+
+## 控件滑动曝光埋点
+<br />
+
+### 使用示例
+
+
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.

@@ -56,9 +56,9 @@ export default class ListScreen extends React.Component<
 
   screenWidth: number;
 
-  list1Ref: React.RefObject<ScrollAnalyticWapper> = React.createRef();
+  list1Id: string = 'list1Id';
 
-  list2Ref: React.RefObject<ScrollAnalyticWapper> = React.createRef();
+  list2Id: string = 'list2Id';
 
   componentDidMount() {}
 
@@ -115,21 +115,21 @@ export default class ListScreen extends React.Component<
   tabHandler = (item: number) => {
     if (item === 0) {
       this.setState({ list1Diabled: false, list2Diabled: true });
-      this.list2Ref.current?.triggerHide();
-      this.list1Ref.current?.triggerShow();
+      ScrollEventSender.send(this.list1Id, 'show');
+      ScrollEventSender.send(this.list2Id, 'hide');
     } else {
       this.setState({ list1Diabled: true, list2Diabled: false });
-      this.list1Ref.current?.triggerHide();
-      this.list2Ref.current?.triggerShow();
+      ScrollEventSender.send(this.list1Id, 'hide');
+      ScrollEventSender.send(this.list2Id, 'show');
     }
     this.setState({ selectedTab: item });
   };
 
   refreshHandler = (item: number) => {
     if (item === this.state.tabList[0]) {
-      this.list1Ref.current?.triggerRefreshed();
+      ScrollEventSender.send(this.list1Id, 'refreshed');
     } else {
-      this.list2Ref.current?.triggerRefreshed();
+      ScrollEventSender.send(this.list2Id, 'refreshed');
     }
   };
 
@@ -196,7 +196,7 @@ export default class ListScreen extends React.Component<
           >
             <DisableWrapper disable={this.state.list1Diabled}>
               <ScrollAnalyticWapper
-                ref={this.list1Ref}
+                id={this.list1Id}
                 useNavigation={useNavigation}
                 buildChildren={(onScroll, onRefreshed) => {
                   return (
@@ -222,7 +222,7 @@ export default class ListScreen extends React.Component<
           >
             <DisableWrapper disable={this.state.list2Diabled}>
               <ScrollAnalyticWapper
-                ref={this.list2Ref}
+                id={this.list2Id}
                 useNavigation={useNavigation}
                 buildChildren={(onScroll, onRefreshed) => {
                   return (
