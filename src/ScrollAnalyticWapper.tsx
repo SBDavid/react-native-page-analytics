@@ -270,10 +270,11 @@ function ScrollAnalyticWapperWithNavitaion(props: {
   id?: String;
   isNormalVirtualizedList?: Boolean;
   viewStyle?: StyleProp<ViewStyle>;
-  buildChildren: (
-    triggerScroll: () => void,
-    triggerRefreshed: () => void
-  ) => JSX.Element;
+  // buildChildren: (
+  //   triggerScroll: () => void,
+  //   triggerRefreshed: () => void
+  // ) => JSX.Element;
+  children: React.ReactNode;
 }) {
   let navigation;
   if (props.useNavigation) {

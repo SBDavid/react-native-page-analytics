@@ -16,6 +16,8 @@ import {
   Text,
   Dimensions,
   StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -169,6 +171,16 @@ export default class ListScreen extends React.Component<
     );
   };
 
+  handleList1Scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // console.log(event);
+    ScrollEventSender.send(this.list1Id, 'scroll');
+  };
+
+  handleList2Scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // console.log(event);
+    ScrollEventSender.send(this.list2Id, 'scroll');
+  };
+
   render() {
     return (
       <>
@@ -198,18 +210,15 @@ export default class ListScreen extends React.Component<
               <ScrollAnalyticWapper
                 id={this.list1Id}
                 useNavigation={useNavigation}
-                buildChildren={(onScroll, onRefreshed) => {
-                  return (
-                    <FlatList
-                      onScroll={onScroll}
-                      data={this.state.list1}
-                      renderItem={this.createItem}
-                      keyExtractor={(item, index) => index.toString()}
-                      ItemSeparatorComponent={this.createSeperator}
-                    />
-                  );
-                }}
-              />
+              >
+                <FlatList
+                  onScroll={this.handleList1Scroll}
+                  data={this.state.list1}
+                  renderItem={this.createItem}
+                  keyExtractor={(item, index) => index.toString()}
+                  ItemSeparatorComponent={this.createSeperator}
+                />
+              </ScrollAnalyticWapper>
             </DisableWrapper>
           </View>
           <View
@@ -224,18 +233,15 @@ export default class ListScreen extends React.Component<
               <ScrollAnalyticWapper
                 id={this.list2Id}
                 useNavigation={useNavigation}
-                buildChildren={(onScroll, onRefreshed) => {
-                  return (
-                    <FlatList
-                      onScroll={onScroll}
-                      data={this.state.list2}
-                      renderItem={this.createItem}
-                      keyExtractor={(item, index) => index.toString()}
-                      ItemSeparatorComponent={this.createSeperator}
-                    />
-                  );
-                }}
-              />
+              >
+                <FlatList
+                  onScroll={this.handleList2Scroll}
+                  data={this.state.list2}
+                  renderItem={this.createItem}
+                  keyExtractor={(item, index) => index.toString()}
+                  ItemSeparatorComponent={this.createSeperator}
+                />
+              </ScrollAnalyticWapper>
             </DisableWrapper>
           </View>
         </View>
