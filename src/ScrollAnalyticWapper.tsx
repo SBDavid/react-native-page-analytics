@@ -154,7 +154,10 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
     this.emitter.removeListener('scroll', handler);
   }
 
-  globalEventHandler(event: { id: String; name: 'scroll' | 'refreshed' }) {
+  globalEventHandler(event: {
+    id: String;
+    name: 'scroll' | 'refreshed' | 'hide' | 'show';
+  }) {
     if (event.id === this.props.id) {
       if (event.name === 'scroll') {
         this.triggerScroll();
@@ -162,6 +165,14 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
 
       if (event.name === 'refreshed') {
         this.triggerRefreshed();
+      }
+
+      if (event.name === 'hide') {
+        this.triggerHide();
+      }
+
+      if (event.name === 'show') {
+        this.triggerShow();
       }
     }
   }

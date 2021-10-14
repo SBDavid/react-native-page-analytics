@@ -1,6 +1,11 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { View, InteractionManager, Platform } from 'react-native';
+import {
+  View,
+  InteractionManager,
+  Platform,
+  NativeModules,
+  findNodeHandle } from 'react-native';
 
 export type ShowEvent = {
   hasInteracted: Boolean;
@@ -99,6 +104,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this.layoutPromiseResolve = resolve;
   });
   async _isViewable() {
+    // NativeModules.XMTrace.getVisibility({
+    //   id: findNodeHandle(this.itemRef.current),
+    // })
+    //   .then((e: boolean) => {
+    //     console.info('getVisibility', e);
+    //   })
+    //   .catch((err: any) => {
+    //     console.info('getVisibility err', err);
+    //   });
     try {
       if (
         this.context.isDisablePageAnalytics !== undefined &&
@@ -111,22 +125,25 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         return;
       }
 
-      let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
-      if (this.props.isNormalVirtualizedList !== undefined) {
-        isNormalVirtualizedList = this.props.isNormalVirtualizedList;
-      }
+      // let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
+      // if (this.props.isNormalVirtualizedList !== undefined) {
+      //   isNormalVirtualizedList = this.props.isNormalVirtualizedList;
+      // }
 
-      if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
-        if (this.isVisable) {
-          this.isVisable = false;
-          this.props.onHide && this.props.onHide();
-        }
-        return;
-      }
+      // if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
+      //   if (this.isVisable) {
+      //     this.isVisable = false;
+      //     this.props.onHide && this.props.onHide();
+      //   }
+      //   return;
+      // }
 
       // size
       const selfSize = await this._getSelfMeasureLayout();
       const wrapperSize = await this.context.getWrapperSize();
+
+      // temp
+      const temp = selfSize.left === 0 && selfSize.top === wrapperSize.top;
 
       // 判断是否漏出
       const res =
@@ -139,7 +156,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
       // console.info(this.props.debugTitle, res, selfSize, wrapperSize);
 
-      if (res && !this.isVisable) {
+      if (res && !this.isVisable && !temp) {
         this.isVisable = true;
         this.props.onShow &&
           this.props.onShow({
@@ -190,17 +207,17 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
-    let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
-    if (this.props.isNormalVirtualizedList !== undefined) {
-      isNormalVirtualizedList = this.props.isNormalVirtualizedList;
-    }
-    if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
-      return {
-        isVisable: false,
-        hasInteracted: this.context.getHasInteracted(),
-        hasViewed: this._hasViewed(),
-      };
-    }
+    // let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
+    // if (this.props.isNormalVirtualizedList !== undefined) {
+    //   isNormalVirtualizedList = this.props.isNormalVirtualizedList;
+    // }
+    // if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
+    //   return {
+    //     isVisable: false,
+    //     hasInteracted: this.context.getHasInteracted(),
+    //     hasViewed: this._hasViewed(),
+    //   };
+    // }
 
     if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
       return {
@@ -213,6 +230,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     // size
     const selfSize = await this._getSelfMeasureLayout();
     const wrapperSize = await this.context.getWrapperSize();
+
+    // temp
+    if (selfSize.left === 0 && selfSize.top === wrapperSize.top) {
+      return {
+        isVisable: false,
+        hasInteracted: this.context.getHasInteracted(),
+        hasViewed: this._hasViewed(),
+      };
+    }
 
     // 判断是否漏出
     const res =
