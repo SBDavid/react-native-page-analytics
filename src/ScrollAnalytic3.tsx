@@ -4,8 +4,9 @@ import {
   View,
   InteractionManager,
   Platform,
-  NativeModules,
-  findNodeHandle } from 'react-native';
+  // NativeModules,
+  // findNodeHandle
+} from 'react-native';
 
 export type ShowEvent = {
   hasInteracted: Boolean;
