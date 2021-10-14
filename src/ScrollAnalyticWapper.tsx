@@ -9,10 +9,6 @@ import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 type Props = {
   id?: String;
   viewStyle?: StyleProp<ViewStyle>;
-  buildChildren: (
-    triggerScroll: () => void,
-    triggerRefreshed: () => void
-  ) => JSX.Element;
   isNormalVirtualizedList?: Boolean;
   navigation?: NavigationProp<ParamListBase>;
 };
@@ -226,7 +222,7 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
             });
           }}
         >
-          {this.props.buildChildren(this.triggerScroll, this.triggerRefreshed)}
+          {this.props.children}
         </View>
       </ScrollAnalyticStoreWrapper>
     );
