@@ -4,9 +4,8 @@ import {
   View,
   InteractionManager,
   Platform,
-  // NativeModules,
-  // findNodeHandle
-} from 'react-native';
+  NativeModules,
+  findNodeHandle } from 'react-native';
 
 export type ShowEvent = {
   hasInteracted: Boolean;
@@ -144,7 +143,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       const wrapperSize = await this.context.getWrapperSize();
 
       // temp
-      const temp = selfSize.left === 0 && selfSize.top === wrapperSize.top;
+      const temp =
+        selfSize.left === 0 &&
+        selfSize.top === wrapperSize.top &&
+        Platform.OS === 'android';
 
       // 判断是否漏出
       const res =
@@ -233,7 +235,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     const wrapperSize = await this.context.getWrapperSize();
 
     // temp
-    if (selfSize.left === 0 && selfSize.top === wrapperSize.top) {
+    if (
+      selfSize.left === 0 &&
+      selfSize.top === wrapperSize.top &&
+      Platform.OS === 'android'
+    ) {
       return {
         isVisable: false,
         hasInteracted: this.context.getHasInteracted(),
