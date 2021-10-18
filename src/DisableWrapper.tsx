@@ -1,8 +1,11 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import Sender from './ScrollEventSender';
 
 type Props = {
-  disable: boolean;
+  id: String;
+  debugKey?: String;
+  defalutValue: boolean;
 };
 
 // 返回真表示关闭
@@ -19,8 +22,9 @@ export default class DisableWapper extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    this.isDisable = this.props.disable;
+    this.isDisable = this.props.defalutValue;
     this.isDisablePageAnalytics = this.isDisablePageAnalytics.bind(this);
+    this.globalEventHandler = this.globalEventHandler.bind(this);
   }
 
   getChildContext() {
@@ -30,7 +34,6 @@ export default class DisableWapper extends React.Component<Props> {
   }
 
   isDisablePageAnalytics() {
-    // console.info('isDisablePageAnalytics', this.isDisable);
     if (this.isDisable === true) {
       return true;
     } else if (this.context?.isDisablePageAnalytics !== undefined) {
@@ -40,11 +43,29 @@ export default class DisableWapper extends React.Component<Props> {
     }
   }
 
-  shouldComponentUpdate() {
-    this.isDisable = this.props.disable;
+  componentDidMount() {
+    Sender.addListener(this.globalEventHandler);
+  }
 
-    // console.info('shouldComponentUpdate', this.isDisable);
-    return true;
+  componentWillUnmount() {
+    Sender.removeListener(this.globalEventHandler);
+  }
+
+  globalEventHandler(event: {
+    id: String;
+    name: 'disable' | 'enable';
+  }) {
+    if (event.id === this.props.id) {
+      // console.info('DisableWapper', event);
+
+      if (event.name === 'disable') {
+        this.isDisable = true;
+      }
+
+      if (event.name === 'enable') {
+        this.isDisable = false;
+      }
+    }
   }
 
   render() {

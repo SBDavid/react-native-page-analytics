@@ -475,12 +475,17 @@ export default class ListScreen extends React.Component<
     if (value.i === 0) {
       console.log('切换到list1');
       this.setState({ list1Diabled: false, list2Diabled: true }, () => {
+        console.info(1234);
+        ScrollEventSender.send(this.list1Id, 'enable');
+        ScrollEventSender.send(this.list2Id, 'disable');
         ScrollEventSender.send(this.list1Id, 'show');
         ScrollEventSender.send(this.list2Id, 'hide');
       });
     } else {
       console.log('切换到list2');
       this.setState({ list1Diabled: true, list2Diabled: false }, () => {
+        ScrollEventSender.send(this.list1Id, 'disable');
+        ScrollEventSender.send(this.list2Id, 'enable');
         ScrollEventSender.send(this.list1Id, 'hide');
         ScrollEventSender.send(this.list2Id, 'show');
       });
@@ -497,7 +502,7 @@ export default class ListScreen extends React.Component<
         initialPage={0}
       >
         <PageWrapper screenWidth={this.screenWidth} tabLabel="Tab1">
-          <DisableWrapper disable={this.state.list1Diabled}>
+          <DisableWrapper id={this.list1Id} defalutValue={false} debugKey={'1'}>
             <ScrollAnalyticWapper
               id={this.list1Id}
               useNavigation={useNavigation}
@@ -522,7 +527,7 @@ export default class ListScreen extends React.Component<
         </PageWrapper>
 
         <PageWrapper screenWidth={this.screenWidth} tabLabel="Tab2">
-          <DisableWrapper disable={this.state.list2Diabled}>
+        <DisableWrapper id={this.list2Id} defalutValue={true} debugKey={'2'}>
             <ScrollAnalyticWapper
               id={this.list2Id}
               useNavigation={useNavigation}
