@@ -11,12 +11,15 @@ export default class DisableWapper extends React.Component<Props> {
     isDisablePageAnalytics: PropTypes.func,
   };
 
+  isDisable: boolean;
+
   static childContextTypes = {
     isDisablePageAnalytics: PropTypes.func,
   };
 
   constructor(props: Props) {
     super(props);
+    this.isDisable = this.props.disable;
     this.isDisablePageAnalytics = this.isDisablePageAnalytics.bind(this);
   }
 
@@ -27,7 +30,8 @@ export default class DisableWapper extends React.Component<Props> {
   }
 
   isDisablePageAnalytics() {
-    if (this.props.disable === true) {
+    // console.info('isDisablePageAnalytics', this.isDisable);
+    if (this.isDisable === true) {
       return true;
     } else if (this.context?.isDisablePageAnalytics !== undefined) {
       return this.context?.isDisablePageAnalytics();
@@ -36,9 +40,12 @@ export default class DisableWapper extends React.Component<Props> {
     }
   }
 
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
+  shouldComponentUpdate() {
+    this.isDisable = this.props.disable;
+
+    // console.info('shouldComponentUpdate', this.isDisable);
+    return true;
+  }
 
   render() {
     return this.props.children;

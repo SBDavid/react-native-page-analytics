@@ -316,8 +316,8 @@ export default class ListScreen extends React.Component<
   }
 
   state: HomePageState = {
-    list1: Array(10).fill('list1'),
-    list2: Array(6).fill('list2'),
+    list1: Array(2).fill('list1'),
+    list2: Array(3).fill('list2'),
     tabList: [0, 1],
     selectedTab: 0,
     list1Diabled: false,

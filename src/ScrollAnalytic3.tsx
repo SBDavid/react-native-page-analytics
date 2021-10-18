@@ -115,7 +115,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       return new Promise((resolve) => {
         if (VisibilityTrackerModule.isViewVisible !== undefined) {
           VisibilityTrackerModule.isViewVisible(findNodeHandle(this.itemRef.current), (e: any)=> {
-            // console.info('isViewVisible', e, this.props._key);
+            // console.info('_isViewableOnAndroid new', e, this.props._key);
             resolve(e);
           }, ()=> {
             resolve(true);
@@ -125,7 +125,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
             selfSize.left === 0 &&
             selfSize.top === wrapperSize.top &&
             Platform.OS === 'android';
-          resolve(res);
+            // console.info('_isViewableOnAndroid old', !res, this.props._key);
+          resolve(!res);
         }
       });
     } else {
@@ -134,15 +135,18 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   }
 
   async _isViewable() {
+    // console.info('_isViewable start', this.props._key);
     try {
       if (
         this.context.isDisablePageAnalytics !== undefined &&
         this.context.isDisablePageAnalytics()
       ) {
+        console.info('_isViewable end 1', this.props._key);
         return;
       }
 
       if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
+        // console.info('_isViewable end 2', this.props._key);
         return;
       }
 
@@ -159,7 +163,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         selfSize.top + selfSize.height <=
           wrapperSize.top + wrapperSize.height + 1;
 
-      // console.info(this.props.debugTitle, res, selfSize, wrapperSize);
+      // console.info('_isViewable size', this.props._key, res, selfSize, wrapperSize);
 
       if (res && !this.isVisable) {
 
@@ -220,6 +224,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
+    // console.info('manuallyIsVisable', this.props._key);
     if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
       return {
         isVisable: false,
@@ -232,17 +237,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     const selfSize = await this._getSelfMeasureLayout();
     const wrapperSize = await this.context.getWrapperSize();
 
-    if (Platform.OS === 'android') {
-      if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
-        return {
-          isVisable: false,
-          hasInteracted: this.context.getHasInteracted(),
-          hasViewed: this._hasViewed(),
-        };
-      }
-    }
-    
-
     // 判断是否漏出
     const res =
       selfSize.left + 1 >= wrapperSize.left &&
@@ -251,6 +245,16 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       selfSize.top + 1 >= wrapperSize.top &&
       selfSize.top + selfSize.height <=
         wrapperSize.top + wrapperSize.height + 1;
+
+    if (res && Platform.OS === 'android') {
+      if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
+        return {
+          isVisable: false,
+          hasInteracted: this.context.getHasInteracted(),
+          hasViewed: this._hasViewed(),
+        };
+      }
+    }
 
     const manuallyRes = {
       isVisable: res,
@@ -268,6 +272,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动隐藏接口，用户页面离开或者tab页离开
   manuallyHide() {
+    // console.info('manuallyHide', this.props._key);
     this.isVisable = false;
     // 如果离开页面也作为已交互过处理
     this.context.setHasInteracted(true);
@@ -277,9 +282,10 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   manuallyShow() {
     setTimeout(() => {
       InteractionManager.runAfterInteractions(() => {
+        // console.info('manuallyShow', this.props._key);
         this._isViewable();
       });
-    }, 100);
+    }, 1000);
   }
 
   // 手动触发刷新
