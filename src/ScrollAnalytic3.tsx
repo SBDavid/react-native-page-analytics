@@ -7,6 +7,9 @@ import {
   NativeModules,
   findNodeHandle } from 'react-native';
 
+const packageName = 'VisibilityTracker';
+const VisibilityTrackerModule = NativeModules[packageName] || {};
+
 export type ShowEvent = {
   hasInteracted: Boolean;
   hasViewed: Boolean;
@@ -71,6 +74,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     this._isVisableInAsVirtualizedList =
       this._isVisableInAsVirtualizedList.bind(this);
     this.manuallyIsVisable = this.manuallyIsVisable.bind(this);
+
+    this._isViewableOnAndroid = this._isViewableOnAndroid.bind(this);
   }
 
   // 是否处于曝光状态
@@ -103,16 +108,32 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   layoutPromise = new Promise<void>((resolve) => {
     this.layoutPromiseResolve = resolve;
   });
+
+  // 处理Android上的离屏优化，ios上返回可见
+  async _isViewableOnAndroid(selfSize: any, wrapperSize: any) {
+    if (Platform.OS === 'android') {
+      return new Promise((resolve) => {
+        if (VisibilityTrackerModule.isViewVisible !== undefined) {
+          VisibilityTrackerModule.isViewVisible(findNodeHandle(this.itemRef.current), (e: any)=> {
+            // console.info('isViewVisible', e, this.props._key);
+            resolve(e);
+          }, ()=> {
+            resolve(true);
+          });
+        } else {
+          const res =
+            selfSize.left === 0 &&
+            selfSize.top === wrapperSize.top &&
+            Platform.OS === 'android';
+          resolve(res);
+        }
+      });
+    } else {
+      throw Error('IOS系统上没有 _isViewableOnAndroid 接口');
+    }
+  }
+
   async _isViewable() {
-    // NativeModules.XMTrace.getVisibility({
-    //   id: findNodeHandle(this.itemRef.current),
-    // })
-    //   .then((e: boolean) => {
-    //     console.info('getVisibility', e);
-    //   })
-    //   .catch((err: any) => {
-    //     console.info('getVisibility err', err);
-    //   });
     try {
       if (
         this.context.isDisablePageAnalytics !== undefined &&
@@ -125,28 +146,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         return;
       }
 
-      // let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
-      // if (this.props.isNormalVirtualizedList !== undefined) {
-      //   isNormalVirtualizedList = this.props.isNormalVirtualizedList;
-      // }
-
-      // if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
-      //   if (this.isVisable) {
-      //     this.isVisable = false;
-      //     this.props.onHide && this.props.onHide();
-      //   }
-      //   return;
-      // }
-
       // size
       const selfSize = await this._getSelfMeasureLayout();
       const wrapperSize = await this.context.getWrapperSize();
-
-      // temp
-      const temp =
-        selfSize.left === 0 &&
-        selfSize.top === wrapperSize.top &&
-        Platform.OS === 'android';
 
       // 判断是否漏出
       const res =
@@ -159,7 +161,15 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
       // console.info(this.props.debugTitle, res, selfSize, wrapperSize);
 
-      if (res && !this.isVisable && !temp) {
+      if (res && !this.isVisable) {
+
+        // 如果Android上离屏，则不发送可见
+        if (Platform.OS === 'android') {
+          if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
+            return;
+          }
+        }
+
         this.isVisable = true;
         this.props.onShow &&
           this.props.onShow({
@@ -210,18 +220,6 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 手动查询是否为可见状态
   async manuallyIsVisable() {
-    // let isNormalVirtualizedList = this.context.isNormalVirtualizedList;
-    // if (this.props.isNormalVirtualizedList !== undefined) {
-    //   isNormalVirtualizedList = this.props.isNormalVirtualizedList;
-    // }
-    // if (isNormalVirtualizedList && !this._isVisableInAsVirtualizedList()) {
-    //   return {
-    //     isVisable: false,
-    //     hasInteracted: this.context.getHasInteracted(),
-    //     hasViewed: this._hasViewed(),
-    //   };
-    // }
-
     if (this.context.hasNavigation() && !this.context.isNavigationFocused()) {
       return {
         isVisable: false,
@@ -234,18 +232,16 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     const selfSize = await this._getSelfMeasureLayout();
     const wrapperSize = await this.context.getWrapperSize();
 
-    // temp
-    if (
-      selfSize.left === 0 &&
-      selfSize.top === wrapperSize.top &&
-      Platform.OS === 'android'
-    ) {
-      return {
-        isVisable: false,
-        hasInteracted: this.context.getHasInteracted(),
-        hasViewed: this._hasViewed(),
-      };
+    if (Platform.OS === 'android') {
+      if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
+        return {
+          isVisable: false,
+          hasInteracted: this.context.getHasInteracted(),
+          hasViewed: this._hasViewed(),
+        };
+      }
     }
+    
 
     // 判断是否漏出
     const res =
