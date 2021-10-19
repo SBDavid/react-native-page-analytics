@@ -14,8 +14,7 @@ export const Container = styled(View)`
 export const Item = styled(View)`
   width: 200px;
   height: 30px;
-  margin-top: 25px;
-  margin-left: 20px;
+  margin: 10px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,14 +38,16 @@ export const TabButtonContainer = styled(View)`
 `;
 
 export const TabButtonItem = styled(View)`
-  padding: 5px 10px;
-  border: 1px solid red;
-  background-color: white;
+  padding: 5px 15px;
+  background-color: rgba(255, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 5px;
 `;
 
 export const TabButtonItemText = styled(Text)`
   font-size: 20px;
-  color: green;
+  color: white;
   font-weight: bold;
 `;

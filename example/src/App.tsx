@@ -22,6 +22,7 @@ import TestWapper from './screens/TestWrapper';
 // import LazyLoad from './screens/LazyLoad';
 import LazyLoad from 'react-navigation-lazy-screen';
 import { View } from 'react-native';
+import MambaConsole from '@xmly/mamba-console';
 
 const Stack = createStackNavigator();
 
@@ -70,16 +71,17 @@ export default class App extends React.PureComponent {
     // return <ScrollScreen />;
 
     return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
-          <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
-          <Stack.Screen
-            name={RouterName.ScrollScreen as string}
-            component={ScrollScreen}
-          />
+      <>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName={RouterName.HOME_TAB}>
+            <Stack.Screen name={RouterName.HOME_TAB} component={HomeTab} />
+            <Stack.Screen
+              name={RouterName.ScrollScreen as string}
+              component={ScrollScreen}
+            />
 
-          {/* 懒加载页面 */}
-          {/* <Stack.Screen
+            {/* 懒加载页面 */}
+            {/* <Stack.Screen
             name={RouterName.SCREEN1 as string}
             component={LazyScreen1}
           />
@@ -88,45 +90,47 @@ export default class App extends React.PureComponent {
             component={LazyScreen2}
           /> */}
 
-          {/* 非懒加载页面 */}
-          <Stack.Screen
-            name={RouterName.SCREEN1 as string}
-            component={Screen1}
-          />
-          <Stack.Screen
-            name={RouterName.SCREEN2 as string}
-            component={Screen2}
-          />
-          <Stack.Screen
-            name={RouterName.VirtualizedList as string}
-            component={TestVirtralLizedList}
-            options={{
-              headerTitle: () => <View />,
-              header: () => <View />,
-            }}
-          />
-          <Stack.Screen
-            name={RouterName.FlatList as string}
-            component={TestFlatList}
-          />
-          <Stack.Screen
-            name={RouterName.SectionList as string}
-            component={TestSectionList}
-          />
-          <Stack.Screen
-            name={RouterName.TestSameDirectionList as string}
-            component={TestSameDirectionList}
-          />
-          <Stack.Screen
-            name={RouterName.TestRecycleView as string}
-            component={TestRecycleView}
-          />
-          <Stack.Screen
-            name={RouterName.TestWrapper as string}
-            component={TestWapper}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+            {/* 非懒加载页面 */}
+            <Stack.Screen
+              name={RouterName.SCREEN1 as string}
+              component={Screen1}
+            />
+            <Stack.Screen
+              name={RouterName.SCREEN2 as string}
+              component={Screen2}
+            />
+            <Stack.Screen
+              name={RouterName.VirtualizedList as string}
+              component={TestVirtralLizedList}
+              options={{
+                headerTitle: () => <View />,
+                header: () => <View />,
+              }}
+            />
+            <Stack.Screen
+              name={RouterName.FlatList as string}
+              component={TestFlatList}
+            />
+            <Stack.Screen
+              name={RouterName.SectionList as string}
+              component={TestSectionList}
+            />
+            <Stack.Screen
+              name={RouterName.TestSameDirectionList as string}
+              component={TestSameDirectionList}
+            />
+            <Stack.Screen
+              name={RouterName.TestRecycleView as string}
+              component={TestRecycleView}
+            />
+            <Stack.Screen
+              name={RouterName.TestWrapper as string}
+              component={TestWapper}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <MambaConsole showInDevelopment />
+      </>
     );
   }
 }

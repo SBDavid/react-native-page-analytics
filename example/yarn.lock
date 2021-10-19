@@ -839,6 +839,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
+"@react-native-community/cameraroll@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.npmmirror.com/@react-native-community/cameraroll/download/@react-native-community/cameraroll-4.0.0.tgz?cache=0&sync_timestamp=1634031608057&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40react-native-community%2Fcameraroll%2Fdownload%2F%40react-native-community%2Fcameraroll-4.0.0.tgz#97a4be5d01bc05c387c26599ffa559e1b425e415"
+  integrity sha1-l6S+XQG8BcOHwmWZ/6VZ4bQl5BU=
+
 "@react-native-community/cli-debugger-ui@^4.9.0":
   version "4.13.1"
   resolved "https://registry.nlark.com/@react-native-community/cli-debugger-ui/download/@react-native-community/cli-debugger-ui-4.13.1.tgz?cache=0&sync_timestamp=1623144457152&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-native-community%2Fcli-debugger-ui%2Fdownload%2F%40react-native-community%2Fcli-debugger-ui-4.13.1.tgz#07de6d4dab80ec49231de1f1fbf658b4ad39b32c"
@@ -896,6 +901,18 @@
   version "0.1.10"
   resolved "https://registry.nlark.com/@react-native-community/masked-view/download/@react-native-community/masked-view-0.1.10.tgz?cache=0&sync_timestamp=1619440061429&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-native-community%2Fmasked-view%2Fdownload%2F%40react-native-community%2Fmasked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
   integrity sha1-XdpkPhnlh3k7wgNN2b9zmK1D1AE=
+
+"@react-native-community/netinfo@5.9.6":
+  version "5.9.6"
+  resolved "https://registry.nlark.com/@react-native-community/netinfo/download/@react-native-community/netinfo-5.9.6.tgz?cache=0&sync_timestamp=1630682501698&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-native-community%2Fnetinfo%2Fdownload%2F%40react-native-community%2Fnetinfo-5.9.6.tgz#fab6cd78fe740f9c674b4a93abd77f6bfb90f655"
+  integrity sha1-+rbNeP50D5xnS0qTq9d/a/uQ9lU=
+
+"@react-native-community/push-notification-ios@1.5.0":
+  version "1.5.0"
+  resolved "https://registry.nlark.com/@react-native-community/push-notification-ios/download/@react-native-community/push-notification-ios-1.5.0.tgz#b41802b58d2388c8cb76cd219bbeec9ac9a4c06d"
+  integrity sha1-tBgCtY0jiMjLds0hm77smsmkwG0=
+  dependencies:
+    invariant "^2.2.4"
 
 "@react-native-community/viewpager@^2.0.1":
   version "2.0.2"
@@ -1105,6 +1122,13 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@xmly/mamba-console@0.0.10":
+  version "0.0.10"
+  resolved "http://xnpm.ximalaya.com/@xmly/mamba-console/download/@xmly/mamba-console-0.0.10.tgz#d3e11ec43b98ca6a991d09413d54dfd89dcf4cc4"
+  integrity sha1-0+EexDuYymqZHQlBPVTf2J3PTMQ=
+  dependencies:
+    "@xmly/rn-movable" "0.0.7"
+
 "@xmly/metro@^0.2.10":
   version "0.2.10"
   resolved "http://xnpm.ximalaya.com/@xmly/metro/download/@xmly/metro-0.2.10.tgz#bcc4b6e9cfaafcccd4e47652d51f0b1a6e4ee412"
@@ -1177,6 +1201,22 @@
   dependencies:
     lodash "^4.17.4"
     prop-types "^15.5.10"
+
+"@xmly/rn-movable@0.0.7":
+  version "0.0.7"
+  resolved "http://xnpm.ximalaya.com/@xmly/rn-movable/download/@xmly/rn-movable-0.0.7.tgz#d04f8a4cffad1d93f05ace455c6eb69cbd1340d2"
+  integrity sha1-0E+KTP+tHZPwWs5FXG62nL0TQNI=
+
+"@xmly/rn-sdk@^0.0.9":
+  version "0.0.9"
+  resolved "http://xnpm.ximalaya.com/@xmly/rn-sdk/download/@xmly/rn-sdk-0.0.9.tgz#eede53ef052ca8aec433eba384e60d16a57bf370"
+  integrity sha1-7t5T7wUsqK7EM+ujhOYNFqV783A=
+  dependencies:
+    "@react-native-community/cameraroll" "4.0.0"
+    "@react-native-community/netinfo" "5.9.6"
+    "@react-native-community/push-notification-ios" "1.5.0"
+    react-native-permissions "2.1.5"
+    react-native-view-shot "3.1.2"
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -4084,6 +4124,11 @@ react-native-iphone-x-helper@^1.2.1, react-native-iphone-x-helper@^1.3.0:
   resolved "https://registry.npm.taobao.org/react-native-iphone-x-helper/download/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha1-IMYD6aDnZf1vlzlmOL3rDlpgsBA=
 
+react-native-permissions@2.1.5:
+  version "2.1.5"
+  resolved "https://registry.npmmirror.com/react-native-permissions/download/react-native-permissions-2.1.5.tgz#6cfc4f1ab1590f4952299b7cdc9698525ad540e0"
+  integrity sha1-bPxPGrFZD0lSKZt83JaYUlrVQOA=
+
 react-native-reanimated@1.12.0:
   version "1.12.0"
   resolved "https://registry.nlark.com/react-native-reanimated/download/react-native-reanimated-1.12.0.tgz#6a7d6746957e0fd56694ea7ef7ffb82b1b3666a3"
@@ -4110,6 +4155,11 @@ react-native-scrollable-tab-view@1.0.0:
     create-react-class "^15.6.2"
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.3"
+
+react-native-view-shot@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.npm.taobao.org/react-native-view-shot/download/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"
+  integrity sha1-jI6ExnpLyLYD5pfbvVnbybT4SCU=
 
 "react-native@git+ssh://git@gitlab.ximalaya.com:react-native-app/xm-react-native-0.56.1.git#0.63-dev":
   version "0.63.2"
