@@ -267,7 +267,7 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
 export type UseNaviType = <T extends NavigationProp<ParamListBase>>() => T;
 function ScrollAnalyticWapperWithNavitaion(props: {
   useNavigation?: UseNaviType;
-  id?: String;
+  id: String;
   isNormalVirtualizedList?: Boolean;
   viewStyle?: StyleProp<ViewStyle>;
   // buildChildren: (
