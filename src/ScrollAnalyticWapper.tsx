@@ -7,7 +7,7 @@ import Sender from './ScrollEventSender';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 type Props = {
-  id?: String;
+  id: String;
   viewStyle?: StyleProp<ViewStyle>;
   isNormalVirtualizedList?: Boolean;
   navigation?: NavigationProp<ParamListBase>;
