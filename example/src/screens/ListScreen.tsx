@@ -579,7 +579,8 @@ export default class ListScreen extends React.Component<
   onList1Refresh = async () => {
     this.setState({ list1Refreshing: true });
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.setState({ list1Refreshing: false });
+    const newList = this.state.list1.map((item) => item + '*');
+    this.setState({ list1: newList, list1Refreshing: false });
     ScrollEventSender.send(this.list1Id, 'refreshed');
     Toast.info('list1内容刷新成功');
   };
@@ -587,7 +588,8 @@ export default class ListScreen extends React.Component<
   onList2Refresh = async () => {
     this.setState({ list2Refreshing: true });
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.setState({ list2Refreshing: false });
+    const newList = this.state.list1.map((item) => item + '*');
+    this.setState({ list2: newList, list2Refreshing: false });
     ScrollEventSender.send(this.list2Id, 'refreshed');
     Toast.info('list2内容刷新成功');
   };
