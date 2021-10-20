@@ -498,7 +498,7 @@ class Page extends React.Component<CurrentProps, CurrentState> {
 | 参数 | 类型 | 描述 |
 | :--| :-- | :-- |
 | id | string | 列表id值|
-| event | string | 可选值：<br/>'scroll'&nbsp;&nbsp;滚动<br />'refreshed'&nbsp;&nbsp;刷新<br/>'hide'&nbsp;&nbsp;隐藏<br/> 'show'&nbsp;&nbsp; 显示<br/> 'disable'&nbsp;&nbsp; 关闭曝光监听<br/> 'enable'&nbsp;&nbsp; 打开曝光监听 |
+| event | string | 事件名<br/>可选值包括：<br/>'scroll'&nbsp;&nbsp;滚动<br />'refreshed'&nbsp;&nbsp;刷新<br/>'hide'&nbsp;&nbsp;隐藏<br/> 'show'&nbsp;&nbsp; 显示<br/> 'disable'&nbsp;&nbsp; 关闭曝光监听<br/> 'enable'&nbsp;&nbsp; 打开曝光监听 |
 
 ## Contributing
 
