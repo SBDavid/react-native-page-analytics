@@ -68,7 +68,7 @@ class HomePage extends PageAnalytics.Screen<CurrentProps & AnalyticProps, Curren
 | 属性             | 类型        | 可选     | 含义               |
 | :---            | :---        | :---    | :---              |
 | customPageView  | () => void  |   否    | 页面展示埋点方法 |
-| customPageExit  | () => void  |   否    | 自定义页面隐藏埋点方法 |
+| customPageExit  | () => void  |   否    | 页面隐藏埋点方法 |
 
 
 <br />
@@ -275,12 +275,7 @@ class Page extends React.Component<CurrentProps, CurrentState> {
 
   screenWidth: number;
 
-  pressHandler = () => {
-    NativeModules.Page.start(
-      'iting://open?msg_type=14&url=https://www.baidu.com'
-    );
-  };
-
+  // 曝光事件
   onShowHandler = (name: string, exposeType: number) => {
     console.log(`onShow  type: ${exposeType}  name: ${name}`);
   };
@@ -312,14 +307,13 @@ class Page extends React.Component<CurrentProps, CurrentState> {
 
   createSeperator = () => <View style={{ width: '100%', height: 10 }} />;
 
-  createHorizontalSeperator = () => <View style={{ width: 10, height: 5 }} />;
-
   // 列表滚动事件
   handleScroll = (listId: string) => {
     // 滚动时发送事件通知，会触发新出现的组件的曝光事件
     ScrollEventSender.send(listId, 'scroll');
   };
 
+  // 列表刷新
   onRefresh = async () => {
     this.setState({ flatList: { ...this.state.flatList, refreshing: true } });
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -366,6 +360,7 @@ class Page extends React.Component<CurrentProps, CurrentState> {
     }
   };
 
+  // 创建FlatList
   createFlatListTab = (): JSX.Element => {
     const { listId, data, refreshing } = this.state.flatList;
     return (
@@ -396,6 +391,7 @@ class Page extends React.Component<CurrentProps, CurrentState> {
     );
   };
 
+  // 创建ScrollView
   createScrollViewTab = (): JSX.Element => {
     const { listId, data } = this.state.scrollView;
     return (
