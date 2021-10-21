@@ -251,9 +251,8 @@
 // }
 
 import React from 'react';
-import PageAnalytics, {
+import {
   AnalyticProps,
-  ScrollShowEvent,
   ScrollEventSender,
   ScrollAnalyticComp,
   ScrollAnalyticWapper,
@@ -277,10 +276,6 @@ import ScrollableTabView, {
 } from 'react-native-scrollable-tab-view';
 import styled from 'styled-components';
 
-import Content from '../components/Content';
-import { Container, Item, ItemText } from './StyledComponents';
-import Utils from '../utils';
-import RouterName from '../router';
 import Button from '../components/Button';
 import { Toast } from '@xmly/rn-sdk';
 

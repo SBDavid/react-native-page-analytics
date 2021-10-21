@@ -1,15 +1,14 @@
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
-import PageAnalytics, { AnalyticPropsParams } from '../../../src';
 import {
   createBottomTabNavigator,
   BottomTabBarProps,
 } from '@react-navigation/bottom-tabs';
 import LazyLoad from 'react-navigation-lazy-screen';
-import Tab1 from './Tab1';
-import Tab2 from './Tab2';
+// import Tab1 from './Tab1';
+// import Tab2 from './Tab2';
 // import Tab2 from './Tab2Hook';
-import Tab3 from './Tab3';
+// import Tab3 from './Tab3';
 
 import RouterName from '../router';
 import {
@@ -41,26 +40,26 @@ const LazyTab3: React.FC = (props) => {
   );
 };
 
-function TabButton({ state, navigation }: BottomTabBarProps) {
-  return (
-    <TabButtonContainer>
-      {state.routes.map((item, index) => {
-        return (
-          <TouchableHighlight
-            key={index}
-            onPress={() => {
-              navigation.navigate(item.name);
-            }}
-          >
-            <TabButtonItem>
-              <TabButtonItemText>{item.name}</TabButtonItemText>
-            </TabButtonItem>
-          </TouchableHighlight>
-        );
-      })}
-    </TabButtonContainer>
-  );
-}
+// function TabButton({ state, navigation }: BottomTabBarProps) {
+//   return (
+//     <TabButtonContainer>
+//       {state.routes.map((item, index) => {
+//         return (
+//           <TouchableHighlight
+//             key={index}
+//             onPress={() => {
+//               navigation.navigate(item.name);
+//             }}
+//           >
+//             <TabButtonItem>
+//               <TabButtonItemText>{item.name}</TabButtonItemText>
+//             </TabButtonItem>
+//           </TouchableHighlight>
+//         );
+//       })}
+//     </TabButtonContainer>
+//   );
+// }
 
 export default class HomeTab extends React.Component<HomeTabProps> {
   constructor(props: HomeTabProps) {
@@ -71,12 +70,39 @@ export default class HomeTab extends React.Component<HomeTabProps> {
     return (
       <Tab.Navigator
         initialRouteName={RouterName.TAB1}
-        tabBar={(props) => <TabButton {...props} />}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+          tabStyle: {
+            height: 45,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopWidth: 1.5,
+            borderTopColor: 'gray',
+            // borderWidth: 1,
+            // borderColor: 'red',
+          },
+          labelStyle: { fontSize: 20, fontWeight: 'normal' },
+        }}
+        // tabBar={(props) => <TabButton {...props} />}
       >
         {/* 懒加载页面 */}
-        <Tab.Screen name={RouterName.TAB1} component={LazyTab1} />
-        <Tab.Screen name={RouterName.TAB2} component={LazyTab2} />
-        <Tab.Screen name={RouterName.TAB3} component={LazyTab3} />
+        <Tab.Screen
+          name={RouterName.TAB1}
+          component={LazyTab1}
+          options={{ tabBarLabel: 'Tab1' }}
+        />
+        <Tab.Screen
+          name={RouterName.TAB2}
+          component={LazyTab2}
+          options={{ tabBarLabel: 'Tab2' }}
+        />
+        <Tab.Screen
+          name={RouterName.TAB3}
+          component={LazyTab3}
+          options={{ tabBarLabel: 'Tab3' }}
+        />
 
         {/* 非懒加载页面 */}
         {/* <Tab.Screen name={RouterName.TAB1} component={Tab1} />

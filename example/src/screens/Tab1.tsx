@@ -32,14 +32,14 @@ export default class Tab1 extends PageAnalytics.Screen<
     list: [
       RouterName.SCREEN1,
       RouterName.SCREEN2,
-      RouterName.NativeScreen,
+      RouterName.H5,
       RouterName.ScrollScreen,
-      RouterName.VirtualizedList,
-      RouterName.FlatList,
-      RouterName.SectionList,
-      RouterName.TestSameDirectionList,
-      RouterName.TestRecycleView,
-      RouterName.TestWrapper,
+      // RouterName.VirtualizedList,
+      // RouterName.FlatList,
+      // RouterName.SectionList,
+      // RouterName.TestSameDirectionList,
+      // RouterName.TestRecycleView,
+      // RouterName.TestWrapper,
     ],
   };
 
@@ -60,6 +60,10 @@ export default class Tab1 extends PageAnalytics.Screen<
   customPageView = () => {
     console.log(`发送页面pageView埋点 自定义 页面名: Tab1 pageExitId: 0`);
   };
+
+  // customPageView = () => {
+
+  // };
 
   // 用户自定义的页面离开埋点上传方法
   customPageExit = () => {
@@ -82,7 +86,7 @@ export default class Tab1 extends PageAnalytics.Screen<
   // };
 
   handlePress = (item: RouterName) => {
-    if (item === RouterName.NativeScreen) {
+    if (item === RouterName.H5) {
       // 跳转到账号绑定页
       // NativeModules.Page.start('iting://open?msg_type=84');
       NativeModules.Page.start(

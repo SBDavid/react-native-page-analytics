@@ -296,11 +296,9 @@ class Page extends React.Component<CurrentProps, CurrentState> {
         }}
         {...this.props}
       >
-        <TouchableHighlight onPress={this.pressHandler}>
-          <VerticalListItemWrapper width={this.screenWidth}>
-            <InnerListItemText>{`${item}--${index}`}</InnerListItemText>
-          </VerticalListItemWrapper>
-        </TouchableHighlight>
+        <VerticalListItemWrapper width={this.screenWidth}>
+          <InnerListItemText>{`${item}--${index}`}</InnerListItemText>
+        </VerticalListItemWrapper>
       </ScrollAnalyticComp>
     );
   };

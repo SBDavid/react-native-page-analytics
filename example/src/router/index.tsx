@@ -5,7 +5,7 @@ enum RouterName {
   TAB1 = 'tab1',
   TAB2 = 'tab2',
   TAB3 = 'tab3',
-  NativeScreen = 'native_screen',
+  H5 = 'H5',
   ScrollScreen = 'scroll_screen',
   VirtualizedList = 'VirtualizedList',
   FlatList = 'FlatList',

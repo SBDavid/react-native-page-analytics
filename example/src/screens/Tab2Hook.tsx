@@ -4,14 +4,11 @@ import {
   TouchableHighlight,
   Text,
   NativeModules,
-  View,
 } from 'react-native';
 import PageAnalytics, { AnalyticProps } from '../../../src';
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
-import Utils from '../utils';
 import RouterName from '../router';
-import ListScreen from './ListScreen';
 
 interface HomePageProps {}
 
@@ -21,7 +18,7 @@ interface HomePageState {
 
 export default function Tab2(props: HomePageProps & AnalyticProps) {
   const pageViewId: number = 0;
-  const pageExitId: number = 0;
+  // const pageExitId: number = 0;
   const currPage: string = 'tab2';
 
   // let timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,7 +51,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   //   );
   // }
 
-  const { setPageViewProps, setPageExitProps } = PageAnalytics.useScreen({
+  PageAnalytics.useScreen({
     // pageViewId,
     // pageExitId,
     // currPage,
@@ -71,12 +68,12 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   const list = useRef<RouterName[]>([
     RouterName.SCREEN1,
     RouterName.SCREEN2,
-    RouterName.NativeScreen,
+    RouterName.H5,
   ]);
 
   const handlePress = useCallback(
     (item: RouterName) => {
-      if (item === RouterName.NativeScreen) {
+      if (item === RouterName.H5) {
         // 跳转到账号绑定页
         // NativeModules.Page.start('iting://open?msg_type=84');
         NativeModules.Page.start(
@@ -132,7 +129,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
           );
         })}
 
-        <TouchableHighlight
+        {/* <TouchableHighlight
           onPress={() => setCount(count + 1)}
           style={{ marginTop: 30 }}
         >
@@ -141,7 +138,7 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
 
         <Text
           style={{ fontSize: 25, color: 'red', marginTop: 20 }}
-        >{`count: ${count}`}</Text>
+        >{`count: ${count}`}</Text> */}
       </ScrollView>
     </Container>
   );

@@ -59,7 +59,10 @@ export type PageExitDataGener = () => PageViewExitPropsType;
 
 export type PageTraceType = 'focus' | 'blur';
 
-export default class Screen<P, S> extends React.Component<P & Props, S> {
+export default abstract class Screen<P, S> extends React.Component<
+  P & Props,
+  S
+> {
   // focus事件订阅
   private focusSubs?: () => void;
 
@@ -137,10 +140,10 @@ export default class Screen<P, S> extends React.Component<P & Props, S> {
   // }
 
   // 自定义pageView埋点发送方法
-  protected customPageView?: () => void;
+  protected abstract customPageView: () => void;
 
   // 自定义pageExit埋点发送方法
-  protected customPageExit?: () => void;
+  protected abstract customPageExit: () => void;
 
   // 页面key
   private pageKey: string;
