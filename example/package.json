@@ -24,7 +24,6 @@
     "react-native-safe-area-context": "3.1.7",
     "react-native-screens": "2.10.1",
     "react-native-scrollable-tab-view": "1.0.0",
-    "react-native-view-shot": "3.1.2",
     "react-navigation-lazy-screen": "^1.0.0",
     "styled-components": "^5.3.0"
   },
