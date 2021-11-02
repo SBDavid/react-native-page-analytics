@@ -328,24 +328,23 @@ export default abstract class Screen<P, S> extends React.Component<
 
   // 页面显示操作
   private onFocus = async (source: PageViewExitEventSource) => {
+    console.log('onFocus source', source);
     // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
     // 由首次页面展示埋点由onNavigatiionChange去触发
-    if (
-      this.focusSubs &&
-      this.blurSubs &&
-      source === PageViewExitEventSource.page &&
-      ScreenUtils.getIsFirstPageView()
-    ) {
-      console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
-      ScreenUtils.updateIsFirstPageView(false);
-      return;
-    }
+    // if (
+    //   this.focusSubs &&
+    //   this.blurSubs &&
+    //   source === PageViewExitEventSource.page &&
+    //   ScreenUtils.getIsFirstPageView()
+    // ) {
+    //   console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
+    //   ScreenUtils.updateIsFirstPageView(false);
+    //   return;
+    // }
 
-    if (ScreenUtils.getIsFirstPageView()) {
-      ScreenUtils.updateIsFirstPageView(false);
-    }
-    // await this.pageViewPropsPromise;
-    // ScreenUtils.currPage = this.currPage;
+    // if (ScreenUtils.getIsFirstPageView()) {
+    //   ScreenUtils.updateIsFirstPageView(false);
+    // }
     this.sendAnalyticAction('focus');
   };
 
@@ -412,6 +411,7 @@ export default abstract class Screen<P, S> extends React.Component<
     // const { pageView, pageExit } = sendActions;
 
     if (!this.shouldSend(type)) {
+      console.log('not should send');
       return;
     }
 

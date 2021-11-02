@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { EmitterSubscription, AppState, AppStateStatus } from 'react-native';
+import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 // import { useNavigation } from '@react-navigation/native';
 import {
   PageViewExitEventSource,
@@ -12,11 +13,9 @@ import {
 import ScreenUtils from './utils';
 
 interface ScreenHookProps {
-  pageViewId?: number;
-  pageExitId?: number;
-  currPage?: string;
   customPageView: () => void;
   customPageExit: () => void;
+  navigation?: NavigationProp<ParamListBase>;
   [index: string]: any;
 }
 
@@ -28,8 +27,6 @@ interface UseScreenReturnType {
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   const {
-    // pageViewId,
-    // pageExitId,
     currPage,
     customPageView,
     customPageExit,
@@ -139,6 +136,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       // const { pageView, pageExit } = sendActions;
 
       if (!shouldSend(type)) {
+        console.log('not should send');
         return;
       }
 
@@ -197,23 +195,22 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 页面显示操作
   let onFocus = useCallback(
     async (source: PageViewExitEventSource) => {
+      console.log('onFocus source', source);
       // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
       // 由首次页面展示埋点由onNavigatiionChange去触发
-      if (
-        hasFocusSubsRef.current &&
-        hasBlurSubsRef.current &&
-        source === PageViewExitEventSource.page &&
-        ScreenUtils.getIsFirstPageView()
-      ) {
-        console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
-        ScreenUtils.updateIsFirstPageView(false);
-        return;
-      }
-      if (ScreenUtils.getIsFirstPageView()) {
-        ScreenUtils.updateIsFirstPageView(false);
-      }
-      // await pageViewPropsPromiseRef.current;
-      // ScreenUtils.currPage = currPage;
+      // if (
+      //   hasFocusSubsRef.current &&
+      //   hasBlurSubsRef.current &&
+      //   source === PageViewExitEventSource.page &&
+      //   ScreenUtils.getIsFirstPageView()
+      // ) {
+      //   console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
+      //   ScreenUtils.updateIsFirstPageView(false);
+      //   return;
+      // }
+      // if (ScreenUtils.getIsFirstPageView()) {
+      //   ScreenUtils.updateIsFirstPageView(false);
+      // }
       sendAnalyticAction('focus');
     },
     [
