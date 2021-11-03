@@ -4,7 +4,6 @@ import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 // import { useNavigation } from '@react-navigation/native';
 import {
   PageViewExitEventSource,
-  AnalyticDataProps,
   isIos,
   PageEventEmitter,
   CustomAppState,
