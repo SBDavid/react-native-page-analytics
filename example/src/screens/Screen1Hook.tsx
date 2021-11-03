@@ -32,21 +32,15 @@ export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
     );
   }, []);
 
-  const { setPageExitProps, setPageViewProps } = PageAnalytics.useScreen({
+  const { notifyFirstPageView } = PageAnalytics.useScreen({
     pageViewId: 0,
     pageExitId: 0,
     currPage: 'screen1',
     customPageView,
     customPageExit,
+    // needNotifyFirstPageView: true,
     ...props,
   });
-
-  // 同步设置pageViewProps
-  const syncSetPageViewProps = useCallback(async () => {
-    setPageViewProps({
-      customPageProp: 'data',
-    });
-  }, [setPageViewProps]);
 
   const clearAction = useCallback(() => {
     console.log('screen1Hook willunmount');
@@ -54,15 +48,12 @@ export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
 
   useEffect(() => {
     console.log('screen1Hook didmount');
-    // syncSetPageViewProps();
+    notifyFirstPageView();
     return clearAction;
-  }, [syncSetPageViewProps, clearAction]);
+  }, [clearAction, notifyFirstPageView]);
 
   return (
     <Container>
-      <View style={{ height: 200 }}>
-        <ListScreen {...props} />
-      </View>
       <ScrollView>
         <Content title="Screen1" />
         <Button

@@ -93,7 +93,7 @@ export default class App extends React.PureComponent {
             {/* 非懒加载页面 */}
             <Stack.Screen
               name={RouterName.SCREEN1 as string}
-              component={Screen1}
+              component={LazyScreen1}
             />
             <Stack.Screen
               name={RouterName.SCREEN2 as string}

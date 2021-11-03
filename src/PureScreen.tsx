@@ -124,6 +124,9 @@ export default class PureScreen<P, S> extends React.PureComponent<
     // this.pageViewPropsPromise = new Promise((resolve) => {
     //   this.pageViewPropsResolve = resolve;
     // });
+    this.firstPageViewPromise = new Promise((resolve) => {
+      this.firstPageViewPromiseResolve = resolve;
+    });
     this.pageKey = Date.now().toString();
     console.log('screen中添加监听');
     // this.pageShow();
@@ -136,6 +139,20 @@ export default class PureScreen<P, S> extends React.PureComponent<
     //
     this.delayCheckFirstPageView();
   }
+
+  // 等待首次页面展示埋点的Promise
+  private firstPageViewPromise: Promise<any>;
+
+  // 等待首次页面展示埋点的promiseResolve
+  private firstPageViewPromiseResolve?: (r: any) => void;
+
+  // 首次页面展示埋点是否需要等待通知
+  protected needNotifyFirstPageView: boolean = false;
+
+  // 通知数据加载完成，可以发送首次页面展示埋点
+  protected notifyFirstPageView = () => {
+    this.firstPageViewPromiseResolve && this.firstPageViewPromiseResolve(null);
+  };
 
   // 添加路由监听
   private addNavigationListener = () => {
@@ -304,12 +321,26 @@ export default class PureScreen<P, S> extends React.PureComponent<
     // if (ScreenUtils.getIsFirstPageView()) {
     //   ScreenUtils.updateIsFirstPageView(false);
     // }
+    if (this.needNotifyFirstPageView) {
+      await this.firstPageViewPromise;
+    }
     this.sendAnalyticAction('focus');
   };
 
   // 页面离开操作
   private onBlur = () => {
-    this.sendAnalyticAction('blur');
+    if (this.needNotifyFirstPageView) {
+      if (this.pageTraceList.length === 0) {
+        this.notifyFirstPageView();
+        this.firstPageViewPromise.then(() => {
+          this.sendAnalyticAction('blur');
+        });
+      } else {
+        this.sendAnalyticAction('blur');
+      }
+    } else {
+      this.sendAnalyticAction('blur');
+    }
   };
 
   // 上传pageKey
@@ -360,60 +391,25 @@ export default class PureScreen<P, S> extends React.PureComponent<
 
   // 发送数据操作
   private sendAnalyticAction = (type: PageTraceType) => {
-    // const sendActions = ScreenUtils.getSendAnalyticActions();
-
-    // if (!sendActions) {
-    //   console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
-    //   return;
-    // }
-
-    // const { pageView, pageExit } = sendActions;
-
     if (!this.shouldSend(type)) {
       console.log('not should send');
       return;
     }
 
     if (type === 'focus') {
-      // console.log('sendAnalyticAction focus');
-      if (this.customPageView) {
-        // console.log('customPageView 存在 执行');
-        this.pageTraceList.push('focus');
-        this.customPageView();
-        // return;
+      if (!this.customPageView) {
+        return;
       }
-      // console.log(
-      //   `发送页面pageView埋点 页面名: ${ScreenUtils.currPage} pageViewId: ${
-      //     this.pageViewId
-      //   } props: ${this.pageViewProps} ${Date.now()}`
-      // );
-      // if (!pageView) {
-      //   return;
-      // }
-      // this.pageTraceList.push('focus');
-      // pageView(this.pageViewId, this.currPage, this.pageViewProps || {});
-      // return;
+      this.pageTraceList.push('focus');
+      this.customPageView();
     }
 
     if (type === 'blur') {
-      // console.log('sendAnalyticAction blur');
-      if (this.customPageExit) {
-        // console.log('customPageExit 存在 执行');
-        this.pageTraceList.push('blur');
-        this.customPageExit();
-        // return;
+      if (!this.customPageExit) {
+        return;
       }
-      // console.log(
-      //   `发送页面pageExit埋点 页面名: ${ScreenUtils.currPage} pageExitId: ${
-      //     this.pageExitId
-      //   } props: ${this.pageExitProps} ${Date.now()}`
-      // );
-      // if (!pageExit) {
-      //   return;
-      // }
-      // this.pageTraceList.push('blur');
-      // pageExit(this.pageExitId, this.currPage, this.pageExitProps || {});
-      // return;
+      this.pageTraceList.push('blur');
+      this.customPageExit();
     }
   };
 

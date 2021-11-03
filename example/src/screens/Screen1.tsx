@@ -75,6 +75,8 @@ export default class Screen1 extends PageAnalytics.Screen<
   //   });
   // };
 
+  // needNotifyFirstPageView = true;
+
   // 用户自定义的页面展示埋点上传方法
   customPageView = () => {
     console.log(

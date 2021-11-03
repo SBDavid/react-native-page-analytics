@@ -15,22 +15,21 @@ import ScreenUtils from './utils';
 interface ScreenHookProps {
   customPageView: () => void;
   customPageExit: () => void;
+  needNotifyFirstPageView?: boolean;
   navigation?: NavigationProp<ParamListBase>;
   [index: string]: any;
 }
 
 type UpdatePagePropsFunc = (props: AnalyticDataProps) => void;
 interface UseScreenReturnType {
-  setPageViewProps: UpdatePagePropsFunc;
-  setPageExitProps: UpdatePagePropsFunc;
+  notifyFirstPageView: () => void;
 }
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   const {
-    currPage,
     customPageView,
     customPageExit,
-    // test,
+    needNotifyFirstPageView = false,
   } = props;
 
   // 当前页面维护的APPstate数组
@@ -53,6 +52,16 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // onPause事件订阅
   let onPauseSubsRef = useRef<EmitterSubscription | null>(null);
+
+  // 等待首次页面展示埋点的promiseResolve
+  let firstPageViewPromiseResolveRef = useRef<((r: any) => void) | null>(null);
+
+  // 等待首次页面展示埋点的Promise
+  let firstPageViewPromiseRef = useRef<Promise<any>>(
+    new Promise((resolve) => {
+      firstPageViewPromiseResolveRef.current = resolve;
+    })
+  );
 
   // // pageview属性
   // let pageViewPropsRef = useRef<AnalyticDataProps | null>(null);
@@ -211,10 +220,15 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       // if (ScreenUtils.getIsFirstPageView()) {
       //   ScreenUtils.updateIsFirstPageView(false);
       // }
+      if (needNotifyFirstPageView) {
+        await firstPageViewPromiseRef.current;
+      }
       sendAnalyticAction('focus');
     },
     [
       // currPage,
+      needNotifyFirstPageView,
+      firstPageViewPromiseRef,
       sendAnalyticAction,
     ]
   );
@@ -232,47 +246,40 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     }, 500);
   }, [onFocus, pageShow]);
 
-  // 设置pageView埋点属性
-  let setPageViewProps = useCallback<UpdatePagePropsFunc>(
-    (prop: AnalyticDataProps) => {
-      // if (!hasSetPageViewPropsRef.current) {
-      //   hasSetPageViewPropsRef.current = true;
-      //   delayCheckFirstPageView();
-      // }
-      // pageViewPropsRef.current = prop;
-      // pageViewPropsResolveRef.current && pageViewPropsResolveRef.current(null);
-      console.log(prop);
-      delayCheckFirstPageView();
-    },
-    [delayCheckFirstPageView]
-  );
-
-  // 设置pageExit埋点属性
-  let setPageExitProps = useCallback<UpdatePagePropsFunc>(
-    (prop: AnalyticDataProps) => {
-      // pageExitPropsRef.current = prop;
-      console.log(prop);
-    },
-    []
-  );
+  // 通知数据加载完成，可以发送首次页面展示埋点
+  let notifyFirstPageView = useCallback(() => {
+    firstPageViewPromiseResolveRef.current &&
+      firstPageViewPromiseResolveRef.current(null);
+  }, [firstPageViewPromiseResolveRef]);
 
   // 页面离开操作
   let onBlur = useCallback(() => {
-    sendAnalyticAction('blur');
-  }, [sendAnalyticAction]);
+    if (needNotifyFirstPageView) {
+      if (pageTraceListRef.current.length === 0) {
+        notifyFirstPageView();
+        firstPageViewPromiseRef.current.then(() => {
+          sendAnalyticAction('blur');
+        });
+      } else {
+        sendAnalyticAction('blur');
+      }
+    } else {
+      sendAnalyticAction('blur');
+    }
+  }, [needNotifyFirstPageView, notifyFirstPageView, sendAnalyticAction]);
 
   // navigationOnFocus事件
   let onNavigationFocus = useCallback(() => {
-    console.log(`onNavigationFocus事件： 页面名：${currPage}`);
+    console.log(`onNavigationFocus事件： 页面名`);
     pageShow();
     onFocus(PageViewExitEventSource.navigation);
-  }, [currPage, pageShow, onFocus]);
+  }, [pageShow, onFocus]);
 
   // navigationOnBlur事件
   let onNavigationBlur = useCallback(() => {
-    console.log(`onNavigationBlur事件： 页面名：${currPage}`);
+    console.log(`onNavigationBlur事件： 页面名：`);
     onBlur();
-  }, [currPage, onBlur]);
+  }, [onBlur]);
 
   // 添加路由监听
   let addNavigationListener = useCallback((): void => {
@@ -303,19 +310,19 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     if (navigationRef.current && !navigationRef.current.isFocused()) {
       return;
     }
-    console.log(`onResume事件： 页面名：${currPage}`);
+    console.log(`onResume事件： 页面名：`);
     pageShow();
     onFocus(PageViewExitEventSource.page);
-  }, [currPage, pageShow, onFocus]);
+  }, [pageShow, onFocus]);
 
   // 页面与native页面相互跳转的处理
   let onPauseHandler = useCallback(() => {
     if (navigationRef.current && !navigationRef.current.isFocused()) {
       return;
     }
-    console.log(`onPause事件： 页面名：${currPage}`);
+    console.log(`onPause事件： 页面名：`);
     onBlur();
-  }, [currPage, onBlur]);
+  }, [onBlur]);
 
   // 添加RN页面状态变化监听，从RN页面跳转到Native页面时触发onPause，回到RN页面时触发onResume
   let addPageChangeHandler = useCallback((): void => {
@@ -365,22 +372,20 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       appStateListRef.current.push(currentAppState);
 
       if (currentAppState === CustomAppState.active) {
-        console.log(`appstate变化，active 页面名：${currPage} ${Date.now()}`);
+        console.log(`appstate变化，active 页面名： ${Date.now()}`);
         onFocus(PageViewExitEventSource.appState);
       } else {
-        console.log(
-          `appstate变化，background 页面名：${currPage} ${Date.now()}`
-        );
+        console.log(`appstate变化，background 页面名： ${Date.now()}`);
         onBlur();
       }
     },
-    [currPage, onBlur, onFocus]
+    [onBlur, onFocus]
   );
 
   // APPstate状态更新防抖
   let appStateChangeHandler = useCallback(
     (status: AppStateStatus) => {
-      console.log(`appStateChangeHandler ${status} ${currPage}  ${Date.now()}`);
+      console.log(`appStateChangeHandler ${status} ${Date.now()}`);
       if (navigationRef.current && !navigationRef.current.isFocused()) {
         return;
       }
@@ -395,7 +400,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
         handleAppState(status);
       }, debounceDurationRef.current);
     },
-    [currPage, handleAppState]
+    [handleAppState]
   );
 
   // 添加APPstate状态变化监听，切换到后台触发background，回来触发active
@@ -447,7 +452,6 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   }, []);
 
   return {
-    setPageViewProps,
-    setPageExitProps,
+    notifyFirstPageView,
   };
 }

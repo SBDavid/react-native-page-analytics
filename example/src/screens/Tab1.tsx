@@ -49,12 +49,17 @@ export default class Tab1 extends PageAnalytics.Screen<
     // this.syncSetPageViewProps();
     // // 添加pageExit数据，如果每次页面离开时发送的prop数据不同，可以多次调用这个方法更新prop
     // this.setPageExitProps({ trackId: String(100) });
+    Utils.delay(3500).then(() => {
+      this.notifyFirstPageView();
+    });
   }
 
   componentWillUnmount() {
     // 移除监听
     super.componentWillUnmount();
   }
+
+  needNotifyFirstPageView = true;
 
   // 用户自定义的页面展示埋点上传方法
   customPageView = () => {

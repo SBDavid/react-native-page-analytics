@@ -9,6 +9,7 @@ import PageAnalytics, { AnalyticProps } from '../../../src';
 import Content from '../components/Content';
 import { Container, Item, ItemText } from './StyledComponents';
 import RouterName from '../router';
+import Utils from '../utils';
 
 interface HomePageProps {}
 
@@ -51,12 +52,13 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
   //   );
   // }
 
-  PageAnalytics.useScreen({
+  let { notifyFirstPageView } = PageAnalytics.useScreen({
     // pageViewId,
     // pageExitId,
     // currPage,
     customPageView,
     customPageExit,
+    needNotifyFirstPageView: true,
     ...props,
   });
 
@@ -101,6 +103,9 @@ export default function Tab2(props: HomePageProps & AnalyticProps) {
     //   setCount(count + 1);
     // }, 1000);
     console.log('Tab2Hook didmount');
+    Utils.delay(2000).then(() => {
+      notifyFirstPageView();
+    });
     return () => {
       console.log('Tab2Hook willunmount');
       // timer.current && clearTimeout(timer.current);
