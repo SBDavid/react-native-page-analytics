@@ -19,8 +19,6 @@ interface ScreenHookProps {
   navigation?: NavigationProp<ParamListBase>;
   [index: string]: any;
 }
-
-type UpdatePagePropsFunc = (props: AnalyticDataProps) => void;
 interface UseScreenReturnType {
   notifyFirstPageView: () => void;
 }
