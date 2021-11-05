@@ -23,11 +23,24 @@ interface UseScreenReturnType {
 }
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
-  const {
-    customPageView,
-    customPageExit,
-    needNotifyFirstPageView = false,
-  } = props;
+  // const {
+  //   customPageView,
+  //   customPageExit,
+  //   needNotifyFirstPageView = false,
+  // } = props;
+
+  const customPageViewRef = useRef<(() => void) | null>(null);
+  const customPageExitRef = useRef<(() => void) | null>(null);
+  const needNotifyFirstPageViewRef = useRef<boolean>(false);
+
+  // console.log('执行customPageViewRef');
+  // props.customPageView();
+  customPageViewRef.current = props.customPageView;
+  customPageExitRef.current = props.customPageExit;
+  needNotifyFirstPageViewRef.current =
+    props.needNotifyFirstPageView !== undefined
+      ? props.needNotifyFirstPageView
+      : false;
 
   // 当前页面维护的APPstate数组
   const appStateListRef = useRef<CustomAppState[]>([]);
@@ -151,10 +164,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
       if (type === 'focus') {
         // console.log('sendAnalyticAction focus');
-        if (customPageView) {
+        if (customPageViewRef.current) {
           // console.log('customPageView 存在 执行');
           pageTraceListRef.current.push('focus');
-          customPageView();
+          customPageViewRef.current();
           // return;
         }
         // console.log(
@@ -172,10 +185,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
       if (type === 'blur') {
         console.log('sendAnalyticAction blur');
-        if (customPageExit) {
+        if (customPageExitRef.current) {
           // console.log('customPageExit 存在 执行');
           pageTraceListRef.current.push('blur');
-          customPageExit();
+          customPageExitRef.current();
           // return;
         }
         // console.log(
@@ -191,14 +204,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
         // return;
       }
     },
-    [
-      // currPage,
-      // pageViewId,
-      // pageExitId,
-      customPageView,
-      customPageExit,
-      shouldSend,
-    ]
+    [customPageExitRef, pageTraceListRef, shouldSend]
   );
 
   // 页面显示操作
@@ -220,17 +226,12 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       // if (ScreenUtils.getIsFirstPageView()) {
       //   ScreenUtils.updateIsFirstPageView(false);
       // }
-      if (needNotifyFirstPageView) {
+      if (needNotifyFirstPageViewRef.current) {
         await firstPageViewPromiseRef.current;
       }
       sendAnalyticAction('focus');
     },
-    [
-      // currPage,
-      needNotifyFirstPageView,
-      firstPageViewPromiseRef,
-      sendAnalyticAction,
-    ]
+    [needNotifyFirstPageViewRef, firstPageViewPromiseRef, sendAnalyticAction]
   );
 
   // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
@@ -254,7 +255,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 页面离开操作
   let onBlur = useCallback(() => {
-    if (needNotifyFirstPageView) {
+    if (needNotifyFirstPageViewRef.current) {
       if (pageTraceListRef.current.length === 0) {
         notifyFirstPageView();
         firstPageViewPromiseRef.current.then(() => {
@@ -266,7 +267,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     } else {
       sendAnalyticAction('blur');
     }
-  }, [needNotifyFirstPageView, notifyFirstPageView, sendAnalyticAction]);
+  }, [needNotifyFirstPageViewRef, notifyFirstPageView, sendAnalyticAction]);
 
   // navigationOnFocus事件
   let onNavigationFocus = useCallback(() => {
