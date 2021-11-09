@@ -67,14 +67,12 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   let firstPageViewPromiseResolveRef = useRef<((r: any) => void) | null>(null);
 
   // 等待首次页面展示埋点的Promise
-  let firstPageViewPromiseRef = useRef<Promise<any>>(
-    new Promise((resolve) => {
-      if (firstPageViewPromiseResolveRef.current === null) {
-        firstPageViewPromiseResolveRef.current = resolve;
-      }
-      // firstPageViewPromiseResolveRef.current = resolve;
-    })
-  );
+  let firstPageViewPromiseRef = useRef<Promise<any> | null>(null);
+  if (firstPageViewPromiseRef.current === null) {
+    firstPageViewPromiseRef.current = new Promise((resolve) => {
+      firstPageViewPromiseResolveRef.current = resolve;
+    });
+  }
 
   // // pageview属性
   // let pageViewPropsRef = useRef<AnalyticDataProps | null>(null);
