@@ -256,9 +256,11 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     if (needNotifyFirstPageViewRef.current) {
       if (pageTraceListRef.current.length === 0) {
         notifyFirstPageView();
-        firstPageViewPromiseRef.current.then(() => {
-          sendAnalyticAction('blur');
-        });
+        if (firstPageViewPromiseRef.current) {
+          firstPageViewPromiseRef.current.then(() => {
+            sendAnalyticAction('blur');
+          });
+        }
       } else {
         sendAnalyticAction('blur');
       }
