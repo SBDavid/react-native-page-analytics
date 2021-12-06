@@ -16,6 +16,8 @@ interface ScreenHookProps {
   customPageExit: () => void;
   needNotifyFirstPageView?: boolean;
   navigation?: NavigationProp<ParamListBase>;
+  // 仅仅有页面曝光追踪的功能，不添加ubtSource更新的功能
+  onlyUsePageAnalytic?: boolean;
   [index: string]: any;
 }
 interface UseScreenReturnType {
@@ -131,8 +133,11 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 上传pageKey
   let pageShow = useCallback(() => {
+    if (props.onlyUsePageAnalytic) {
+      return;
+    }
     ScreenUtils.getPageShowAction()({ __pageKey: pageKeyRef.current });
-  }, []);
+  }, [props.onlyUsePageAnalytic]);
 
   // 检查能否发送pageView或者pageExit事件，这两个事件应该是成对出现，避免连续发送pageView或者pageExit事件，
   // 除了首次，首次可以直接发送pageView事件

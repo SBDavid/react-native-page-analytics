@@ -107,6 +107,9 @@ export default class PureScreen<P, S> extends React.PureComponent<
   // 页面key
   private pageKey: string;
 
+  // 仅仅有页面曝光追踪的功能，不添加ubtSource更新的功能
+  protected onlyUsePageAnalytic: boolean = false;
+
   // // 全局currPage
   // protected static currentPage: string;
 
@@ -345,6 +348,9 @@ export default class PureScreen<P, S> extends React.PureComponent<
 
   // 上传pageKey
   private pageShow() {
+    if (this.onlyUsePageAnalytic) {
+      return;
+    }
     ScreenUtils.getPageShowAction()({ __pageKey: this.pageKey });
   }
 
