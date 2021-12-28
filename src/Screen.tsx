@@ -163,6 +163,13 @@ export default abstract class Screen<P, S> extends React.Component<
   //   return Screen.currentPage;
   // }
 
+  // 记录AppState变化状态
+  private currentAppState: CustomAppState | null = null;
+
+  // 要延后执行的onPause任务列表，ios 在切换到后台之后，扫码进入一个native页面，会先收到onPause事件，再收到appState active事件，
+  // 把onPause事件存起来，后续执行这个任务
+  private hasOnPauseTask: boolean = false;
+
   constructor(p: P & Props) {
     super(p);
     // this.pageViewPropsPromise = new Promise((resolve) => {
@@ -298,6 +305,10 @@ export default abstract class Screen<P, S> extends React.Component<
     if (!currentAppState || formerAppState === currentAppState) {
       return;
     }
+
+    // 记录appState的变化
+    this.currentAppState = currentAppState;
+
     this.appStateList.push(currentAppState);
 
     if (currentAppState === CustomAppState.active) {
@@ -319,6 +330,9 @@ export default abstract class Screen<P, S> extends React.Component<
       return;
     }
     console.log(`onResume事件： 页面名：${this.currPage}`);
+    if (isIos) {
+      this.hasOnPauseTask = false;
+    }
     this.pageShow();
     this.onFocus(PageViewExitEventSource.page);
   };
@@ -329,6 +343,10 @@ export default abstract class Screen<P, S> extends React.Component<
       return;
     }
     console.log(`onPause事件： 页面名：${this.currPage}`);
+    // ios 在切换到后台状态下，扫码进入一个Native页面，会先收到onPause事件，把这个事件存起来，后面再执行
+    if (isIos && this.currentAppState === CustomAppState.background) {
+      this.hasOnPauseTask = true;
+    }
     this.onBlur();
   };
 
@@ -367,7 +385,8 @@ export default abstract class Screen<P, S> extends React.Component<
     if (this.needNotifyFirstPageView) {
       await this.firstPageViewPromise;
     }
-    this.sendAnalyticAction('focus');
+    await this.sendAnalyticAction('focus');
+    this.handleOnPauseTask();
   };
 
   // 页面离开操作
@@ -383,6 +402,14 @@ export default abstract class Screen<P, S> extends React.Component<
       }
     } else {
       this.sendAnalyticAction('blur');
+    }
+  };
+
+  // 处理onPauseTaskList任务
+  private handleOnPauseTask = async () => {
+    if (isIos && this.hasOnPauseTask) {
+      this.hasOnPauseTask = false;
+      setTimeout(this.onBlur, 0);
     }
   };
 

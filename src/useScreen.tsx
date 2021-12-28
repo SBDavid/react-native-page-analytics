@@ -95,6 +95,13 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // // 是否首次setPageViewProps
   // let hasSetPageViewPropsRef = useRef<boolean>(false);
 
+  // 记录AppState变化状态
+  let currentAppStateRef = useRef<CustomAppState | null>(null);
+
+  // 要延后执行的onPause任务列表，ios 在切换到后台之后，扫码进入一个native页面，会先收到onPause事件，再收到appState active事件，
+  // 把onPause事件存起来，后续执行这个任务
+  let hasOnPauseTaskRef = useRef<boolean>(false);
+
   // 当前已经出发的pageView和pageExit事件记录
   let pageTraceListRef = useRef<PageTraceType[]>([]);
 
@@ -151,7 +158,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   // 发送数据操作
   let sendAnalyticAction = useCallback(
-    (type: PageTraceType) => {
+    async (type: PageTraceType) => {
       // const sendActions = ScreenUtils.getSendAnalyticActions();
       // if (!sendActions) {
       //   console.log(`没有设置sendAnalyticAction，发送${type}事件失败`);
@@ -210,46 +217,6 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     [customPageExitRef, pageTraceListRef, shouldSend]
   );
 
-  // 页面显示操作
-  let onFocus = useCallback(
-    async (source: PageViewExitEventSource) => {
-      console.log('onFocus source', source);
-      // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
-      // 由首次页面展示埋点由onNavigatiionChange去触发
-      // if (
-      //   hasFocusSubsRef.current &&
-      //   hasBlurSubsRef.current &&
-      //   source === PageViewExitEventSource.page &&
-      //   ScreenUtils.getIsFirstPageView()
-      // ) {
-      //   console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
-      //   ScreenUtils.updateIsFirstPageView(false);
-      //   return;
-      // }
-      // if (ScreenUtils.getIsFirstPageView()) {
-      //   ScreenUtils.updateIsFirstPageView(false);
-      // }
-      if (needNotifyFirstPageViewRef.current) {
-        await firstPageViewPromiseRef.current;
-      }
-      sendAnalyticAction('focus');
-    },
-    [needNotifyFirstPageViewRef, firstPageViewPromiseRef, sendAnalyticAction]
-  );
-
-  // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
-  let delayCheckFirstPageView = useCallback(() => {
-    delayCheckTimerRef.current && clearTimeout(delayCheckTimerRef.current);
-    delayCheckTimerRef.current = setTimeout(() => {
-      console.log('delaycheckfirstpageview');
-      if (!pageTraceListRef.current.includes('focus')) {
-        console.log('delaycheckfirstpageview onfocus');
-        pageShow();
-        onFocus(PageViewExitEventSource.page);
-      }
-    }, 500);
-  }, [onFocus, pageShow]);
-
   // 通知数据加载完成，可以发送首次页面展示埋点
   let notifyFirstPageView = useCallback(() => {
     firstPageViewPromiseResolveRef.current &&
@@ -273,6 +240,60 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       sendAnalyticAction('blur');
     }
   }, [needNotifyFirstPageViewRef, notifyFirstPageView, sendAnalyticAction]);
+
+  // 处理onPauseTaskList任务
+  let handleOnPauseTask = useCallback(async () => {
+    if (isIos && hasOnPauseTaskRef.current) {
+      hasOnPauseTaskRef.current = false;
+      setTimeout(onBlur, 0);
+    }
+  }, [onBlur]);
+
+  // 页面显示操作
+  let onFocus = useCallback(
+    async (source: PageViewExitEventSource) => {
+      console.log('onFocus source', source);
+      // 有navigation的情况下，首次页面展示埋点如果是由onResume事件触发（可能有，可能没有）,过滤此次页面展示埋点，
+      // 由首次页面展示埋点由onNavigatiionChange去触发
+      // if (
+      //   hasFocusSubsRef.current &&
+      //   hasBlurSubsRef.current &&
+      //   source === PageViewExitEventSource.page &&
+      //   ScreenUtils.getIsFirstPageView()
+      // ) {
+      //   console.log('首次发送页面pageView埋点，触发来源为onResume，不发送');
+      //   ScreenUtils.updateIsFirstPageView(false);
+      //   return;
+      // }
+      // if (ScreenUtils.getIsFirstPageView()) {
+      //   ScreenUtils.updateIsFirstPageView(false);
+      // }
+      if (needNotifyFirstPageViewRef.current) {
+        await firstPageViewPromiseRef.current;
+      }
+      await sendAnalyticAction('focus');
+      handleOnPauseTask();
+    },
+    [
+      needNotifyFirstPageViewRef,
+      firstPageViewPromiseRef,
+      sendAnalyticAction,
+      handleOnPauseTask,
+    ]
+  );
+
+  // 延时去检查是否发送了首次的页面pageView事件，如果没有发送，说明没有收到onNavigationFocus和onResume事件，手动补上一次pageView事件(首次pageView)
+  let delayCheckFirstPageView = useCallback(() => {
+    delayCheckTimerRef.current && clearTimeout(delayCheckTimerRef.current);
+    delayCheckTimerRef.current = setTimeout(() => {
+      console.log('delaycheckfirstpageview');
+      if (!pageTraceListRef.current.includes('focus')) {
+        console.log('delaycheckfirstpageview onfocus');
+        pageShow();
+        onFocus(PageViewExitEventSource.page);
+      }
+    }, 500);
+  }, [onFocus, pageShow]);
 
   // navigationOnFocus事件
   let onNavigationFocus = useCallback(() => {
@@ -317,6 +338,9 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       return;
     }
     console.log(`onResume事件： 页面名：`);
+    if (isIos) {
+      hasOnPauseTaskRef.current = false;
+    }
     pageShow();
     onFocus(PageViewExitEventSource.page);
   }, [pageShow, onFocus]);
@@ -327,6 +351,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       return;
     }
     console.log(`onPause事件： 页面名：`);
+    // ios 在切换到后台状态下，扫码进入一个Native页面，会先收到onPause事件，把这个事件存起来，后面再执行
+    if (isIos && currentAppStateRef.current === CustomAppState.background) {
+      hasOnPauseTaskRef.current = true;
+    }
     onBlur();
   }, [onBlur]);
 
@@ -375,6 +403,10 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
       if (!currentAppState || formerAppState === currentAppState) {
         return;
       }
+
+      // 记录appState的变化
+      currentAppStateRef.current = currentAppState;
+
       appStateListRef.current.push(currentAppState);
 
       if (currentAppState === CustomAppState.active) {
