@@ -24,10 +24,16 @@ export enum ExposeType {
   coldBoot = 0,
   // 滑动产生的新内容曝光
   newContent = 3,
-  // 滑动产生的且历史被曝光(3 或 4 在一个页面生命周期内仅上报一次)
-  hasExposed = 4,
+  // // 滑动产生的且历史被曝光(3 或 4 在一个页面生命周期内仅上报一次)
+  // hasExposed = 4,
+  // // 从其他页面返回
+  // fromPage = 6,
+
+  // 修改，简化，原本的 4和6 都改为3
+  hasExposed = 3,
   // 从其他页面返回
-  fromPage = 6,
+  fromPage = 3,
+
   // 从后台返回
   fromBackground = 7,
 }
