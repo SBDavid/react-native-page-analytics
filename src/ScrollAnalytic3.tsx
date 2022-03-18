@@ -5,7 +5,8 @@ import {
   InteractionManager,
   Platform,
   NativeModules,
-  findNodeHandle } from 'react-native';
+  findNodeHandle,
+} from 'react-native';
 
 const packageName = 'VisibilityTracker';
 const VisibilityTrackerModule = NativeModules[packageName] || {};
@@ -114,18 +115,22 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     if (Platform.OS === 'android') {
       return new Promise((resolve) => {
         if (VisibilityTrackerModule.isViewVisible !== undefined) {
-          VisibilityTrackerModule.isViewVisible(findNodeHandle(this.itemRef.current), (e: any)=> {
-            // console.info('_isViewableOnAndroid new', e, this.props._key);
-            resolve(e);
-          }, ()=> {
-            resolve(true);
-          });
+          VisibilityTrackerModule.isViewVisible(
+            findNodeHandle(this.itemRef.current),
+            (e: any) => {
+              // console.info('_isViewableOnAndroid new', e, this.props._key);
+              resolve(e);
+            },
+            () => {
+              resolve(true);
+            }
+          );
         } else {
           const res =
             selfSize.left === 0 &&
             selfSize.top === wrapperSize.top &&
             Platform.OS === 'android';
-            // console.info('_isViewableOnAndroid old', !res, this.props._key);
+          // console.info('_isViewableOnAndroid old', !res, this.props._key);
           resolve(!res);
         }
       });
@@ -166,10 +171,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
       // console.info('_isViewable size', this.props._key, res, selfSize, wrapperSize);
 
       if (res && !this.isVisable) {
-
         // 如果Android上离屏，则不发送可见
         if (Platform.OS === 'android') {
-          if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
+          if (!(await this._isViewableOnAndroid(selfSize, wrapperSize))) {
             return;
           }
         }
@@ -247,7 +251,7 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         wrapperSize.top + wrapperSize.height + 1;
 
     if (res && Platform.OS === 'android') {
-      if (!await this._isViewableOnAndroid(selfSize, wrapperSize)) {
+      if (!(await this._isViewableOnAndroid(selfSize, wrapperSize))) {
         return {
           isVisable: false,
           hasInteracted: this.context.getHasInteracted(),
@@ -275,6 +279,9 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     // console.info('manuallyHide', this.props._key);
     this.isVisable = false;
     // 如果离开页面也作为已交互过处理
+    if (!this.context.setHasInteracted) {
+      return;
+    }
     this.context.setHasInteracted(true);
   }
 
