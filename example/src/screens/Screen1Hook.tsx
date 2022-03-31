@@ -3,6 +3,7 @@ import { ScrollView, View } from 'react-native';
 import PageAnalytics, {
   AnalyticProps,
   PageExitDataGenerType,
+  CustomPageViewFuncType,
 } from '../../../src';
 import Content from '../components/Content';
 import Button from '../components/Button';
@@ -19,9 +20,11 @@ interface HomePageState {
 
 export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
   // 用户自定义的页面展示埋点上传方法
-  const customPageView = useCallback(() => {
+  const customPageView = useCallback<CustomPageViewFuncType>((param) => {
     console.log(
-      `发送页面pageView埋点 自定义 页面名: screen1Hook pageExitId: ${0}`
+      `发送页面pageView埋点 自定义 页面名: screen1Hook pageExitId: ${0}, ${
+        param.newPageId
+      }`
     );
   }, []);
 
@@ -32,7 +35,7 @@ export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
     );
   }, []);
 
-  const { notifyFirstPageView } = PageAnalytics.useScreen({
+  const { notifyFirstPageView, addNewPageIdProp } = PageAnalytics.useScreen({
     pageViewId: 0,
     pageExitId: 0,
     currPage: 'screen1',
@@ -58,6 +61,7 @@ export default function Screen1Hook(props: HomePageProps & AnalyticProps) {
         <Content title="Screen1" />
         <Button
           handler={() => {
+            console.log('222222', addNewPageIdProp({}));
             props?.navigation?.navigate(RouterName.SCREEN2);
           }}
           title="跳转到Screen2"

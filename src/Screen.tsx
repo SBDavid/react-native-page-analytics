@@ -59,6 +59,13 @@ export type PageExitDataGener = () => PageViewExitPropsType;
 
 export type PageTraceType = 'focus' | 'blur';
 
+export interface CustomPageViewParam {
+  newPageId: string;
+  [index: string]: any;
+}
+
+export type CustomPageViewFuncType = (param: CustomPageViewParam) => void;
+
 export default abstract class Screen<P, S> extends React.Component<
   P & Props,
   S
@@ -140,13 +147,16 @@ export default abstract class Screen<P, S> extends React.Component<
   // }
 
   // 自定义pageView埋点发送方法
-  protected abstract customPageView: () => void;
+  protected abstract customPageView: CustomPageViewFuncType;
 
   // 自定义pageExit埋点发送方法
   protected abstract customPageExit: () => void;
 
   // 页面key
   private pageKey: string;
+
+  // 页面newPageId
+  private newPageId: string;
 
   // 仅仅有页面曝光追踪的功能，不添加ubtSource更新的功能
   protected onlyUsePageAnalytic: boolean = false;
@@ -179,6 +189,7 @@ export default abstract class Screen<P, S> extends React.Component<
       this.firstPageViewPromiseResolve = resolve;
     });
     this.pageKey = Date.now().toString();
+    this.newPageId = ScreenUtils.getUUID() + '_' + Date.now().toString();
     console.log('screen中添加监听');
     // 添加路由监听
     this.addNavigationListener();
@@ -474,7 +485,7 @@ export default abstract class Screen<P, S> extends React.Component<
         return;
       }
       this.pageTraceList.push('focus');
-      this.customPageView();
+      this.customPageView({ newPageId: this.newPageId });
     }
 
     if (type === 'blur') {
@@ -484,6 +495,13 @@ export default abstract class Screen<P, S> extends React.Component<
       this.pageTraceList.push('blur');
       this.customPageExit();
     }
+  };
+
+  // 包装click事件props属性方法
+  addNewPageIdProp = (param: {
+    [index: string]: string;
+  }): { [index: string]: string } => {
+    return { ...param, newPageId: this.newPageId };
   };
 
   componentWillUnmount() {

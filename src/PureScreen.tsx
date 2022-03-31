@@ -14,6 +14,7 @@ import {
   Props,
   AnalyticDataProps,
   PageTraceType,
+  CustomPageViewFuncType,
 } from './Screen';
 
 export const PageEventEmitter = new NativeEventEmitter(NativeModules.Page);
@@ -99,13 +100,16 @@ export default class PureScreen<P, S> extends React.PureComponent<
   // }
 
   // 自定义pageView埋点发送方法
-  protected customPageView?: () => void;
+  protected customPageView?: CustomPageViewFuncType;
 
   // 自定义pageExit埋点发送方法
   protected customPageExit?: () => void;
 
   // 页面key
   private pageKey: string;
+
+  // 页面newPageId
+  private newPageId: string;
 
   // 仅仅有页面曝光追踪的功能，不添加ubtSource更新的功能
   protected onlyUsePageAnalytic: boolean = false;
@@ -138,6 +142,7 @@ export default class PureScreen<P, S> extends React.PureComponent<
       this.firstPageViewPromiseResolve = resolve;
     });
     this.pageKey = Date.now().toString();
+    this.newPageId = ScreenUtils.getUUID() + '_' + Date.now().toString();
     console.log('screen中添加监听');
     // this.pageShow();
     // 添加路由监听
@@ -434,7 +439,7 @@ export default class PureScreen<P, S> extends React.PureComponent<
         return;
       }
       this.pageTraceList.push('focus');
-      this.customPageView();
+      this.customPageView({ newPageId: this.newPageId });
     }
 
     if (type === 'blur') {
@@ -450,6 +455,13 @@ export default class PureScreen<P, S> extends React.PureComponent<
   // protected setPageExitPropsGener = (cb: PageExitDataGener) => {
   //   this.pageExitDataGener = cb;
   // };
+
+  // 包装click事件props属性方法
+  addNewPageIdProp = (param: {
+    [index: string]: string;
+  }): { [index: string]: string } => {
+    return { ...param, newPageId: this.newPageId };
+  };
 
   componentWillUnmount() {
     try {

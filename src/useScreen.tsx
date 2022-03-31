@@ -8,11 +8,12 @@ import {
   PageEventEmitter,
   CustomAppState,
   PageTraceType,
+  CustomPageViewFuncType,
 } from './Screen';
 import ScreenUtils from './utils';
 
 interface ScreenHookProps {
-  customPageView: () => void;
+  customPageView: CustomPageViewFuncType;
   customPageExit: () => void;
   needNotifyFirstPageView?: boolean;
   navigation?: NavigationProp<ParamListBase>;
@@ -20,8 +21,14 @@ interface ScreenHookProps {
   onlyUsePageAnalytic?: boolean;
   [index: string]: any;
 }
+
+interface PropParamType {
+  [index: string]: string;
+}
+
 interface UseScreenReturnType {
   notifyFirstPageView: () => void;
+  addNewPageIdProp: (param: PropParamType) => PropParamType;
 }
 
 export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
@@ -31,7 +38,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   //   needNotifyFirstPageView = false,
   // } = props;
 
-  const customPageViewRef = useRef<(() => void) | null>(null);
+  const customPageViewRef = useRef<CustomPageViewFuncType | null>(null);
   const customPageExitRef = useRef<(() => void) | null>(null);
   const needNotifyFirstPageViewRef = useRef<boolean>(false);
 
@@ -138,6 +145,9 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
   // 页面key
   let pageKeyRef = useRef<string>('');
 
+  // newPageId
+  let newPageIdRef = useRef<string>('');
+
   // 上传pageKey
   let pageShow = useCallback(() => {
     if (props.onlyUsePageAnalytic) {
@@ -177,7 +187,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
         if (customPageViewRef.current) {
           // console.log('customPageView 存在 执行');
           pageTraceListRef.current.push('focus');
-          customPageViewRef.current();
+          customPageViewRef.current({ newPageId: newPageIdRef.current });
           // return;
         }
         // console.log(
@@ -222,6 +232,11 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
     firstPageViewPromiseResolveRef.current &&
       firstPageViewPromiseResolveRef.current(null);
   }, [firstPageViewPromiseResolveRef]);
+
+  // 包装click事件props属性方法
+  let addNewPageIdProp = useCallback((param: PropParamType): PropParamType => {
+    return { ...param, newPageId: newPageIdRef.current };
+  }, []);
 
   // 页面离开操作
   let onBlur = useCallback(() => {
@@ -482,6 +497,7 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   useEffect(() => {
     pageKeyRef.current = Date.now().toString();
+    newPageIdRef.current = ScreenUtils.getUUID() + '_' + Date.now().toString();
     // pageShow();
     addListeners();
     delayCheckFirstPageView();
@@ -491,5 +507,6 @@ export default function useScreen(props: ScreenHookProps): UseScreenReturnType {
 
   return {
     notifyFirstPageView,
+    addNewPageIdProp,
   };
 }
