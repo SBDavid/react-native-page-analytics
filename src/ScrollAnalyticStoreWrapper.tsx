@@ -18,7 +18,7 @@ import {
   PageEventEmitter,
   PageViewExitEventSource,
 } from './Screen';
-import { ExposeType } from './ScrollAnalyticComp';
+import { ExposeType } from './ScrollAnalyticComp2';
 
 export type CustomProps = {
   navigation?: NavigationProp<ParamListBase>;
