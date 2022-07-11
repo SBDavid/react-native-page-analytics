@@ -21,6 +21,9 @@
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
+  "maintainers": [
+    "gerrard.li"
+  ],
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
