@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, InteractionManager, StyleProp, ViewStyle } from 'react-native';
+import { View, StyleProp, ViewStyle } from 'react-native';
 import EventEmitter from 'eventemitter3';
 import PropTypes from 'prop-types';
 import ScrollAnalyticStoreWrapper from './ScrollAnalyticStoreWrapper';
@@ -217,9 +217,12 @@ export class ScrollAnalyticWapper extends React.PureComponent<Props> {
           }
           ref={this.ref}
           onLayout={() => {
-            InteractionManager.runAfterInteractions(() => {
+            // InteractionManager.runAfterInteractions(() => {
+            //   this._sizeResolve && this._sizeResolve(null);
+            // });
+            setTimeout(() => {
               this._sizeResolve && this._sizeResolve(null);
-            });
+            }, 300);
           }}
         >
           {this.props.children}

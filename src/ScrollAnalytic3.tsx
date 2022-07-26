@@ -1,12 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  InteractionManager,
-  Platform,
-  NativeModules,
-  findNodeHandle,
-} from 'react-native';
+import { View, Platform, NativeModules, findNodeHandle } from 'react-native';
 
 const packageName = 'VisibilityTracker';
 const VisibilityTrackerModule = NativeModules[packageName] || {};
@@ -288,10 +282,11 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   // 手动触发展示
   manuallyShow() {
     setTimeout(() => {
-      InteractionManager.runAfterInteractions(() => {
-        // console.info('manuallyShow', this.props._key);
-        this._isViewable();
-      });
+      // InteractionManager.runAfterInteractions(() => {
+      //   // console.info('manuallyShow', this.props._key);
+      //   this._isViewable();
+      // });
+      this._isViewable();
     }, 1000);
   }
 
@@ -325,9 +320,12 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
         ref={this.itemRef}
         collapsable={false}
         onLayout={() => {
-          InteractionManager.runAfterInteractions(() => {
+          // InteractionManager.runAfterInteractions(() => {
+          //   this.layoutPromiseResolve && this.layoutPromiseResolve();
+          // });
+          setTimeout(() => {
             this.layoutPromiseResolve && this.layoutPromiseResolve();
-          });
+          }, 300);
         }}
       >
         {this.props.children}
