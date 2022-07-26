@@ -1,6 +1,6 @@
 {
   "name": "@xmly/react-native-page-analytics",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "empty",
   "maintainer": ["jiawei.tang"],
   "main": "lib/commonjs/index",
