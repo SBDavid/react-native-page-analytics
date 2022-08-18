@@ -18,6 +18,7 @@ export type Props = {
   disable?: Boolean;
   debugTitle?: string;
   isNormalVirtualizedList?: boolean;
+  useAndroidOffScreenTracker?: boolean; // 是否判断android离屏渲染
 };
 
 export default class ScrollAnalytics extends React.PureComponent<Props> {
@@ -50,6 +51,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
     isNavigationFocused: PropTypes.func,
 
     isNormalVirtualizedList: PropTypes.bool,
+
+    useAndroidOffScreenTracker: PropTypes.bool,
   };
 
   constructor(props: Props) {
@@ -106,6 +109,12 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
 
   // 处理Android上的离屏优化，ios上返回可见
   async _isViewableOnAndroid(selfSize: any, wrapperSize: any) {
+    if (
+      this.context.useAndroidOffScreenTracker === undefined ||
+      !this.context.useAndroidOffScreenTracker
+    ) {
+      return true;
+    }
     if (Platform.OS === 'android') {
       return new Promise((resolve) => {
         if (VisibilityTrackerModule.isViewVisible !== undefined) {

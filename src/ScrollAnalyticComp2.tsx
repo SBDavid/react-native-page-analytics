@@ -17,6 +17,7 @@ export interface ScrollProps {
   onHide?: () => void;
   onRefreshed?: () => void;
   isNormalVirtualizedList?: boolean;
+  useAndroidOffScreenTracker?: boolean;
 }
 
 export enum ExposeType {
@@ -676,6 +677,7 @@ class ScrollAnalyticContent<P, S> extends React.Component<
           onHide={this.onHide}
           onRefreshed={this.onRefreshed}
           isNormalVirtualizedList={this.props.isNormalVirtualizedList}
+          useAndroidOffScreenTracker={this.props.useAndroidOffScreenTracker}
         />
       </>
     );
