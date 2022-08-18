@@ -18,6 +18,7 @@ export interface ScrollProps {
   onRefreshed?: () => void;
   isNormalVirtualizedList?: boolean;
   useAndroidOffScreenTracker?: boolean;
+  allowRepeatExpose?: boolean;
 }
 
 export enum ExposeType {
@@ -639,17 +640,27 @@ class ScrollAnalyticContent<P, S> extends React.Component<
       //   this.exposeHandler(exposeType);
       //   return;
       // }
-      if (!this.context.shouldItemExposeScroll) {
-        return;
+
+      // 允许滑动隐藏再滑动出现后重复曝光，默认不重复曝光
+      if (this.props.allowRepeatExpose) {
+        // type为 4
+        const exposeType = ExposeType.hasExposed;
+        this.context.updateItemHasExposedType(itemKey, exposeType);
+        // this.updateHasExposedType(exposeType);
+        this.exposeHandler(exposeType);
+      } else {
+        if (!this.context.shouldItemExposeScroll) {
+          return;
+        }
+        if (!this.context.shouldItemExposeScroll(itemKey)) {
+          return;
+        }
+        // type为 4
+        const exposeType = ExposeType.hasExposed;
+        this.context.updateItemHasExposedType(itemKey, exposeType);
+        // this.updateHasExposedType(exposeType);
+        this.exposeHandler(exposeType);
       }
-      if (!this.context.shouldItemExposeScroll(itemKey)) {
-        return;
-      }
-      // type为 4
-      const exposeType = ExposeType.hasExposed;
-      this.context.updateItemHasExposedType(itemKey, exposeType);
-      // this.updateHasExposedType(exposeType);
-      this.exposeHandler(exposeType);
       return;
     }
   };

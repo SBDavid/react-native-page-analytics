@@ -390,7 +390,7 @@ export default class ListScreen extends React.Component<
   };
 
   onShowHandler = (name: string, exposeType: number) => {
-    console.log(`onShow  type: ${exposeType}  name: ${name}`);
+    console.log(`onShow  11111111  type: ${exposeType}  name: ${name}`);
   };
 
   createHorizontalListItem = ({
@@ -463,6 +463,7 @@ export default class ListScreen extends React.Component<
       return (
         <ScrollAnalyticComp
           itemKey={item + '  ' + index}
+          allowRepeatExpose
           // key={index}
           onShow={(exposeType: number) => {
             this.onShowHandler(`${item}--${index}`, exposeType);
