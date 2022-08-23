@@ -108,8 +108,8 @@ export default class ScrollAnalytics extends React.PureComponent<Props> {
   async _isViewableOnAndroid(selfSize: any, wrapperSize: any) {
     if (Platform.OS === 'android') {
       const viewId = findNodeHandle(this.itemRef.current);
-      // 如果 viewId === -1, 表示元素为渲染，此时返回 false，表示不可见
-      if (viewId === -1) {
+      // 如果 viewId === null, 表示元素为渲染，此时返回 false，表示不可见
+      if (typeof viewId !== 'number' || viewId <= 0) {
         return false;
       }
       return new Promise((resolve) => {
